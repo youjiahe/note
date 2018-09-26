@@ -1,6 +1,4 @@
-#!/bin/bash
 拓扑结构
-
 
             master51
 	        |
