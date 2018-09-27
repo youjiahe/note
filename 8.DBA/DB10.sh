@@ -20,6 +20,17 @@
    – 适合数据大量写入数据的存储需求
 ●分片规则，10种
   comment-day-10.txt  #老师笔记里面，这个文件对每种规则做了详细说明
+
+  &1 枚举法 sharding-by-intfile
+  &2 固定分片 rule1
+  & 3 范围约定 auto-sharding-long
+  &4 求模法 mod-long
+  &5 日期列分区法 sharding-by-date
+  &6 通配取模 sharding-by-pattern
+ &7ASCII 码求模通配 sharding-by-prefixpattern
+  &8 编程指定 sharding-by-substring
+  &9 字符串拆分 hash 解析 sharding-by-stringhash
+  &10 一致性 hash sharding-by-murmur
 ●工作过程
              
           |--------------dn1,prov=wuhan,db1@Mysql1  

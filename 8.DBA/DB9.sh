@@ -1,12 +1,3 @@
-问题：
-1.重要选项ALGORITHM的使用，给出例子?
-2.temptable #具体化方式
-  含义:
-  先执行创建视图时的SQL查询语句，结果放到查询缓存；
-  再执行 select * from 视图名，这个命令在缓存上面查询。  
-  问题来了:
-  没有视图时，如何执行select * from 视图名?
-  创建视图的命令什么时候执行?
 ##################################################################################
 视图
 ●什么是视图(View)
@@ -107,11 +98,31 @@
   mysql> create or replace view v1 select * from user;
 ●ALGORITHM
   ALGORITHM = {UNDEFINED | MERAGE |TEMPTABLE}   
-  &merge      #替换方式
-    不单独执行创建视图时的SQL查询；创建视图与SQL查询一起执行
-  &temptable  #具体化方式
-    先执行创建视图时的SQL查询语句，结果放到查询缓存；
-    再执行 select * from 视图名，这个命令再缓存上面查询，最后再建视图； #有问题
+  例子：
+mysql> create algorithm=merage view v9 as select  * from user;
+ 
++视图查询语句的处理
+  示例：视图为shell是/sbin/nologin的用户信息
+ &创建视图：
+   mysql> create view v7
+    -> as
+    -> select * from user
+    -> where shell="/sbin/nologin"；
+ &查询视图：
+   mysql> select name，shell from v7
+      -> where name like "----"；
+ 
+ &merage 替代方法：
+　　先把select语句中的视图名使用定义视图的select语句来替代；
+　　再处理所得到的select语句。
+   mysql> select name，shell from ( select * from user where shell="/sbin/nologin"；)
+    -> where name like "----"；
+ 
+ &temptable具体化方法：
+　　先处理定义视图的select语句，这会生成一个中间的结果集；
+　　然后，再在中间结果上执行select查询。
+    mysql> select <列名> from <中间结果>;
+  
 ●LOCAL和CASCADED关键字决定检查的范围
   &local      #仅检查当前视图的限制
   &cascaded   #同时要满足基表的限制(默认值)
