@@ -32,14 +32,18 @@ MongoDB服务    2days
 +非关系型数据库  //NoSQL Redis Mongodb
                    //数据存储时不需要事先创建存储结构，使用key和values键值正确的方式存储数据，已经存储之间不可以做关联操作
 
-●搭建数据库服务器        #192.168.4.50
-  Oracel               #商业
-  MySQL(商业)/Mariadb   #商业,开源.公开最基本的版本。需要符合需求就得找商家
-  SQL Server           #商业闭源,WIN.         
-  Access
-  DB2                  #IBM
-  Sybase
-  PostgreSQL
+●常见数据库服务器        
+  主流数据库服务软件有:
+  甲骨文        Oracle
+  IBM        DB2
+  微软          SQL Server
+  美国Sybase  Sybase
+    
+  主流数据库相关信息：
+  MySQL、PostgreSQL:开源且跨平台
+  Oracle、DB2:跨平台不开源
+  SQL Server:不跨平台不开源
+  Sybase:跨平台不开源
 
 ●数据库服务的基本使用
   +把数据存储到数据库的步骤
@@ -56,11 +60,10 @@ MongoDB服务    2days
    -适用于中小规模、关系型数据库
    -用C，C++编写的软件，可移植性强
    -通过API可支持Python/PHP/Java  #如php-mysql，就是API
-   -跨平台
+   -跨平台,开源
 ●应用环境
   -LNMP平台，与Nginx组合
   -LAMP平台，与Apache组合
-
 
 ●MySQL搭建
 与右边软件包有版本冲突  #mariadb-server.x86_64
@@ -141,6 +144,7 @@ mysql> 管理环境
 ●字符集
   包含所有汉字的集合              #UTF8，包含所有的汉字，用得比较多
   默认字符集：CHARSET=latin1  #不包含汉字
+  default charset="UTF8";
 ●查看建表过程的命令
   show create table t2;
 ●建表时指定utf8，可以支持中文
@@ -172,8 +176,17 @@ mysql> 管理环境
    99999.99
    -99999.99
 
-+建表时，指定数值类型时，默认有符号
-  #加上"unsigned",就会切换为无符号。
++关于整数型字段
+– 使用 UNSIGNED 修饰时,对应的字段只保存正数
+– 数值不够指定宽度时,在左边填空格补位
+– 宽度仅是显示宽度,存数值的大小由类型决定
+– 使用关键字 ZEROFILL 时,填 0 代替空格补位
+– 数值超出范围时,报错
+
++关于浮点型字段
+– 定义格式: float( 总宽度 , 小数位数 )
+– 当字段值与类型不匹配时,字段值作为 0 处理
+– 数值超出范围时,仅保存最大 / 最小值
 
 例子：
 create table t1(age tinyint,pay float(7,2));   
@@ -184,7 +197,7 @@ create table t2(age tinyint unsigned);
  char(宽度)            #性能更好，生产环境比较多
      --最大255个字符
      --默认为1个字符
-     --不足宽度，自动补位
+     --不足宽度，自动以空格补位
 +变长:
  varchar(宽度)         #不占用太多空间，可是性能没那么好，生产环境比较少
      --最大65532个字符
@@ -247,7 +260,6 @@ mysql> insert into t7(meeting) values(20190806120000);
 字段名  enum(值列表)  单选
 字段名  set(值列表)   多选
 
-
 ●案例：
 mysql> create table t6( 
 name char(10), 
@@ -282,6 +294,8 @@ year()    指定的年
 date()    指定的日期
 day()     指定的天
 time()    指定时间
+sleep(N)  休眠N秒
+
 ●指定年份
 指定2001～2069时可以用  01～69
 指定1970～1999时可以用  70～99
