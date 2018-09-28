@@ -321,7 +321,7 @@ MySQL性能调优
     ~]# vim /etc/mysqld
      <--------------------------------------------
      [mysqld]
-     general-log               #启用慢查询日志
+     general-log               #启用查询日志
      --------------------------------------------> 
     ~]# systemctl restart mysqld
     ~]# cat /var/lib/mysql/主机名.log
