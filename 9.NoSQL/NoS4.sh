@@ -3,13 +3,21 @@ NSD NoSQL DAY04
 MongoDB
 
 1.部署MongoDB服务
-装包
-配置
-起服务
-查看服务信息
+  1.1装包
+  1.2配置
+  1.3起服务
+  1.4查看服务信息
 2.mongodb使用
-2.1库管理
-2.2文档管理
+  2.1库管理  
+  2.2文档管理
+3.数据类型
+  字符串 数值 空 布尔值 数组 日期 代码 对象 内嵌 正则表达式
+4.数据导出导入s
+  4.1数据导出 mongoexport
+  4.2数据导入 mongoimport
+5.数据备份与恢复
+  5.1数据备份 mongodump
+  5.2数据恢复 mongorestore
 ##################################################################################
 MongoDB介绍
 ●•介于关系数据库和非关系数据库之间的产品
@@ -24,6 +32,7 @@ MongoDB介绍
  MongoDB                 RDBMS
   集合(collections)---------------表(tables)
   文档(document)--------------------行/记录(row)
+  分片(shard)-------------------------分片(partition)
 
 ##################################################################################
 部署MongoDB
@@ -189,13 +198,7 @@ WriteResult({ "nInserted" : 1 })
 
 #################################################################################
 MongoDB数据类型
-字符类型
-数值类型
-数组
-代码
-日期
-对象 
-内嵌
+字符类型 空  布尔值 数值类型 数组 代码 正则表达式 日期 对象 内嵌
 ##################################################################################
 MongoDB数据类型
 ●字符串string
@@ -466,7 +469,21 @@ usertab.bson  usertab.metadata.json
 ●语法格式
 ]# mongorestore --host IP地址 --port 端口 -d 数据库名 [ -c 集合名 ]  备份目录名
 
+●例子
+]# mongodump --host 192.168.4.51 --port 27051 -d linux_user -c usertab -o /opt/
+2018-09-29T21:05:26.150+0800	writing linux_user.usertab to 
+2018-09-29T21:05:26.153+0800	done dumping linux_user.usertab (43 documents)
 
+]# mongorestore --host 192.168.4.51 --port 27051 -d host -c user /opt/
+admin/      game/       linux_user/ rh/         
+
+]# mongorestore --host 192.168.4.51 --port 27051 -d host -c user /opt/linux_user/usertab.bson 
+2018-09-29T21:06:31.750+0800	checking for collection data in /opt/linux_user/usertab.bson
+2018-09-29T21:06:31.751+0800	reading metadata for host.user from /opt/linux_user/usertab.metadata.json
+2018-09-29T21:06:31.879+0800	restoring host.user from /opt/linux_user/usertab.bson
+2018-09-29T21:06:31.942+0800	no indexes to restore
+2018-09-29T21:06:31.942+0800	finished restoring host.user (43 documents)
+2018-09-29T21:06:31.942+0800	done
 
 
 
