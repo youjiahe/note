@@ -1,4 +1,5 @@
 问题：
+1.如何体现先加载AOF文件,再加载RDB文件
 2.做以下操作，如果按照先读AOF，再读RDB规则的话，应该会有数据，可是没有。解析下为什么？
   写入数据----->save---->停服务----->备份AOF文件----->删除AOF文件---->起服务----->keys *
 3.修复AOF文件后，数据是空的？
@@ -349,15 +350,92 @@ List列表操作
    > lrange list 0 2   //从0位开始,读到2位为止
    > lrange list 0 -1  //从开始读到结束为止
    > lrange list 0 -2  //从开始读到倒数第2位为止
+• lpop key
+  &移除并返回列表头元素数据,key不存在则返回nil
+   > lpop yyy
+• llen key
+  &返回列表key的长度
+• lindex key index
+  &返回列表中第index个值
+  > lindex key 0 ; lindex key 2; lindex key -2
+• lset key index value
+  &将key中index位置的值修改为value
+  > lset list 3 test #将list中第3个值修改为test
+• rpush key value [value...]
+  &将value插入到key的末尾
+   > rpush list3 a b c  #从-1位开始插入数据
+   > rpush list3 d      #末尾插入d
+• rpop key
+  &删除并返回key末尾的值    
+  > rpop list4          #删除末尾的c,并返回删除的值
+##################################################################################
+Hash表
+  &是一个string类型的field和value的映射表
+  &一个key可对应多个field,一个field对应一个value   #记这个
+  &将一个对象存储为hash类型,较于每个字段都存储成string类型更能节省内存
+• hset
+   &给hash表单个列赋值 
+  hset key field value
+  > hset book version 2.0
+• hget 
+   &对hash表单个列取值
+  > hget book date 
+• hgetall
+   &返回hash表中所有field的值  #奇数行位列名，偶数行位值
+• hvals
+   & 返回hash表中所有field的值 
+  > hvals book
+• hmset
+   &对hash表多个列取值
+  hmset key field value [field value ...]  
+  > hmset book pages 50 cbs rmrb  
+• hkeys
+  &返回hash表中所有field名称  
+  hkeys key
+  > hvals book
+• hmget 
+  hmget key field [field...]
+  &返回hash表中多个field的值
+  > hmget site google baidu  
+• hdel 
+  hdel key field [field...]
+  &删除hash表中多个field的值,不存在则忽略
+  > hdel site google baidu
 
-
-
-
-
-
-
-
-
++例子
+> hset book author dmy
+> hset book version 2.0
+> hset booke title opezd
+> hset book title opezd
+> hset book date 2018-09-29
+> hget book date    #取值----book变量的date
+> HGETALL book  #列出所有字段及它的值
+ 1) "author"
+ 2) "dmy"
+ 3) "version"
+ 4) "2.0"
+ 5) "title"
+ 6) "opezd"
+ 7) "date"
+ 8) "2018-09-29"
+ 9) "pages"
+ 10) "50"
+ 11) "cbs"
+ 12) "rmrb"
+> hkeys book     #所有字段
+1) "author"
+2) "version"
+3) "title"
+4) "date"
+5) "pages"
+6) "cbs" 
+> hvals book
+1) "dmy"
+2) "2.0"
+3) "opezd"
+4) "2018-09-29"
+5) "50"
+6) "rmrb"
 
 
 
