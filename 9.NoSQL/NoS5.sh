@@ -251,7 +251,7 @@ MogoDB文档管理
   > db.集合名.update({条件},{修改的字段})       
   > db.user.update({条件},{$set:{修改的字段}}) //默认只更新与条件匹配的第1行
   > db.user.update({条件},{$set:{修改的字段}} ,false,true)
-                                                        #与条件匹配所有记录的列的值都修改  
+    #与条件匹配所有记录的列的值都修改  
  &默认只修改与条件匹配第一条记录的值，并删除其他字段   
   > db.usertab.find({uid:{$lte:4}},{_id:0})
   > db.usertab.update({uid:{$lte:4}},{pass:"AAA"})
