@@ -172,10 +172,17 @@ Redis主从复制概述
  sentinel current-epoch 1
 ##################################################################################
 主从扩展
-生产中用得最多的是一主多从。
+●生产中用得最多的是一主多从。
 如果需要启用哨兵模式，
 最好配置3台哨兵服务器，票数为2时，可以切换该机
 所有的redis服务需要设置密码，并修改脚本
+
+●配置文件：
+vim /etc/sentinel.conf
+sentinel monitor redis31 192.168.4.31 6331 2
+sentinel auth-pass redis31 123456
+bind 0.0.0.0    #监听任何地址,必须加上
+
 ##################################################################################
 redis持久化-----------RDB
 ●方式1：RDB
@@ -276,6 +283,22 @@ redis持久化-----------AOF
  先读AOF文件，再读RDB文件 
 ●flushall后修复数据
  ~]# sed -i '/flushall/d' /var/lib/redis/6379/appendonly.aof
+
+●命令行启用AOF
+  > config set appendonly yes
+  > info  #查看redis服务器所有配置 
+  
+●生产环境中临时需要启用AOF(配置)-------------------重要
+  步骤1：备份/var/lib/redis/6379/dump.rdb 
+  步骤2：停服务
+  步骤3：修改配置文件，启用AOF #如何启用参照上述
+  步骤4：起服务 
+    redis-server /etc/redis/6379.conf --appendonly no  #不要用脚本
+  步骤5：命令行启动AOF
+    > config set appendonly yes
+  步骤6：重写AOF文件  
+    >：bgrewriteaof      #把RDB文件的数据读到AOF文件中
+  步骤7：重启服务
 ##################################################################################
 
 数据类型
