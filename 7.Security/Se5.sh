@@ -43,12 +43,12 @@ libevent-devel #类似于use epoll，提供处理事件的方法
 安装源码包
 tar -xf zabbix-3.4.4.tar.gz
 ./configure \
->--enable-server \ #安装监控服务器.客户端不需要
->--enable-proxy \  #分布式监控需要装这个包
->--enable-agent \  #被监控软件，有监控自己的需求
->--with-mysql=/usr/bin/mysql_config \ #程序，可以获得mysql的重要路径
->--with-libcurl \  #启动监控公有数据功能
->--with-net-snmp   #启动监控网络数据公您呢个
+--enable-server \ #安装监控服务器.客户端不需要
+--enable-proxy \  #分布式监控需要装这个包
+--enable-agent \  #被监控软件，有监控自己的需求
+--with-mysql=/usr/bin/mysql_config \ #程序，可以获得mysql的重要路径
+--with-libcurl \  #启动监控公有数据功能
+--with-net-snmp   #启动监控网络数据公您呢个
 
 安装完成后查看命令
 zabbix_<Tab><Tab>
@@ -105,9 +105,13 @@ php-xml       #画图用的依赖包
 php-bcmath    #运算支持包
 php-mbstring  #字符处理支持包
 ●PHP配置文件错误
-/etc/php.ini
-内容参考页面fail项
-
+vim /etc/php.ini   #内容参考页面fail项
+<--------------------------------
+672 post_max_size = 16M
+384 max_execution_time = 300
+394 max_input_time = 300
+878 date.timezone = Asia/Shanghai
+--------------------------------->
 ●在登陆页面
 用户:admin
 密码:zabbix
