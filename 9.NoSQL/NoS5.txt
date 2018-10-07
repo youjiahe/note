@@ -6,7 +6,13 @@ NSD NoSQL DAY05
   1.2测试副本集
 2.MogoDB文档管理
   2.1插入文档  save(),insert()
-  2.2查询文档 
+  2.2查询文档  db.集合名.find({条件}.{字段显示设置})，findOne()
+     2.2.1 普通条件
+     2.2.2 范围匹配 【$in/$nin】
+     2.2.3 数值匹配 【$gt/$gte/$lte/$lt/$ne】
+  2.3更改文档  db.集合名update({条件},{$set:{修改的字段值}})  
+               $set/$unset $inc $push/$pull/$pop/$addToSet $drop/$remove
+  2.4移除文档  db.集合名.remove({条件})
 ##################################################################################
 ●副本集介绍     #Mongodb的高可用集群
   &也称为MongoDB复制
@@ -112,6 +118,8 @@ mongodb副本集信息
 测试mongo副本集(集群)
 ●测试集群高可用
 +停止当前主库  51
+ alias mgstart="/etc/mongodb/bin/mongod -f /etc/mongodb/etc/mongodb.conf"
+ alias mgstop="/etc/mongodb/bin/mongod -f /etc/mongodb/etc/mongodb.conf --shutdown"
  [root@redis51 ~]#  mgstop   #定义了别名
 +到原从库52查看状态  52 
  rs1:SECONDARY> rs.status()

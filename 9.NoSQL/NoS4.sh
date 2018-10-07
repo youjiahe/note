@@ -1,13 +1,4 @@
-NoSQL数据库管理
-NSD NoSQL DAY04
-MongoDB
-
-1.部署MongoDB服务
-  1.1装包
-  1.2配置
-  1.3起服务
-  1.4查看服务信息
-2.mongodb使用
+mongodb使用
   2.1库管理  
   2.2文档管理
 3.数据类型

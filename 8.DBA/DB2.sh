@@ -1,3 +1,20 @@
+DBA day2
+1.约束条件
+2.修改表结构
+  2.1语法结构
+  2.2添加新字段
+  2.3修改表结构
+  2.4修改字段类型
+  2.5修改表名
+  2.6删除字段
+  2.7修改字段名
+2.索引
+  2.1索引介绍
+  2.2索引优缺点
+  2.3键值类型  【index/unique/fulltext/primary key/foreign key】
+3.主键 [primary key/auto_increment]
+4.外键
+  
 ##################################################################################
 约束条件
 ●作用：限制如何给字段赋值
@@ -216,7 +233,12 @@ foregin key外键
     -> foreign key(xname) references x(fname) 
     -> on update cascade on delete cascade
     -> )engine=innodb;  
-    
+
+●删除外键
+  alter table drop 字段 foreign key 外键名  #外键名需要show create table 查看
+
+●验证外键update功能
+●验证外键delete功能
     
     
     
