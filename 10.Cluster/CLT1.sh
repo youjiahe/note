@@ -49,7 +49,7 @@ Cluster day1
      #占用服务器操作系统资源，如CPU、IO等
      #数据量越大，性能越差
    &NAS网络技术存储
-     #一种专用数据存储的服务器，以数据为中心，将存储设备与服务器彻底分离，集中管理数据、
+     #一种专用数据存储的服务器，以数据为中心，将存储设 备与服务器彻底分离，集中管理数据、
      #从而释放带宽、提高性能、降低总拥有成本、保护投资
      #用户通过TCP/IP协议访问数据----采用标准的NFS/HTTP/CIFS
      #存储大小是固定的
@@ -72,6 +72,9 @@ Cluster day1
              4）基于IP协议技术的标准
 ##################################################################################             
 iscsi技术应用
+●使用注意事项：
+  &不可以同时挂载
+  &适合HA集群，不适合LB集群
 ●环境：关闭NetworkManager/Selinux
 ●配置iscsi
  +装包
@@ -94,13 +97,33 @@ iscsi技术应用
     iscsiadm --mode discoverydb --type sendtargets --portal 192.168.4.51 --discover
    &登入设备
     iscsiadm --mode node --targetname iqn.2018-10.cn.tedu.storage51:vdb --portal 192.168.4.51:3260 -l
-   &登出设备
-   
+   &登出设备   
     iscsiadm --mode node --targetname iqn.2018-10.cn.tedu.storage51:vdb --portal 192.168.4.51:3260 -u
    &查看分区信息  lsblk
    &分区 fdisk /dev/sda
    &格式化分区 mkfs.ext4 /dev/sda1
    &挂载使用  mount /dev/sda1 /var/www/html
+   
+●配置多客户端访问同一个iscsi磁盘
+ +创建多个客户端，acl
+  o- iscsi  #省略显示结果
+  | o- iqn.2018-10.cn.tedu.storage51:vdb
+  |   o- tpg1
+  |     o- acls 
+  |     | o- iqn.2018-10.cn.tedu.client52
+  |     | o- iqn.2018-10.cn.tedu.client53 
+  |     | o- iqn.2018-10.cn.tedu.client50:vdb 
+    
+ +在52和53主机分别在自己的网页目录下创建自己的网页文件
+ +实验结果：
+   在客户端分别访问52和53主机上的网站服务时，都访问不到对方创建的网页文件
+   
+ +在各自客户端挂载使用后问题：
+     1.新文件不能实时共享；
+     2.只有挂载前存在的文件能看到；  
+  &综上两点，ISCSI不能同时挂载，不适合使用在LB集群(负载均衡)，只适合在HA集群(高可用)
+  
+  &如果想实现实时共享，则需要搭建全局文件系统"gfs" <---------扩展知识，需要添加模块，搭建集群
 ##################################################################################      
 设备文件管理方法
 ●devfs
@@ -121,8 +144,7 @@ udev
     & 处理设备命名
     & 决定要创建哪些设备文件或链接
     & 决定如何设置属性
-    & 决定触发哪些事件
-        
+    & 决定触发哪些事件        
 ##################################################################################
 udev的应用   
 ●udev事件监控  
@@ -162,6 +184,11 @@ udev的应用
     & = : 指定赋予的值
     & += : 添加新值
     & := : 指定值，且不允许被替换    
+  +变量
+    %k : 内核名称，如"sda1,sdb2"
+    %n : 内核编号
+    %p : 路径
+     %% : %符号本身
   +例子：    
     & ACTION=="add"
     & KERNEL=="sd[a-z]1"
@@ -207,7 +234,12 @@ Multi_path
     & 主备模式，高可用
   +改进的性能
     & 主主模式，负载均衡
-
+●multipath基本操作命令 
+   & /etc/init.d/multipathd start #开启mulitipath服务 
+   & multipath -F  #删除现有路径 
+   & multipath -v2 #格式化路径 
+   & multipath -ll #查看多路径
+   & multipath -rr #重新加载多路径
 ●配置案例
  +环境
   client50   eth0:192.168.4.50; eth1:192.168.2.50      
@@ -216,7 +248,9 @@ Multi_path
  +客户端client50发现iscsi
    通过两个IP地址发现      
  +装包           #client50
-  ~]# yum -y install device-mapper-multipath
+  ~]# yum -y install device-mapper device-mapper-multipath
+ +查看安装效果
+   lsmod |grep dm_multipath
  +创建配置文件 #client50
   ~]# mpathconf --user_friendly_names n  #不使用友好名称识别
  +获取wwid    #全球时别符
@@ -256,7 +290,6 @@ Multi_path
  +查看多路径信息
   ~]# multipath -rr   #重新加载多路径信息；会识别哪些路径正在运行
   ~]# multipath -ll   #查看多路径信息；
-
       
 [root@client50 ~]# mpathconf --help
 usage: /usr/sbin/mpathconf <command>
@@ -271,6 +304,48 @@ Load the dm-multipath modules on enable (Default y): --with_module <y|n>
 start/stop/reload multipathd (Default n): --with_multipathd <y|n>
 select output file (Default /etc/multipath.conf): --outfile <FILE>      
       
+##################################################################################      
+配置NFS      
+●文件系统
+  +本地文件系统
+   EXT3/4、SWAP、NTFS   -----本地磁盘
+  +伪文件系统
+   /proc、/sys         -----内存空间 
+  +网络文件系统
+    NFS                -----网络存储空间
+●NFS共享协议
+  &sun公司开发的
+  &依赖于RPC(远程过程调用)映射机制
+  &存储位于远程磁盘中的文档数据，对应用程序是透明的，就好像访问本地文件一样
+●配置NFS服务器
+  +装包
+    nfs-utils
+    rpcbind
+    系统服务脚本
+  +主配置文件
+    /etc/exports
+    
+●用NFS共享51本地的2G磁盘，并且让52，53的网页文件都放到这块磁盘 
+  +部署2G磁盘，并且格式化，挂载到/sharedir
+  +51主机搭建NFS，并把/sharedir共享出去
+   ~]# cat /etc/exports
+     /sharedir *(rw)
+   ~]# systemctl restart nfs-server.service 
+  +52和53主机分别搭建网络服务，并把51共享的/sharedir挂载到/var/www/html
+   [root@redis52 ~]# mount 192.168.4.51:/sharedir /var/www/html/  
+   [root@redis52 ~]# echo "<h1>525252" >  /var/www/html/52.html
+    
+   [root@redis53 ~]# mount 192.168.4.51:/sharedir /var/www/html/  
+   [root@redis53 ~]# echo "<h1>535353" >  /var/www/html/53.html   
+  +客户端访问
+   ~]# curl 192.168.4.52/52.html
+     <h1>525252
+   ~]# curl 192.168.4.53/53.html
+     <h1>535353
+   ~]# curl 192.168.4.52/53.html
+    <h1>535353  
+   ~]# curl 192.168.4.53/52.html
+    <h1>535353  
       
       
       
@@ -282,13 +357,26 @@ select output file (Default /etc/multipath.conf): --outfile <FILE>
       
       
       
-      
-      
-      
-      
-      
-      
-      
-      
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
       
       
