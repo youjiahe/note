@@ -395,64 +395,63 @@ HAproxy服务器
 ● HAProxy工作模式  #背
   & mode http
      –  客户端请求被深度分析后再发往服务器
-•  mode tcp
-–  客户端与服务器之间建立会话,不检查第七层信息
-•  mode health
-–  仅做健康状态检查,已经不建议使用  
+  & mode tcp
+     –  客户端与服务器之间建立会话,不检查第七层信息
+  & mode health
+     –  仅做健康状态检查,已经不建议使用  
 ##################################################################################  
 HTTP协议解析
 ● HTTP解析
-• 当HAProxy运行在HTTP模式下,HTTP请求
+  & 当HAProxy运行在HTTP模式下,HTTP请求
 (Request)和响应(Response)均被完全分析和索引,这样便于创建恰当的匹配规则
-•  理解HTTP请求和响应,对于更好的创建匹配规则至关重要 
+  & 理解HTTP请求和响应,对于更好的创建匹配规则至关重要 
   
 ● HTTP事务模型
-•  HTTP协议是事务驱动的
-•  每个请求(Request)仅能对应一个响应(Response)
-•  常见模型:
-–  HTTP close
-–  Keep-alive
-–  Pipelining 
+  & HTTP协议是事务驱动的
+  & 每个请求(Request)仅能对应一个响应(Response)
+  & 常见模型:
+    –  HTTP close
+    –  Keep-alive
+    –  Pipelining 
   
 ● HTTP事务模型(续1)
-•  HTTP close
-–  客户端向服务器建立一个TCP连接
-–  客户端发送请求给服务器
-–  服务器响应客户端请求后即断开连接
-–  如果客户端到服务器的请求不只一个,那么就要不断的
-去建立连接
-–  TCP三次握手消耗相对较大的系统资源,同时延迟较大  
+  & HTTP close
+     –  客户端向服务器建立一个TCP连接
+     –  客户端发送请求给服务器
+     –  服务器响应客户端请求后即断开连接
+     –  如果客户端到服务器的请求不只一个,那么就要不断的去建立连接
+    –  TCP三次握手消耗相对较大的系统资源,同时延迟较大  
   
 ● HTTP事务模型(续2)
-•  Keep-alive
-–  一次连接可以传输多个请求
-–  客户端需要知道传输内容的长度,以避免无限期的等待传输结束
-–  降低两个HTTP事务间的延迟
-–  需要相对较少的服务器资源
+  & Keep-alive
+     –  一次连接可以传输多个请求
+     –  客户端需要知道传输内容的长度,以避免无限期的等待传输结束
+     –  降低两个HTTP事务间的延迟
+     –  需要相对较少的服务器资源
   
 ● HTTP事务模型(续3)
-•  Pipelining
-–  仍然使用Keep-alive
-–  在发送后续请求前,不用等前面的请求已经得到回应
-–  适用于有大量图片的页面
-–  降低了多次请求之间的网络延迟  
+  & Pipelining
+     –  仍然使用Keep-alive
+     –  在发送后续请求前,不用等前面的请求已经得到回应
+     –  适用于有大量图片的页面
+     –  降低了多次请求之间的网络延迟  
    
-●  HTTP头部信息
-•  请求头部信息
-–  方法:GET
-   URL:http://www.baidu.com/music/88.mp3
-–  URI:/music/88.mp3
-–  版本:HTTP/1.1 
+● HTTP头部信息
+  & 请求头部信息
+     –  方法:GET
+    — URL:http://www.baidu.com/music/88.mp3
+    –  URI:/music/88.mp3
+     –  版本:HTTP/1.1 
   
- HTTP头部信息(续1)
-•  请求头部信息
-–  请求头包含许多有关的客户端环境和请求正文的有用信息,如浏览器所使用的语言、请求正文的长度等 
+● HTTP头部信息(续1)
+  & 请求头部信息
+     –  请求头包含许多有关的客户端环境和请求正文的有用信息,如浏览器所使用的语言、请求正文的长度等 
   
- HTTP头部信息(续2)
-•  响应头部信息
-–  版本:HTTP/1.1
-–  状态码:200
-–  原因:OK  
+● HTTP头部信息(续2)
+  & 响应头部信息
+     –  版本:HTTP/1.1
+     –  状态码:200
+     –  原因:OK  
 ################################################################################## 
 搭建HAproxy集群
 ●案例拓扑
@@ -471,29 +470,24 @@ HTTP协议解析
 ●装包haproxy  
   [root@proxy56 ~]# yum -y install haproxy
 ●修改配置文件
-配置文件说明
-•  HAProxy配置参数来源
-–  命令行:总是具有最高优先级
-–  global部分:全局设置进程级别参数
-–  代理声明部分
-配置文件说明(续1)
-•  配置文件可由如下部分构成:
-–  default
-为后续的其他部分设置缺省参数
-缺省参数可以被后续部分重置 
-–  frontend                      #做LB集群时需要，与listen功能一样
-描述接收客户端侦听套接字(socket)集 
-–  backend                       #做LB集群时需要
-描述转发链接的服务器集
-–  listen
-把frontend和backend结合到一起的完整声明
+ +配置文件说明
+  & HAProxy配置参数来源
+     –  命令行:总是具有最高优先级
+    –  global部分:全局设置进程级别参数
+     –  代理声明部分
+ +配置文件说明(续1)
+  & 配置文件可由如下部分构成:
+    –  default
+       为后续的其他部分设置缺省参数缺省参数可以被后续部分重置 
+    –  frontend         #做LB集群时需要，与listen功能一
+        描述接收客户端侦听套接字(socket)集 
+    –  backend          #做LB集群时需要
+        描述转发链接的服务器集
+    –  listen
+        把frontend和backend结合到一起的完整声明
+    来自于default、listen、frontend和backend
 
-来自于default、listen、frontend和backend
-
-
-	
-
- [root@proxy56 ~]# cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
+[root@proxy56 ~]# cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
  [root@proxy56 ~]# vim /etc/haproxy/haproxy.cfg
  <-----------------------------------------------------------------------------------
 global
@@ -505,6 +499,7 @@ server	web1	192.168.4.55:80	cookie	\
 app1inst1	check	inter	2000	rise	2	fall	5 
 server	web2	192.168.4.57:80	cookie	\	
 app1inst2	check	inter	2000	rise	2	fall	5
+stats /admin  #定义查看状态的uri
 #cookie名称 检查 间隔 2000毫秒 重试 2秒 总次数 5次
 ##################################################################################  
 验证健康性检查，高可用
