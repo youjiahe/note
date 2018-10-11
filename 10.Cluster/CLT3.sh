@@ -4,11 +4,26 @@ Keepalived Keeplived+LVS  HAProxy
 1.Keepalived
   1.1 Keepalived 概述
   1.2 Keepalived 运行原理
-2.配置HA集群Keepalived
-3.配置Keepalived+LVS
-4.HAproxy服务器
-   4.1
-
+  1.3 Keepalived服务
+       1.3.1 Keepalived安装
+         1.3.2 配置文件解析
+         1.3.3 高可用Web拓扑
+         1.3.4 高可用Web案例
+2.配置Keepalived+LVS
+3.HAproxy服务器
+   3.1 HAProxy概述
+       3.1.1 HAProxy简介
+         3.1.2 衡量负债均衡器性能的因素
+   3.2 HTTP协议解析
+       3.2.1 HTTP解析
+       3.2.2 HTTP事务模型
+       3.2.3 HTTP头部信息
+   3.3 HAProxy配置实例    
+         3.3.1 项目拓扑
+       3.3.2 HAProxy安装
+         3.3.3 配置文件说明 
+         3.3.4 管理服务
+         3.3.5 监控HAProxy状态  
 ##################################################################################
 Keepalived
 ●Keepalived 概述
