@@ -70,10 +70,10 @@ Ceph概述
   & 创建虚拟机磁盘
 
 ●实验拓扑
-  client  eth0-192.168.4.50  
-  node1   eth0-192.168.4.51   #Mon,OSD,装ceph-deploy
-  node2   eth0-192.168.4.52   #Mon,OSD
-  node3   eth0-192.168.4.53   #Mon,OSD
+  client eth0-192.168.4.50 
+  node1  eth0-192.168.4.51
+  node2  eth0-192.168.4.52
+  node3  eth0-192.168.4.53
 ●配置YUM
   & 物理机创建网络yum源服务
   [root@room11pc19 ~]# yum -y install vsftpd
@@ -187,6 +187,8 @@ ceph 相关文件
   [root@node1 ceph-cluster]# ceph-deploy osd create node3:vdc:vdb1 node3:vdd:vdb2
   //node1:vdd:vdc1==主机名：磁盘名：日志磁盘分区名
   
+
+
 ##################################################################################  
 验证
 ● 查看集群状态
@@ -200,38 +202,25 @@ ceph 相关文件
       pgmap v71: 64 pgs, 1 pools, 0 bytes data, 0 objects
             202 MB used, 61171 MB / 61373 MB avail
                   64 active+clean
-##################################################################################
+
 ● 可能出现的错误
   & osd create创建OSD存储空间,如提示run 'gatherkeys'
    [root@node1 ~]# ceph-deploy gatherkeys node1 node2  node3		
   & ceph -s查看状态,如果失败或者是警告状态
    [root@node1 ~]# systemctl restart ceph\*.service	ceph\*.target	
    //在所有节点,或仅在失败的节点重启服务
-    （1）、检查防火墙有没有关闭
-    iptables -F 
-    getenforce 
-    setenforce 0
-   （2）、删除之前版本ceph残留的文件
-     rm -rf /etc/ceph/*
-     rm -rf /var/lib/ceph/*/*
-     rm -rf /var/log/ceph/*
-     rm -rf /var/run/ceph/*
-  & pgs超时
-     64 pgs are stuck inactive for more than 300 seconds           in
-    处理：
-   方法1：
-      集群都做
-      echo "chown ceph:ceph /dev/vdb*" >> /etc/rc.local
-      chmod +x /etc/rc.d/rc.local
-       重启
-   方法2 ：
-      编写udev规则
-    [root@node1 ~]# vim /etc/udev/rules.d/90.ceph.rules
-    [root@node1 ~]# cat /etc/udev/rules.d/90.ceph.rules
-    ACTION=="add",KERNEL=="vdb[12]",OWNER="ceph",GROUP="ceph"
- 
-##################################################################################
+（1）、检查防火墙有没有关闭
 
+iptables -F 
+getenforce 
+setenforce 0
+
+（2）、删除之前版本ceph残留的文件
+
+ rm -rf /etc/ceph/*
+ rm -rf /var/lib/ceph/*/*
+ rm -rf /var/log/ceph/*
+ rm -rf /var/run/ceph/*
 
 ● ceph服务  
  [root@node1 ~]# systemctl restart ceph
