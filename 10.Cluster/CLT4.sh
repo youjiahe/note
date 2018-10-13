@@ -84,7 +84,7 @@ Ceph概述
   [root@room11pc19 ~]# systemctl restart vsftpd
  
   & 虚拟机调用YUM源(下面以node1为例)
-  [root@node1 ~]# cat /etc/yum.repos.d/ceph.repo	
+  [root@node1 ~]# cat /etc/yum.repos.d/ceph.repo	[mon]
 [mon]	
 name=mon	
 baseurl=ftp://192.168.4.254/ceph/rhceph-2.0-rhel-7-x86_64/MON	

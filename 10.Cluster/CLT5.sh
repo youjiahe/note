@@ -58,7 +58,6 @@ auth_client_required = cephx     #开启认证
   virtual size: 10G (10737418240 bytes)
   disk size: unavailable
 
-
 ##################################################################################  
 块存储应用案例
 ●客户端部署环境
@@ -217,7 +216,14 @@ auth_client_required = cephx     #开启认证
    pool 'cephfs_data' created
   [root@node1 ceph-cluster]# ceph osd pool create cephfs_metadata 128
    pool 'cephfs_metadata' created
-
+   //128是pg数
+  //PG是指定存储池存储对象的目录有多少
+  //PG的增加会引起PG内的数据进行分裂，分裂到相同的OSD上新生成的PG当中
+   //若少于5个OSD,设置pg_num为128。
+   //5~10个OSD，设置pg_num为512。
+   //10~50个OSD，设置pg_num为4096。
+   //超过50个OSD，可以参考pgcalc计算。
+   
  & 创建Ceph文件系统
    [root@node1 ~]# ceph mds stat  #查看元数据服务器状态
    e2:, 1 up:standby

@@ -23,7 +23,9 @@ Keepalived Keeplived+LVS  HAProxy
        3.3.2 HAProxy安装
          3.3.3 配置文件说明 
          3.3.4 管理服务
-         3.3.5 监控HAProxy状态  
+         3.3.5 监控HAProxy状态 
+4.HAproxy动静分离调度
+  
 ##################################################################################
 Keepalived
 ●Keepalived 概述
@@ -468,7 +470,7 @@ HTTP协议解析
      –  状态码:200
      –  原因:OK  
 ################################################################################## 
-搭建HAproxy集群
+搭建HAproxy负载均衡集群
 ●案例拓扑
   proxy56  eth0-192.168.4.56
   web55    eth0-192.168.4.55  #有网页文件及服务
@@ -507,37 +509,52 @@ HTTP协议解析
  <-----------------------------------------------------------------------------------
 global
 .. ..
-listen	websrv-rewrite	0.0.0.0:80	
-cookie	SERVERID	rewrite	
-balance	roundrobin	
-server	web1	192.168.4.55:80	cookie	\	 
-app1inst1	check	inter	2000	rise	2	fall	5 
-server	web2	192.168.4.57:80	cookie	\	
-app1inst2	check	inter	2000	rise	2	fall	5
-stats /admin  #定义查看状态的uri
-#cookie名称 检查 间隔 2000毫秒 重试 2秒 总次数 5次
+default
+.. ..
+listen websrv-rewrite 0.0.0.0:80	 
+cookie SERVERID rewrite	
+balance roundrobin	
+server web1	192.168.4.55:80 cookie app1inst1 check inter 2000 rise 2 fall 5 
+server web2	192.168.4.57:80 cookie app1inst2 check inter 2000 rise 2 fall 5
+stats uri /admin  #定义查看状态的uri
+----------------------------------------------------------------------------------->
+
+//cookie SERVERID rewrite    #让每台web服务器记录自己的cookie文件名
+//balance roundrobin         #指定调度算法
+//listen 集群名称 监听IP地址：端口号
+//server 主机名 IP地址：端口号   #一台主机一个server
+//cookie后面跟：cookie名称 check 间隔 2000毫秒 重试 2毫秒 总次数 5次
+//每2000毫秒检查一次主机的网络服务健康性，如果健康性不正常，隔2毫秒再检查一次，总重试5次
 ##################################################################################  
 验证健康性检查，高可用
 ●访问haproxy 服务uri  路径查看realserver主机的健康信息
   firefos 192.168.4.56/admin
+##################################################################################  
+扩展——TMOOC没有
+
+搭建HAproxy 基于端口的调度 及 7层调度  <--------------------请看《HAproxy扩展实验》
+
   
   
   
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
