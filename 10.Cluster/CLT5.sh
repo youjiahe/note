@@ -340,7 +340,24 @@ rgw_frontends = "civetweb port=80"  #默认7480修改为80端口
  Save se|ngs? [y/N] y	
  //注意,其他提示都默认回车
 
-
+●客户端测试
+  [root@client ~]# s3cmd ls		
+  & 创建存储数据的bucket(类似于存储数据的目录)
+  [root@client ~]# s3cmd mb s3://my_bucket	
+  Bucket 's3://my_bucket/' created		
+  [root@client ~]# s3cmd ls	
+  2018-05-09 08:14 s3://my_bucket	
+  [root@client ~]# s3cmd put /var/log/messages s3://my_bucket/log/
+  [root@client ~]# s3cmd	ls	
+  2018-05-09 08:14 s3://my_bucket	
+  [root@client ~]# s3cmd ls s3://my_bucket	
+  DIR	s3://my_bucket/log/	
+  [root@client ~]# s3cmd	ls s3://my_bucket/log/	
+    2018-05-09 08:19	309034 s3://my_bucket/log/messages		
+  & 测试下载功能
+  [root@client ~]# s3cmd	get s3://my_bucket/log/messages /tmp/	
+  & 测试删除功能
+  [root@client ~]# s3cmd	del s3://my_bucket/log/messages
 
 
 
