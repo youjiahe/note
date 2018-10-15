@@ -282,7 +282,7 @@ auth_client_required = cephx     #开启认证
     
 ●新建网关实例  #node1
  & 启动一个rgw服务
-   [root@node1 ~]# ceph-deploy rgw create noed5
+   [root@node1 ~]# ceph-deploy rgw create node5
  & 登陆node5验证服务是否启动
    [root@node5 ~]# netstat -untlp | grep radosgw
    tcp    0  0 0.0.0.0:7480     0.0.0.0:* LISTEN  7024/radosgw 
