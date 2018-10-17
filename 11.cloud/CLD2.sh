@@ -333,10 +333,10 @@ python-setuptools #python 安装工具
 ##################################################################################
 ●安装openstack
   & 创建应答文件
-    yum install -y openstack-packstack
-    packstack --gen-answer-file answer.ini
+   [root@openstack ~]# yum install -y openstack-packstack
+   [root@openstack ~]# packstack --gen-answer-file answer.ini
   & 修改应答文件
-    [root@nova ~]# vim answer.txt
+   [root@openstack ~]# vim answer.txt
    11 CONFIG_DEFAULT_PASSWORD=Taren1    #配置默认密码
    42 CONFIG_SWIFT_INSTALL=n   #禁用swift 对象存储模块 （要使用cinder-volumes卷组）
    75 CONFIG_NTP_SERVERS=192.168.1.254  #NTP服务器地址
@@ -353,7 +353,7 @@ python-setuptools #python 安装工具
    • 如果前期环境准备无误,只要耐心等待安装结束即可
    • 根据主机配置丌同,安装过程需要20分钟左右戒更久
    • 如果出现错误,根据屏幕上给出的日志文件迚行排错
-   [root@vh02 ~]# packstack --answer-file answer.txt
+   [root@openstack ~]# packstack --answer-file answer.txt
 ##################################################################################   
 网络配置
 ●查看br-ex网桥配置（br-ex为OVS网桥设备）
@@ -383,7 +383,7 @@ ONBOOT=yes
 BOOTPROTO=none   
 
 ●验证OVS配置 #OVS是虚拟交换机
-[root@nova ~]# ovs-vsctl show
+[root@openstack ~]# ovs-vsctl show
 ##################################################################################
 管理项目
 1）浏览器访问
