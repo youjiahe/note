@@ -31,6 +31,11 @@ cp ./rhel7.repo /var/ftp/share/
 systemctl restart vsftpd
 for i in `seq $start_num $stop_num`
 do 
+#  if [ $i -lt 10 ];then
+#     ii="0"$i
+#  else
+#     ii=$i
+#  fi
 expect << EOF
 spawn virsh console rh7_node$i
 expect "

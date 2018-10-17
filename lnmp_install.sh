@@ -15,13 +15,14 @@ netstat -utanlp | grep nginx
 #LNMP_INSTALL
 cd  /root/lnmp_soft/
 yum -y install php php-mysql php-fpm-5.4.16-42.el7.x86_64.rpm 
+\cp  /usr/local/nginx/conf/nginx.conf.default /usr/local/nginx/conf/nginx.conf 
 sed -i '65,71s/#//;70s/_params/\.conf/;69d' /usr/local/nginx/conf/nginx.conf
 /usr/local/nginx/sbin/nginx -s reload
-systemctl restart php-fpm
+systemctl restart php-fpm  mysqld
 echo '<?php
 $i=99;
 echo $i;
 echo "\n";
 ?>' > /usr/local/nginx/html/index.php
-curl localhost/index.php
+curl -s localhost/index.php
 
