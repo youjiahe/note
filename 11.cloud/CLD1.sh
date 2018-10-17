@@ -147,7 +147,7 @@ cow技术
 ●Copy On Write,写时复制
  & 直接映射原始盘的数据内容
  & 当原始盘的旧数据有修改时,在修改之前自动将旧数据存入前端盘
- & 对前端盘的修改并回写到原始盘
+ & 对前端盘的修改不会写到原始盘
  & 原始盘的数据只能读
  & 用到的数据才从原始盘
 ##################################################################################
@@ -341,6 +341,7 @@ GRUB_ENABLE_LINUX_LABEL="true"   #使用系统设备名
 对以上模版机器，设置静态IP脚本
 #!/bin/bash
 if [ ! -z $1 ] && [ $1 -gt 0 ] && [ $1 -lt 255 ];then
+    sed -i '/^GATEWAY/d;/^IPADDR/d;/^NETMASK/d' /etc/sysconfig/network-scripts/ifcfg-eth0
     sed -i 's/dhcp/static/' /etc/sysconfig/network-scripts/ifcfg-eth0
     echo  "IPADDR=192.168.1.$1
 NETMASK=255.255.255.0
@@ -357,8 +358,8 @@ qemu-img create -b node.qcow2 -f qcow2 ooxx.img  20G
 cd /etc/libvirt/qemu/
 sed 's,node,ooxx,' node.xml > ooxx.xml    #node.xml 是做完上述11点初始化后的配置文件
 virsh define ooxx.xml
-virsh start ooxx.xml
-virsh console ooxx.xml
+virsh start ooxx
+virsh console ooxx
  
 ##################################################################################
 ●根分区扩容
