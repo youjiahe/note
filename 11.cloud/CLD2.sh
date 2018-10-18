@@ -444,8 +444,17 @@ export OS_REGION_NAME=RegionOne
 | ff7cd9576a7f4e7a8280011c7e263ec1 | cinder     |
 | 301f11cf7d7a4bcca6d405c20682ceed | nb         |
 +----------------------------------+------------+
-
-
+##################################################################################
+管理项目
+步骤一：浏览器访问openstack
+●浏览器访问
+  [root@openstack conf.d]# firefox 192.168.1.1  //访问失败
+●需要改配置文件并重新加载
+  [root@openstack ~]# cd /etc/httpd/conf.d/
+  [root@openstack conf.d]# vi 15-horizon_vhost.conf
+     35   WSGIProcessGroup apache
+     36   WSGIApplicationGroup %{GLOBAL}     //添加这一行
+  [root@openstack conf.d]# apachectl  graceful  //重新载入配置文件
 
 
 

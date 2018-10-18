@@ -1,34 +1,6 @@
 云计算部署与管理
 CLOUD DAY03
 
-1.Openstack概述
-   1.1 云计算简介
-        1.1.1 什么云计算
-      1.1.2 IaaS
-      1.1.3 PasS
-      1.1.4 SaaS       
-   1.2 Openstack简介 
-        1.2.1 什么是Openstack
-      1.2.2 Openstack主要组件
-      1.2.3 Openstack版本
-      1.2.4 Openstack结构图
-3.Openstack环境准备
-   3.1 准备两台虚拟机
-    openstack   nova01
-   3.2 根分区的扩容 50G
-   3.3 准备系统资源(CPU,内存，网卡，磁盘)
-   3.4 配置yum
-  3.5 NTP时间同步
-   3.6 真机配置DNS
-4.部署openstack 
-   4.1 基础环境准备
-     【IP/yum/卷组/公钥/额外软件包/检查openstack环境部署】
-   4.2 安装Openstack
-   4.3 网络配置
-        4.3.1 网络拓扑
-        4.3.2 配置外部OVS网桥
-        4.3.3 配置外部OVS网桥端口
-        4.3.4 验证OVS配置
 ##################################################################################   
 ●用户管理
 基本概念
@@ -98,12 +70,42 @@ CLOUD DAY03
 • iso:光盘数据内容的归档格式
 • qcow2:QEMU支持的磁盘格式。空间自动扩展,
 并支持写时复制copy-on-write
+##################################################################################
+1.绑定浮动IP
+2.访问和安全(安全组)，没指定默认是default
+3.设置安全组规则
+4.添加额外节点
+nova 98 102行  #添加Ip
+●安装openstack,nova01
+qemu-kvm
+libvirt-client
+libvirt-daemon
+libvirt-daemon-driver-qemu
+python-setuptools
+
+●只安装在openstack
+openstack-packstack
+
+●openstack页面的控制台，使用的时vnc技术；通过web到5900端口
+
+5.云主机热迁移
+[root@nova01 ~]# rpm -qa | grep rhev  
+#如果以下两个包没有装，热迁移失败；装完后需要重启libvirtd
+qemu-img-rhev-2.6.0-28.el7_3.6.x86_64
+qemu-kvm-rhev-2.6.0-28.el7_3.6.x86_64
 
 
 
-
-
-
+##################################################################################
+常见问题
+●浮动IP为down时，启动以下服务
+[root@openstack ~]# systemctl restart  openstack-nova-compute 
+[root@openstack ~]# systemctl restart neutron-l3-agent
+[root@openstack ~]# ping 192.168.1.9
+PING 192.168.1.9 (192.168.1.9) 56(84) bytes of data.
+64 bytes from 192.168.1.9: icmp_seq=1 ttl=63 time=4.33 ms
+64 bytes from 192.168.1.9: icmp_seq=2 ttl=63 time=2.88 ms
+64 bytes from 192.168.1.9: icmp_seq=3 ttl=63 time=1.84 ms
 
 
 

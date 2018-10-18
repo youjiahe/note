@@ -301,7 +301,7 @@ BOOTPROTO=dhcp
    NOZEROCONF="yes"
    [root@localhost ~]# systemctl restart network
    [root@localhost ~]# ip route show
-   default via 192.168.1.254 dev eth0 
+   default via 192.168.1.254 dev eth0 G
    192.168.1.0/24 dev eth0 proto kernel scope link src 192.168.1.173
 
 ● 7.添加console配置  #以下文件在李欣老师git下有
@@ -329,6 +329,7 @@ GRUB_ENABLE_LINUX_LABEL="true"   #使用系统设备名
 ● 10.设置自动扩容
   – 10.1 安装扩展分区软件
     [root@localhost ~]# yum -y install cloud-utils-growpart 
+     写一个自动扩容脚本到 /etc/rc.d/rc.local
     
 ● 11.关闭虚拟机后执行信息清理工作
   – 11.1 真机安装命令包   
