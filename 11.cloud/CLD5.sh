@@ -4,8 +4,7 @@ CLOUD DAY05
 1.Docker概述
 2.部署Docker
 3.Docker镜像
-   3.1  导入、导出镜像
-4.
+4.docker容器
 ################################################################   
 Docker概述
 ●什么是容器
@@ -47,7 +46,7 @@ Docker概述
 
 ●安装Docker
   • 软件包列表:
-   – docker-engine   #老师提供
+   – docker-engine   #老师提供，cloud4文件夹内
    – docker-engine-selinux
    
   [root@docker01 ~]# ls
@@ -218,10 +217,30 @@ ca9b3b5ab8f3
       `-bash(13)                           `
 
 
+################################################################
+●ubuntu案例
+1.使用从hub仓库下载的nginx镜像，创建网页“hello world”  #该镜像是基于ubuntu的
+步骤1：查找nginx启动脚本  
+    :/# dpkg -L nginx  | grep sbin/nginx
+      /usr/sbin/nginx
+      /usr/sbin/nginx-debug
+步骤2：启动nginx
+    :/# nginx
+步骤3：查找出网页文件 
+    :/# dpkg -L nginx  | grep html
+      /usr/share/nginx/html
+      /usr/share/nginx/html/index.html
+      /usr/share/nginx/html/50x.html
+步骤4：编写网页文件
+   :/# echo "HELLO WORLD" > /usr/share/nginx/html/index.html
+步骤5：查看容器IP
+   :/# ip a | grep eth0
+    6: eth0@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default     inet 172.17.0.3/16 scope global eth0
 
-
-
-
+步骤6：客户端访问页面
+   [root@docker02 ~]# curl 172.17.0.3
+   HELLO WORLD
+################################################################
 
 
 

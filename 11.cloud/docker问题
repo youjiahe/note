@@ -27,6 +27,7 @@ Linux两大流派
 管理包命令     rpm   dpkg      #rpm -qa == dpkg -l
 rpm——redhat packet manager
 ################################################################
+ubuntu 软件包管理
 dpkp
 命令:
 dpkg –l | grep package 查询deb包的详细信息，没有指定包则显示全部已安装包
@@ -39,3 +40,38 @@ dpkg -r remove，移除某个已安装的软件包
 dpkg -P 彻底的卸载，包括软件的配置文件
 dpkg -c 查询deb包文件中所包含的文件
 dpkg -L 查看系统中安装包的的详细清单，同时执行 -c
+################################################################
+ubuntu 软件包源
+●增加搭建apt源 #写到文件 /etc/apt/sources.list
+root@1cc39d2bb93f:/# echo "deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse" >> /etc/apt/sources.list
+
+●更新软件包 #apt-get update
+root@1cc39d2bb93f:/# apt-get update
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
