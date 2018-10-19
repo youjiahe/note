@@ -94,6 +94,13 @@
 硬连接是对i节点做的快捷方式 
 快捷方式只是在i节点表做记录，而复制是会占用磁盘实际空间
 
+[root@docker02 ~]# ln -s /etc/hosts ./
+[root@docker02 ~]# ln /etc/hosts ./h
+[root@docker02 ~]# ll -ih /etc/hosts ./h ./hosts
+   7433 -rw-r--r-- 2 root root 203 10月 19 09:49 /etc/hosts
+   7433 -rw-r--r-- 2 root root 203 10月 19 09:49 ./h
+1115715 lrwxrwxrwx 1 root root  10 10月 19 15:57 ./hosts -> /etc/hosts
+
 归档+压缩操作  zip
 --zip -r   压缩包括文件夹
 --unzip  解压

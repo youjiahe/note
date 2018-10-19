@@ -1,0 +1,28 @@
+1.为什么没有根分区挂载，而且直接挂载到文件/etc/hosts下
+[root@docker01 ~]# docker run -it centos
+[root@fbee456352f8 /]# lsblk
+lsblk: dm-0: failed to get device path
+lsblk: dm-1: failed to get device path
+lsblk: dm-0: failed to get device path
+lsblk: dm-0: failed to get device path
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+vda    253:0    0   40G  0 disk 
+`-vda1 253:1    0   40G  0 part /etc/hosts  #为什么直接挂载这里的？`
+loop0    7:0    0  100G  0 loop 
+loop1    7:1    0    2G  0 loop
+
+2.修改不了主机名
+[root@469b2c54b290 /]# hostnamectl set-hostname youjiahe
+Failed to create bus connection: No such file or directory
+
+3.redis镜像的配置文件没找到,不知道怎么用
+4.nginx镜像里没有yum   #
+5.ubuntu镜像里yum都没有
+  docker run -it unbantu 
+
+Linux两大流派
+            RHEL  DEBIAN  
+软件包格式     rpm   deb
+软件包安装     yum   apt-get
+管理包命令     rpm   dpkg      #rpm -qa == dpkg -l
+rpm——redhat packet manager
