@@ -84,7 +84,7 @@ Docker基本指令
 命令列表
 docker images
 docker history   #查看镜像制作历史
-docker inspect   #查看镜像底层信息提取出容器或者镜像最顶层的元数据
+docker inspect   #查看镜像底层信息  或者说提取出容器或者镜像最顶层的元数据
 docker pull|push
 Docker基本命令
 docker rmi       #删除镜像
