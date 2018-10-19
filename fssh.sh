@@ -41,9 +41,9 @@ expect "(y/n)" {send "y\n"}
 expect "#"  {send "wget ftp://192.168.4.254/share/lnmp_soft/pssh-2.3.1-5.el7.noarch.rpm\n"}
 expect "#"  {send "yum -y install pssh-2.3.1-5.el7.noarch.rpm\n"}
 expect "#"  {send "pscp.pssh -x \"-o StrictHostKeyChecking=no\" -A -h $1 /root/.ssh/id_rsa.pub /root/.ssh/id_rsa${p}.pub\n"}
-expect "Password:" {send "123456\n"}
+expect "Password:" {send "1\n"}
 expect "#"  {send "pssh -A -h $1 \"cat /root/.ssh/id_rsa${p}.pub  >> /root/.ssh/authorized_keys\"\n"}
-expect "Password:" {send "123456\n"}
+expect "Password:" {send "1\n"}
 expect "#"  {send "exit\n"}
 EOF
 done
