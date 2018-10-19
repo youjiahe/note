@@ -14,7 +14,7 @@
 
 日志消息优先级
 Linux 内核定义的事件紧急程度
---0 EMRG (紧急）
+--0 EMERG (紧急）
 --1 ALERT（警告）
 --2 CRIT（严重）
 --3 ERR（错误）   运行出现错误
@@ -24,10 +24,18 @@ Linux 内核定义的事件紧急程度
 --7 DEBUG
 
  #############################################
-Systemctl  journalctl
--journalctl | grep
+使用journalctl工具 
+提取由Systemctl  journalctl 服务搜集的日志
 -（最重要）journalctl -u 服务名
--
+-journalctl | grep 关键词
+-journalctl -u 服务名 [-p 优先级]   
+-journalctl -n 消息数
+-journalctl --since="yyyy-mm-dd HH:MM:SS" --until="yyyy-mm-dd HH:MM:SS"
+
+[root@proxy ~]# journalctl -u mysqld -n 10 -p err
+[root@proxy ~]# journalctl -u mysqld -n 10 -p warning
+[root@proxy ~]# journalctl -u mysqld -n 10 -p notice
+[root@proxy ~]# journalctl -u mysqld -n 10 -p info
  ##############################################
 Init程序的作用
 Linux系统和服务管理器
