@@ -88,6 +88,9 @@ alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-ti
 -  >> :追加重定向输出
 -  2> :错误重定向
 -  &> :混合重定向
+- < :标准注入 0
+    :标准错误 2
+- << key :看见key就结束
 
 [root@server0 ~]# ls nb.txt /etc/fstab >a.txt 2>1.txt
                      #正确的输出，错误的输出分别存在不一样的文件。比&>, 更灵活]
@@ -96,6 +99,16 @@ ls: 无法访问nb.txt: 没有那个文件或目录
 [root@server0 ~]# cat a.txt
 /etc/fstab
 
+[root@docker02 ~]# cat << EOF  #看到EOF就结束
+> youjiahe
+> nihaoma
+> henhaoa
+> ROF
+> EOF
+youjiahe
+nihaoma
+henhaoa
+ROF
 
  #############################################
 重定向输入
