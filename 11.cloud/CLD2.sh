@@ -129,7 +129,7 @@ Openstack环境准备_系统资源
  & openstack   8.5G以下   
   [root@room11pc19 qemu]# virsh edit openstack  
      <memory unit='KiB'>8848000</memory>               # <!--最大内存-->
-     <currentMemory unit='KiB'>8848000</currentMemory> # <!--显示的内存--> 
+     <currentMemory unit='KiB'>8848000</currentMemory> # <!--使用的内存--> 
   [root@room11pc19 qemu]# virsh destroy openstack
   [root@room11pc19 qemu]# virsh start openstack
  & nova01      6.5G
