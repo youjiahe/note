@@ -110,7 +110,18 @@ location /status {
         stub_status on;
     }
 ------------------------------------------------
+●curl 访问nginx状态监控
+ # curl http://127.0.0.1/status
+Active connections: 11921           #当前nginx正在处理的活动连接数.
+server accepts handled requests     #总共处理了11989个连接 , 成功创建11989次握手, 
+ 11989 11989 11991 1930854          #总共处理了11991个请求，总处理时间为1930854毫秒
+Reading: 0 Writing: 7 Waiting: 42
 
+//Reading: nginx读取到客户端的Header信息数.
+//Writing: nginx返回给客户端的Header信息数.
+//Waiting: 开启keep-alive的情况下,这个值等于 active – (reading + writing),
+         意思就是nginx已经处理完成,正在等候下一次请求指令的驻留连接。
+         
 ●书写监控脚本
 curl -s #不输出流量信息
 -----------------------------------------------------------------------------
