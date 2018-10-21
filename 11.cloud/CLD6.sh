@@ -153,7 +153,129 @@ EnvironmentFile=/etc/sysconfig/httpd  /usr/sbin/httpd -DFOREGROUND &
 
 ################################################################
 持久化存储
+################################################################
+4 案例4：创建自定义网桥
+4.1 问题
+本案例要求：
 
+创建网桥设备docker01
+设定网段为172.30.0.0/16
+启动nginx容器，nginx容器桥接docker01设备
+映射真实机8080端口与容器的80端口
+4.2 步骤
+实现此案例需要按照如下步骤进行。
+
+步骤一：新建Docker网络模型
+
+1）新建docker1网络模型
+
+[root@docker1 ~]# docker  network  create  --subnet=172.30.0.0/16 docker01
+c9cf26f911ef2dccb1fd1f670a6c51491e72b49133246f6428dd732c44109462
+[root@docker1 ~]# docker  network  list
+NETWORK ID          NAME                DRIVER              SCOPE
+bc189673f959        bridge              bridge              local               
+6622752788ea        docker01             bridge             local               
+53bf43bdd584        host                host                local                
+ac52d3151ba8        none                null                local                
+[root@docker1 ~]# ip  a   s
+[root@docker1 ~]# docker  network   inspect   docker01
+[
+    {
+        "Name": "docker01",
+        "Id": "c9cf26f911ef2dccb1fd1f670a6c51491e72b49133246f6428dd732c44109462",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.30.0.0/16"
+                }
+            ]
+        },
+        "Internal": false,
+        "Containers": {},
+        "Options": {},
+        "Labels": {}
+    }
+]
+2）使用自定义网桥启动容器
+
+[root@docker1 ~]# docker  run  --network=docker01   -id   nginx
+3）端口映射
+
+[root@docker1 ~]# docker  run  -p  8080:80  -id  nginx
+e523b386f9d6194e53d0a5b6b8f5ab4984d062896bab10639e41aef657cb2a53
+[root@docker1 ~]# curl 192.168.1.10:8080
+################################################################
+步骤二：扩展实验
+
+1）新建一个网络模型docker02
+
+ [root@docker1 ~]# docker  network   create   --driver  bridge  docker02   
+//新建一个 名为docker02的网络模型
+5496835bd3f53ac220ce3d8be71ce6afc919674711ab3f94e6263b9492c7d2cc
+[root@docker1 ~]# ifconfig     
+//但是在用ifconfig命令查看的时候，显示的名字并不是docker02，而是br-5496835bd3f5
+br-5496835bd3f5: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.18.0.1  netmask 255.255.0.0  broadcast 0.0.0.0
+        ether 02:42:89:6a:a2:72  txqueuelen 0  (Ethernet)
+        RX packets 8  bytes 496 (496.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 8  bytes 496 (496.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[root@docker1 ~]# docker  network  list            //查看显示docker02（查看加粗字样）
+NETWORK ID          NAME                DRIVER              SCOPE
+bc189673f959        bridge              bridge              local               
+5496835bd3f5        docker02             bridge             local               
+53bf43bdd584        host                host                local               
+ac52d3151ba8        none                null                local
+2）若要解决使用ifconfig命令可以看到docker02的问题，可以执行以下几步命令
+
+ [root@docker1 ~]# docker network list   //查看docker0的NETWORK ID（加粗字样）
+NETWORK ID          NAME                DRIVER              SCOPE
+bc189673f959        bridge              bridge              local               
+5496835bd3f5        docker02             bridge             local               
+53bf43bdd584        host                host                local               
+ac52d3151ba8        none                null                local               
+3）查看16dc92e55023的信息，如图-3所示：
+
+[root@docker2 ~]# docker network inspect bc189673f959 
+
+图-3
+
+4）查看图片的倒数第六行有"com.docker.network.bridge.name": "docker0"字样
+
+5）把刚刚创建的docker02网桥删掉
+
+[root@docker1 ~]# docker network rm docker02     //删除docker02
+docker02
+[root@docker1 ~]# docker network create  \ 
+docker02  -o com.docker.network.bridge.name=docker02   
+//创建docker02网桥
+648bd5da03606d5a1a395c098662b5f820b9400c6878e2582a7ce754c8c05a3a
+[root@docker1 ~]# ifconfig     //ifconfig查看有docker02
+docker02: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.18.0.1  netmask 255.255.0.0  broadcast 0.0.0.0
+        ether 02:42:94:27:a0:43  txqueuelen 0  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+6）若想在创建docker03的时候自定义网段（之前已经创建过docker01和02，这里用docker03），执行以下命令
+
+[root@docker1 ~]# docker network create docker03 --subnet=172.30.0.0/16 -o com.docker.network.bridge.name=docker03
+f003aa1c0fa20c81e4f73c12dcc79262f1f1d67589d7440175ea01dc0be4d03c
+[root@docker1 ~]# ifconfig    //ifconfig查看，显示的是自己定义的网段
+docker03: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.30.0.1  netmask 255.255.0.0  broadcast 0.0.0.0
+        ether 02:42:27:9b:95:b3  txqueuelen 0  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
 
 
