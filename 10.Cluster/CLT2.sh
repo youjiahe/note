@@ -118,6 +118,23 @@ ipvsadm用法
 ●设置开机自启动
   systemctl enable ipvsadm
 ##################################################################################
+总结：LVS的四种工作模式
+LVS/NAT      real-server必须与LVS是同一VLAN,同一网段
+             real-server必须指定默认网关是LVS
+
+LVS/DR       real-server必须与LVS是同一VLAN，太容易网段
+             real-server必须绑定VIP在环地址上lo:1
+             real-server不能响应vip的arp广播
+
+LVS/TUN      real-server 必须绑定vip
+             real-server 都必须与 lvs 简历 ipip 隧道连接 
+
+LVS/full-nat 
+        #基于centos 6.x开发的
+
+注：
+#Linux系统内核实现的IP隧道技术主要有三种（PPP、PPTP和L2TP等协议或软件不是基于内核模块的）：ipip、gre、sit 。这三种隧道技术都需要内核模块 tunnel4.ko 的支持。
+##################################################################################
 LVS-NAT集群搭建
 ●案例拓扑
   client50  eth0:down;        eth1:192.168.2.50  #客户机

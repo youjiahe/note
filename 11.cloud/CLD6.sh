@@ -153,6 +153,15 @@ EnvironmentFile=/etc/sysconfig/httpd  /usr/sbin/httpd -DFOREGROUND &
 
 ################################################################
 持久化存储
+● 把物理机的文件夹映射到容器里
+   docker run -itd -v /web/webroot:/abc nginx
+################################################################
+共享存储
+● 搭建NFS
+● docker01、docker02 都mount nfs 服务器到本机文件夹
+● 启动容器时使用 -v 参数把nfs 共享目录映射到容器
+● docker01 启动nginx，docker02启动httpd
+● 相同的web主页
 ################################################################
 案例：创建自定义网桥
 
@@ -203,7 +212,7 @@ EnvironmentFile=/etc/sysconfig/httpd  /usr/sbin/httpd -DFOREGROUND &
    [root@docker1 ~]# curl 192.168.1.10:8080
 ################################################################
 扩展实验
-1）新建一个网络模型docker02
+● 新建一个网络模型docker02
    [root@docker1 ~]# docker  network   create   --driver  bridge  docker02   
    //新建一个 名为docker02的网络模型
    5496835bd3f53ac220ce3d8be71ce6afc919674711ab3f94e6263b9492c7d2cc
@@ -216,18 +225,18 @@ EnvironmentFile=/etc/sysconfig/httpd  /usr/sbin/httpd -DFOREGROUND &
    5496835bd3f5        docker02             bridge             local               
    53bf43bdd584        host                host                local               
    ac52d3151ba8        none                null                local
-2）若要解决使用ifconfig命令可以看到docker02的问题，可以执行以下几步命令
+● 若要解决使用ifconfig命令可以看到docker02的问题，可以执行以下几步命令
    [root@docker1 ~]# docker network list   //查看docker0的NETWORK ID（加粗字样）
    NETWORK ID          NAME                DRIVER              SCOPE
    bc189673f959        bridge              bridge              local               
    5496835bd3f5        docker02             bridge             local               
    53bf43bdd584        host                host                local               
    ac52d3151ba8        none                null                local               
-3）查看16dc92e55023的信息，如图-3所示：
+● 查看16dc92e55023的信息，如图-3所示：
    [root@docker2 ~]# docker network inspect bc189673f959 
-4）查看图片的倒数第六行有"com.docker.network.bridge.name": "docker0"字样
+● 查看图片的倒数第六行有"com.docker.network.bridge.name": "docker0"字样
 
-5）把刚刚创建的docker02网桥删掉
+● 把刚刚创建的docker02网桥删掉
    [root@docker1 ~]# docker network rm docker02     //删除docker02
    docker02
    [root@docker1 ~]# docker network create  \ 
@@ -242,7 +251,7 @@ EnvironmentFile=/etc/sysconfig/httpd  /usr/sbin/httpd -DFOREGROUND &
         RX errors 0  dropped 0  overruns 0  frame 0
         TX packets 0  bytes 0 (0.0 B)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-6）若想在创建docker03的时候自定义网段（之前已经创建过docker01和02，这里用docker03），执行以下命令
+● 若想在创建docker03的时候自定义网段（之前已经创建过docker01和02，这里用docker03），执行以下命令
 [root@docker1 ~]# docker network create docker03 --subnet=172.30.0.0/16 -o com.docker.network.bridge.name=docker03
 f003aa1c0fa20c81e4f73c12dcc79262f1f1d67589d7440175ea01dc0be4d03c
 [root@docker1 ~]# ifconfig    //ifconfig查看，显示的是自己定义的网段
@@ -253,16 +262,6 @@ docker03: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
         RX errors 0  dropped 0  overruns 0  frame 0
         TX packets 0  bytes 0 (0.0 B)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-
-
-
-
-
-
-
-
-
 
 
 
