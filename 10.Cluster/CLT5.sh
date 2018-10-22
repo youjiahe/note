@@ -240,7 +240,7 @@ auth_client_required = cephx     #开启认证
    name: myfs1, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
 
 ●客户端挂载
-   [root@client ~]# cat /etc/ceph/ceph.client.admin.keyring 
+   [root@client ~]# cat /etc/ceph/ceph.client.admin.keyring  #装包ceph-common
    [client.admin]
 	key = AQB9Rr9b2DDhHRAAmfq2CNr6hK93KClqaIWHsw==  #密钥
 	
