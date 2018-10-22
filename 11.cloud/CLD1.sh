@@ -180,7 +180,7 @@ disk size: 361M
 cluster_size: 65536
 backing file: /var/lib/libvirt/images/.rh7_template.img  #牛老师的镜像模版
 Format specific information:
-    compat: 1.1
+    compat: 1.1Element domain failed to validate content
     lazy refcounts: false
 
 ##################################################################################
