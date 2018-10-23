@@ -262,7 +262,8 @@ ansible命令基础
 ##################################################################################
 批量部署公钥文件
  [root@ansible ~]# ansible all -m command -a "rm /root/.ssh/authorized_keys"
- [root@ansible ~]# ansible all -m authorized_key -a "user=root exclusive=true manage_dir=true key='$(< /root/.ssh/id_rsa.pub)'"  -v
+ [root@ansible ~]# ansible all -m authorized_key -a "user=root exclusive=true manage_dir=true key='$(< /root/.ssh/id_rsa.pub)'"  -v 
+ #manage_dir作用是/root/.ssh不存在时创建
  [root@ansible ~]# ansible all -m command -a "cat /root/.ssh/authorized_keys" 
 ##################################################################################
 批量配置管理
