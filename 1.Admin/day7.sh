@@ -76,7 +76,7 @@ Sticky Bit
 find /etc  -name "passwd"  -exec  grep  "root" {} \;
 find  .  -name  "*.log"  -exec  mv {} .. \;　　
 find  .  -name  "*.log"  -exec  cp {}  test3  \;　
-find . -name "*.log" -mtime -3 -exec rm {} \; 
+find . -name "*.log" -mtime +3 -exec rm {} \; 
   #############################################
 Grep 
 *根据字符串模式提取字符
