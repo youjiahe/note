@@ -61,6 +61,17 @@ Sticky Bit
  -mtime （-mtime +|-， +10是10天之前，-10是最近10天内) 根据修改时间,所有时间都是过去时间
   
 /var/log  是存放系统日志的地方
+
+*例子：
+[root@room11pc19 test]# ls
+1.doc   2.doc   3.doc   4.doc   5.doc   6.doc   7.doc
+1.html  2.html  3.html  4.html  5.html  6.html  7.html
+1.txt   2.txt   3.txt   4.txt   5.txt   6.txt   7.txt
+[root@room11pc19 test]# find . -name "*.html" -exec rm -rf  {} \;
+[root@room11pc19 test]# ls
+1.doc  2.doc  3.doc  4.doc  5.doc  6.doc  7.doc
+1.txt  2.txt  3.txt  4.txt  5.txt  6.txt  7.txt
+
   #############################################
 Grep 
 *根据字符串模式提取字符
