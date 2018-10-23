@@ -151,17 +151,17 @@ ansible工作流程
       db2
 ##################################################################################
 ● 测试ansible主机
-[root@ansible ~]# sed -n '61p' /etc/ansible/ansible.cfg  #取消注释
-host_key_checking = False
-[root@ansible ~]# ansible web -m ping
-web2 | SUCCESS => {
-    "changed": false, 
-    "ping": "pong"
-}
-web1 | SUCCESS => {
-    "changed": false, 
-    "ping": "pong"
-}
+  [root@ansible ~]# sed -n '61p' /etc/ansible/ansible.cfg  #取消注释
+  host_key_checking = False
+  [root@ansible ~]# ansible web -m ping
+  web2 | SUCCESS => {
+      "changed": false, 
+      "ping": "pong"
+  }
+  web1 | SUCCESS => {
+      "changed": false, 
+      "ping": "pong"
+  }
 
 
 
