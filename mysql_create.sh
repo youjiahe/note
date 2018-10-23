@@ -1,5 +1,5 @@
 #!/bin/bash
-yum -y install perl-JSON 
+yum -y install perl-JSON  perl-Data-Dumper.x86_64 net-tools 
 rpm -qa | grep mysql-community-
 
 if [ $? -ne 0 ];then

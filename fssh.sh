@@ -3,7 +3,14 @@ if [ -z $1 ] || [ ! -f $1 ]; then
  echo "文件未指定或者不存在"  >&2
  exit 12
 fi
-
+while [ -z $pass ]
+do
+  read -p "虚拟机密码:" pass
+done
+while [ -z $bri ]
+do
+  read -p "真机IP[对应虚拟交换机]:" bri
+done
 cp ./lnmp_soft.tar.gz /var/ftp/share/
 tar -xf /var/ftp/share/lnmp_soft.tar.gz -C /var/ftp/share/
 systemctl restart vsftpd
@@ -18,7 +25,7 @@ if [ $? -ne 0 ];then
    echo "未安装pssh" 
    echo "准备安装pssh"
    sleep 1
-   wget ftp://192.168.4.254/share/lnmp_soft/pssh-2.3.1-5.el7.noarch.rpm 
+   wget ftp://${bri}/share/lnmp_soft/pssh-2.3.1-5.el7.noarch.rpm 
    yum -y install pssh-2.3.1-5.el7.noarch.rpm 
 fi
 rpm -qa | grep expect 
@@ -38,12 +45,12 @@ spawn ssh -o StrictHostKeyChecking=no $i
 expect "#"  {send "sed -i \'/$i/d\' $1\n"}
 expect "#"  {send "ssh-keygen -N \'\' -f \"/root/.ssh/id_rsa\"\n"}
 expect "(y/n)" {send "y\n"}
-expect "#"  {send "wget ftp://192.168.4.254/share/lnmp_soft/pssh-2.3.1-5.el7.noarch.rpm\n"}
+expect "#"  {send "wget ftp://${bri}/share/lnmp_soft/pssh-2.3.1-5.el7.noarch.rpm\n"}
 expect "#"  {send "yum -y install pssh-2.3.1-5.el7.noarch.rpm\n"}
 expect "#"  {send "pscp.pssh -x \"-o StrictHostKeyChecking=no\" -A -h $1 /root/.ssh/id_rsa.pub /root/.ssh/id_rsa${p}.pub\n"}
-expect "Password:" {send "1\n"}
+expect "Password:" {send "${pass}\n"}
 expect "#"  {send "pssh -A -h $1 \"cat /root/.ssh/id_rsa${p}.pub  >> /root/.ssh/authorized_keys\"\n"}
-expect "Password:" {send "1\n"}
+expect "Password:" {send "${pass}\n"}
 expect "#"  {send "exit\n"}
 EOF
 done
