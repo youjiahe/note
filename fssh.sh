@@ -9,7 +9,7 @@ do
 done
 while [ -z $bri ]
 do
-  read -p "真机IP[对应虚拟交换机]:" bri
+ read -p "真机IP[对应虚拟交换机]:" bri
 done
 cp ./lnmp_soft.tar.gz /var/ftp/share/
 tar -xf /var/ftp/share/lnmp_soft.tar.gz -C /var/ftp/share/
