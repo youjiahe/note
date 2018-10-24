@@ -232,7 +232,7 @@ ansible命令基础
   – -i inventory文件路径,戒可执行脚本
   – -k 使用交互式登彔密码
   – -e 定义变量
-  – -v 详绅信息,-vvvv开吭debug模式
+  – -v 详绅信息,-vvvv开启debug模式
 ##################################################################################
 批量执行uptime
 ● 主机分组列表
@@ -261,6 +261,7 @@ ansible命令基础
  [root@ansible ~]# ansible all -m command -a "uptime"
 ##################################################################################
 批量部署公钥文件
+● 模块authorized_key
  [root@ansible ~]# ansible all -m command -a "rm /root/.ssh/authorized_keys"
  [root@ansible ~]# ansible all -m authorized_key -a "user=root exclusive=true manage_dir=true key='$(< /root/.ssh/id_rsa.pub)'"  -v 
  #manage_dir作用是/root/.ssh不存在时创建
@@ -269,6 +270,7 @@ ansible命令基础
 批量配置管理
 ● 模块
   ansible-doc和ping模块
+  authorized_key
   command模块
   shell|raw模块
   script模块
@@ -385,7 +387,7 @@ yum模块
      ansible t1 -m yum -a 'name="lrzsz"'
   – 安装多个软件包
      ansible t1 -m yum -a 'name="lrzsz,lftp"'
- ##################################################################################    
+##################################################################################    
 service模块
 • service模块
 – name:必选项,服务名称
@@ -393,7 +395,15 @@ service模块
 – sleep:执行restarted,会在stop和start乊间沉睡几秒钟
 – state:对当前服务执行吭劢,停止、重吭、重新加载等操
 作(started,stopped,restarted,reloaded)
-##################################################################################     
+##################################################################################
+• setup模块
+– 主要用亍获取主机信息,playbooks里经常会用的另一
+个参数gather_facts不该模块相关,setup模块下经常
+用的是filter参数
+– filter过滤所需信息
+ansible t1 -m setup -a 'filter=ansible_distribution'  
+ansible all -m setup -a 'fliter=ansible_os_family'
+##################################################################################  
 ● 练习：
 1.在所有web主机添加用户you，设置默认密码123456
   [root@ansible ~]# ansible web -m shell -a "useradd you && echo 1 | passwd --stdin you"
