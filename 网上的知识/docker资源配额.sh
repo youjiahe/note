@@ -24,8 +24,10 @@ CPU配额
    — cpu-period设置为100000（即0.1秒），
    — cpu-quota设置为200000（0.2秒）。
 
-  &使用命令创建容器
-   docker run -tid –cpu-period 100000 –cpu-quota 200000 ubuntu:latest
+● CPU配额控制使用示例
+  docker run -tid –cpu-shares 100 centos:latest
+  docker run -tid –cpu-period 100000 –cpu-quota 200000 ubuntu:latest
+   
 ##################################################################################
 内存配额控制
 ● 相关配置项
@@ -45,7 +47,7 @@ CPU配额
   & 默认情况下，容器可以使用主机上的所有空闲内存。
 
 ● 内存配额控制使用示例
-     
+   docker run -tid —name mem1 —memory 128m ubuntu:stress /bin/bash
      
      
      
