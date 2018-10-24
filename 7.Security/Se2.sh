@@ -37,11 +37,11 @@ setenfore 0
   --MD5 SHA256 SHA512
    --用于校验数据是否被改
   --md5sum,sha256sum,sha512sum
-●对称加密
+●对称加密  AES DES
   版本：gpg --version
   加密：gpg -c 明文 
   解密：gpg -d 密文 >> 明文
-●非队称加密
+●非队称加密  RSA 
   制作:gpg --gen-key                      #如果终端不能正常使用，输入reset，复位终端
   查看:gpg --list-keys                    #查看公钥环
   导出:gpg -a --export yoyoyo > yoyo.key  #-a,以ASCII码导出；

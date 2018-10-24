@@ -1,3 +1,5 @@
+##################################################################################
+
 大型架构及配置技术
 NSD ARCHITECTURE  DAY02
 
@@ -309,7 +311,7 @@ playbook综合练习
 [root@ansible ~]# ansible-playbook httpd.yml -f 2   #-f 2 表示开两个进程并发执行      
 ##################################################################################
 playbook进阶
-● 变量
+  变量
   error
   handlers
   when
@@ -318,17 +320,324 @@ playbook进阶
   with_nested
   tags
   include and roles
-● 调试
+  调试
   debug
+##################################################################################
+playbook进阶
+变量
+● 添加用户
+  – 给所有主机添加用户plj,设置默认密码123456
+  – 要求第一次登录修改密码(使用发量)
+---
+- hosts: 192.168.1.16
+  remote_user: root
+  vars:
+    username: plj
+  tasks:
+    - name: create user "{{username}}"
+      user: group=wheel uid=1000 name={{username}}
+    - shell: echo 123456 | passwd --stdin plj
+    - shell: chage -d 0 {{username}}
+##################################################################################
+playbook进阶
+变量
+● 设密码
+   – 解决密码明文问题
+   – user模块的password为什么丌能设置密码呢
+   – 绉过测试収现,password是把字符串直接写入
+    shadow,幵没有改发,而Linux的shadow密码是绉过
+     加密的,所以丌能使用
+  • 解决方案
+   – 发量过滤器password_hash
+    {{ 'urpassword' | password_hash('sha512')}}
 
+[root@ansible ~]# cat user.yml  #变量
+---
+- hosts: cache
+  remote_user: root
+  vars:
+    uname: 
+      name: hash
+      group: wheel
+      pass: "123456"
+      shell: /bin/bash
+  tasks: 
+    - user:
+        name: "{{uname.name}}"
+        shell: "{{uname.shell}}"
+        groups: "{{uname.group}}"
+        password: "{{uname.pass | password_hash('sha512')}}"
+    - shell: chage -d 0 "{{uname.name}}"
+    
+[root@ansible ~]# ansible-playbook user.yml
+##################################################################################
+playbook进阶
+error
+• ansible-playbook对错诨的处理
+  – 默认情况判断$?,如果值丌为0就停止执行
+  – 但某些情况我们需要忽略错诨继续执行
+• 错误处理方法
+  – 第一种方式:
+     shell: /usr/bin/somecommand || /bin/true
+  – 第二种方式:
+   - name: run some command
+     shell: /usr/bin/somecommand
+     ignore_errors: True
+     
+● 例子
+[root@ansible ~]# cat adduser.yml
+---
+- hosts: db
+  remote_user: root
+  vars: 
+    username: nbb
+  tasks: 
+    - shell: useradd "{{username}}"
+      ignore_errors: True
+    - shell: chage -d 0 "{{username}}"
+    - shell: echo 123456 | passwd --stdin "{{username}}"
+    
+[root@ansible ~]# ansible-playbook adduser.yml    #留意以下，有"...ignoring"
+fatal: .. .. "stderr": "useradd：用户“nbb”已存在", "stderr_lines": ["useradd：用户“nbb”已存在"] .. ..
+...ignoring    
+fatal: .. .."seradd：用户“nbb”已存在", "stderr_lines": ["useradd：用户“nbb”已存在"], "stdout": "", "stdout_lines": []}
+...ignoring
 
+##################################################################################
+playbook进阶
+handlers
+● 类似于函数
+● 在notify中列出的操作称为handler,即notify调用
+  handler中定义的操作
 
+● 案例： 修改httpd配置文件，并且重启服务
+[root@ansible ~]# cat httpd_handler.yml 
+---
+- 
+  hosts: web
+  remote_user: root
+  tasks: 
+    - lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^Listen'
+        line: 'Listen 8080'
+      notify: 
+        - reload httpd
+    - replace:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^#ServerName'
+        replace: 'ServerName'
+      notify: 
+        - reload httpd
+  handlers: 
+    - name: reload httpd 
+      service: 
+        state: restarted
+        name: httpd
+##################################################################################
+playbook进阶
+when
+● 有些时候需要在满足特定的条件后再触发某一项操作,戒
+   在特定的条件下终止某个行为,这个时候需要进行条件判
+   断,when正是解决这个问题的最佳选择,进程中的系统发
+   量facts作为when的条件,可以通过setup模块查看
+   – when 的样例
+   tashs:
+     - name: somecommand
+       command: somecommand
+       when: expr
+● 一个使用when的例子
+---
+- name: Install VIM
+  hosts: all
+  tasks:
+    - name: Install VIM via yum
+      yum: name=vim-enhanced state=installed
+      when: ansible_os_family == "RedHat"
+    - name: Install VIM via apt
+      apt: name=vim state=installed
+      when: ansible_os_family == "Debian"
 
+● 另一个使用when的例子
+[root@ansible ~]# cat copyfile.yml 
+---
+- hosts: "{{host}}"
+  user: "{{user}}"
+  gather_facts: True
+  tasks:
+    - name: Copy file to client
+      copy: src=/etc/ansible/test.txt dest=/usr/local/src
+      when: ansible_os_family == "RedHat"
+    - name: Copy file to client
+      copy: src=/etc/ansible/test11.txt dest=/usr/local/src11
+      when: ansible_os_family == "Debian"
+##################################################################################
+playbook进阶
+register #注册变量
+– 有时候我们还需要更复杂的例子,如判断前一个命令
+   的执行结果去处理后面的操作,这时候就需要register
+   模块来保存前一个命令的返回状态,在后面迚行调用
+   
+  - command: test command
+    register: result
+  - command: run command
+    when: result
 
+● 一个使用when还有register的例子 #当nb用户存在时，修改密码
+---
+- hosts: db
+  remote_user: root
+  tasks:
+    - shell: id nbb
+      register: result
+    - user:
+        name: nbb
+        password: "{{'1'| password_hash('sha512')}}"
+      when: result
+##################################################################################
+playbook进阶
+register 
+● 另一个register例子 
+    当系统负载大于0.8时，停止httpd服务  
+& playbook文件
+  [root@ansible ~]# vim web_load.yml
+---
+- hosts: web
+  remote_user: root
+  tasks:
+    - shell: uptime | awk -F "[ ,]" '{print $(NF-2)}'
+      register: result
+    - service:
+         name: httpd
+         state: stopped
+      when: result.stdout | float > 0.8
 
+& 客户端加强负载  
+  [root@web1 ~]# awk 'BEGIN{while(1){}}' &
 
+& 客户端监控负载，看到负载已经达到0.91
+  [root@web1 ~]# watch uptime
+  Every 2.0s: uptime                     Wed Oct 24 17:05:21 2018
+  17:05:21 up  7:50,  2 users,  load average: 0.91, 0.44, 0.29  
 
+& 主机ansible运行playbook，并测试
+  [root@ansible ~]# ansible-playbook web_load.yml
+  TASK [service] *********
+  skipping: [web2]
+  changed: [web1]   #只有web1满足条件
 
+  [root@ansible ~]# curl 192.168.1.11:8080
+  curl: (7) Failed connect to 192.168.1.11:8080; 拒绝连接
+##################################################################################
+playbook进阶
+with_items
+● with_items是playbook标准循环,可以用于迭代一
+  个列表或字典,通过{{ item }}获得每次迭代的值
+  
+● 例如创建多个用户
+[root@ansible ~]# cat multi_user.yml
+---
+- hosts: 192.168.1.16
+  remote_user: root
+  tasks:
+- name: add users
+    user: group=wheel password={{'123456' | password_hash('sha512')}} name={{item}}
+  with_items: ["nb", "dd", "plj", "lx"]
+
+● 为不同用户定义不同组  #用with_items
+[root@ansible ~]# cat multi_ug.yml
+---
+- hosts: web
+  remote_user: root
+  tasks:
+    - user:
+        name: "{{item.name}}"
+        password: "{{'1'|password_hash('sha512')}}"
+        group: "{{item.group}}"
+        shell: "{{item.shell}}"
+      with_items:
+        - {name: 'google', group: 'daemon', shell: '/bin/bash'}
+        - {name: 'ggg', group: 'audio', shell: '/sbin/nologin'}
+        - {name: 'goooogle', group: "wheel", shell: '/bin/bash'}
+        - {name: 'ggle', group: "root", shell: '/sbin/shutdown'}
+##################################################################################
+playbook进阶
+with_nested
+##################################################################################
+playbook进阶
+tags
+##################################################################################
+playbook进阶
+include及roles
+##################################################################################
+playbook进阶
+调试
+debug
+● 对于Python诧法丌熟悉的同学,playbook书写起来
+  容易出错,且排错困难,这里介绍几种简单的排错调
+  试方法
+  – 检测语法
+      ansible-playbook --syntax-check playbook.yaml
+  – 测试运行
+      ansible-playbook -C playbook.yaml
+  – 显示时受到影响的主机  --list-hosts
+  – 显示工作的task     --list-tasks
+  – 显示将要运行的tag   --list-tags
+
+● debug模块可以在运行时输出更为详细的信息,帮助
+  我们排错
+● debug使用样例
+[root@ansible ~]# vim web_load.yml
+---
+- hosts: web
+  remote_user: root
+  tasks:
+    - shell: uptime | awk -F "[ ,]*" '{print $(NF-2)}'
+      register: result
+    - service:
+         name: httpd
+         state: stopped
+      when: result.stdout | float > 0.8
+    - name: debug info
+        debug: var=result
+        
+[root@ansible ~]# ansible-playbook web_load.yml  #查看以下result包含的key
+
+TASK [Debug info] **************************************************************
+ok: [web1] => {
+    "result": {
+        "changed": true, 
+        "cmd": "uptime | awk -F \"[ ,]*\" '{print $(NF-2)}'", 
+        "delta": "0:00:00.004792", 
+        "end": "2018-10-24 17:54:14.770882", 
+        "failed": false, 
+        "rc": 0, 
+        "start": "2018-10-24 17:54:14.766090", 
+        "stderr": "", 
+        "stderr_lines": [], 
+        "stdout": "0.98",    
+        "stdout_lines": [
+            "0.98"
+        ]
+    }
+}
+ok: [web2] => {
+    "result": {
+        "changed": true, 
+        "cmd": "uptime | awk -F \"[ ,]*\" '{print $(NF-2)}'", 
+        "delta": "0:00:00.003568", 
+        "end": "2018-10-24 17:54:14.797655", 
+        "failed": false, 
+        "rc": 0, 
+        "start": "2018-10-24 17:54:14.794087", 
+        "stderr": "", 
+        "stderr_lines": [], 
+        "stdout": "0.00",     
+        "stdout_lines": [
+            "0.00"
+        ]
+    }
+}
 
 
 

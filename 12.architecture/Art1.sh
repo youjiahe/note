@@ -397,7 +397,7 @@ service模块
 作(started,stopped,restarted,reloaded)
 ##################################################################################
 • setup模块
-– 主要用亍获取主机信息,playbooks里经常会用的另一
+– 主要用于获取主机信息,playbooks里经常会用的另一
 个参数gather_facts不该模块相关,setup模块下经常
 用的是filter参数
 – filter过滤所需信息
