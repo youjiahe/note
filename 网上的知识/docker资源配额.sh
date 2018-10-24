@@ -39,9 +39,10 @@ CPU配额
   & –memory-swap：
       — 等于内存和swap分区大小的总和，
       — 设置为-1时，表示swap分区的大小是无限的。
-      — 默认单位为byte，可以使用K、G、M等带单位的字符串。如果–memory-swap的设置值小于–memory的值，则使用默认值，为–memory-swap值的两倍。
+      — 默认单位为byte，可以使用K、G、M等带单位的字符串。
+      — 如果 -memory-swap的设置值小于 -memory的值，则使用默认值，为 -memory-swap值的两倍。
      
-     
+  & 默认情况下，容器可以使用主机上的所有空闲内存。
      
      
      
