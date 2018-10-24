@@ -562,18 +562,85 @@ with_items
         - {name: 'ggle', group: "root", shell: '/sbin/shutdown'}
 ##################################################################################
 playbook进阶
-with_nested
+with_nested  #把所有组合列出来
+● 例子： 
+[root@ansible ~]# cat nested.yml
+---
+- hosts: web1
+  remote_user: root
+  vars:
+    a1: ["0", "1", "2"]
+    a2: ["nb", "dd", "plj", "lx"]
+  tasks:
+    - shell: echo "{{item}}"
+      with_nested:
+        - "{{a1}}"
+        - "{{a2}}"
+[root@ansible ~]# ansible-playbook nested.yml
+PLAY [web1] ***************************************************************************
+
+TASK [Gathering Facts] ****************************************************************
+ok: [web1]
+
+TASK [command] ************************************************************************
+changed: [web1] => (item=[u'0', u'nb'])
+changed: [web1] => (item=[u'0', u'dd'])
+changed: [web1] => (item=[u'0', u'plj'])
+changed: [web1] => (item=[u'0', u'lx'])
+changed: [web1] => (item=[u'1', u'nb'])
+changed: [web1] => (item=[u'1', u'dd'])
+changed: [web1] => (item=[u'1', u'plj'])
+changed: [web1] => (item=[u'1', u'lx'])
+changed: [web1] => (item=[u'2', u'nb'])
+changed: [web1] => (item=[u'2', u'dd'])
+changed: [web1] => (item=[u'2', u'plj'])
+changed: [web1] => (item=[u'2', u'lx'])
+        
 ##################################################################################
 playbook进阶
 tags
+● 说明：
+  & 有指定标签的task，需要在执行时，指定标签才会运行；
+  & 没有指定标签的task，在没有指定标签时会执行
+● 例子：
+[root@ansible ~]# vim tags.yml
+---
+- hosts: web
+  remote_user: root
+  tasks:
+    - yum: name="{{item}}" state=installed
+      with_items:
+        - httpd
+        - memcached
+        - bind
+        - bind-chroot
+      tags: install
+    - copy: src=/root/1.txt dest=/root/1.xml
+      tags:
+        - cp
+                
+#run 多个tags        
+[root@ansible ~]# ansible-playbook tags.yml --tags "install,cp"
+# 只run 一个tag         
+[root@ansible ~]# ansible-playbook tags.yml --tags "cp"
+
 ##################################################################################
 playbook进阶
 include及roles
+• 在编写playbook的时候随着项目越来越大,playbook越  
+  来越复杂,修改也很麻烦。这时可以把一些play、task 戒
+  handler放到其他文件中,通过include指令包含近来是一 
+  个不错的选择
+tasks:
+- include: tasks/setup.yml
+- include: tasks/users.yml user=plj #users.yml 中可以通过{{user}}来使用这些变量
+handlers:
+- include: handlers/handlers.yml
 ##################################################################################
 playbook进阶
 调试
 debug
-● 对于Python诧法丌熟悉的同学,playbook书写起来
+● 对于Python语法不熟悉的同学,playbook书写起来
   容易出错,且排错困难,这里介绍几种简单的排错调
   试方法
   – 检测语法
@@ -599,7 +666,7 @@ debug
          state: stopped
       when: result.stdout | float > 0.8
     - name: debug info
-        debug: var=result
+      debug: var=result
         
 [root@ansible ~]# ansible-playbook web_load.yml  #查看以下result包含的key
 
@@ -638,21 +705,6 @@ ok: [web2] => {
         ]
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
