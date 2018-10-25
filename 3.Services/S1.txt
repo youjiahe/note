@@ -76,11 +76,26 @@
 统计目录大小
 -du -sh
 
--date +%R  #提取时：分；  
--date +%F #提取年月日
--date +%Y, +%m,%d,%H,%M %S  
--date -s  修改时间
+date,查看/调整系统日期时间
+– date +%F、date +%R、date +%T
+– date +"%Y-%m-%d %H:%M:%S"
+– date -s "yyyy-mm-dd HH:MM:SS"
+— date +%s 时间戳
 
+[root@room11pc19 ~]# date +%F
+2018-10-25
+[root@room11pc19 ~]# date +%R
+08:32
+[root@room11pc19 ~]# date +%T
+08:32:56
+[root@room11pc19 ~]# echo `date +%Y-%m-%d`
+2018-10-25
+[root@room11pc19 ~]# echo `date +%H:%M:%S`
+08:34:35
+[root@room11pc19 ~]# date +%s
+1540428870
+[root@room11pc19 ~]# date +%s
+1540428873
  ############################################
 制作快捷方式
 -ln -s    软链接发送快捷方式

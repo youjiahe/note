@@ -1,5 +1,4 @@
 ##################################################################################
-
 大型架构及配置技术
 NSD ARCHITECTURE  DAY02
 
@@ -370,6 +369,14 @@ playbook进阶
     - shell: chage -d 0 "{{uname.name}}"
     
 [root@ansible ~]# ansible-playbook user.yml
+[root@ansible ~]# cat f1.yml
+uname: 
+  name: g1
+  group: root
+  pass: "123"
+  shell: /bin/bash
+[root@ansible ~]# ansible-playbook user.yml -e "@f1.yml"
+[root@ansible ~]# ansible-playbook -e "{'uname':{'name':'kkk', 'group':'wheel', 'pass':'123', 'shell':'/bin/bash'}}" user.yml
 ##################################################################################
 playbook进阶
 error
@@ -600,8 +607,15 @@ changed: [web1] => (item=[u'2', u'lx'])
 playbook进阶
 tags
 ● 说明：
-  & 有指定标签的task，需要在执行时，指定标签才会运行；
-  & 没有指定标签的task，在没有指定标签时会执行
+  & tags:给指定的任务定义一个调用标识;
+  & 使用格式:
+    – name: NAME
+    – module: arguments
+    – tags: TAG_ID
+  & playbook 调用方式
+    – -t TAGS, --tags=TAGS      #只调用标签的任务，其他不执行
+    – --skip-tags=SKIP_TAGS     #跳过某个标签，执行其他
+    – --start-at-task=START_AT  #从某个标签开始执行
 ● 例子：
 [root@ansible ~]# vim tags.yml
 ---
@@ -632,10 +646,10 @@ include及roles
   handler放到其他文件中,通过include指令包含近来是一 
   个不错的选择
 tasks:
-- include: tasks/setup.yml
-- include: tasks/users.yml user=plj #users.yml 中可以通过{{user}}来使用这些变量
+  - include: tasks/setup.yml
+  - include: tasks/users.yml user=plj #users.yml 中可以通过{{user}}来使用这些变量
 handlers:
-- include: handlers/handlers.yml
+  - include: handlers/handlers.yml
 ##################################################################################
 playbook进阶
 调试

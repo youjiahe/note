@@ -165,7 +165,16 @@ ss -tanlp | grep 22  #只检查tcp的
 ESTAB   #已连接的
 
 --------------------------------------------------------------
+TCP三次握手：
+    A                  B
+SYN_SEND    
+             SYN    SYN_RCVD
+           SYN,ACK
+ESTABLISH    
+             ACK    ESTABLISH
+--------------------------------------------------------------
 TCP四次断开：
+    A                   B
 FIN_WAIT1
            FIN ACK  CLOSE_WAIT
                ACK
@@ -173,20 +182,17 @@ FIN_WAIT2
                      LAST_ACK
              FIN
 TIME_WAIT
-             ACK    
+             ACK     CLOSED
+CLOSED
 --------------------------------------------------------------
+●为什么TCP协议终止链接要四次？
+1、当主机A确认发送完数据且知道B已经接受完了，想要关闭发送数据口（当然确认信号还是可以发），就会发FIN给主机B。
+2、主机B收到A发送的FIN，表示收到了，就会发送ACK回复。
+3、但这是B可能还在发送数据，没有想要关闭数据口的意思，所以FIN与ACK不是同时发送的，而是等到B数据发送完了，才会发送FIN给主机A。
+4、A收到B发来的FIN，知道B的数据也发送完了，回复ACK， A等待2MSL以后，没有收到B传来的任何消息，知道B已经收到自己的ACK了，A就关闭链接，B也关闭链接了。
 
-
-
-
-
-
-
-
-
-
-
-主机 ------硬集
+●A为什么等待2MSl，从TIME_WAIT到CLOSE？
+    在Client发送出最后的ACK回复，但该ACK可能丢失。Server如果没有收到ACK，将不断重复发送FIN片段。所以Client不能立即关闭，它必须确认Server接收到了该ACK。Client会在发送出ACK之后进入到TIME_WAIT状态。Client会设置一个计时器，等待2MSL的时间。如果在该时间内再次收到FIN，那么Client会重发ACK并再次等待2MSL。所谓的2MSL是两倍的MSL(Maximum Segment Lifetime)。MSL指一个片段在网络中最大的存活时间，2MSL就是一个发送和一个回复所需的最大时间。如果直到2MSL，Client都没有再次收到FIN，那么Client推断ACK已经被成功接收，则结束TCP连接。
 
 
 
