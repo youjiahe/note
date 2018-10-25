@@ -30,11 +30,10 @@ E..$.L@.@......
      – 常用方法 GET,POST,HEAD
      – 其他方法 OPTIONS,PUT,DELETE,TRACE和CONNECT
   & ES 常用
-    – PUT
-     — 增
+    – PUT ------ 增
     – DELETE --- 删
-    – POST --- 改
-    – GET --- 查
+    – POST ----- 改
+    – GET ------ 查
     
 ● 系统命令 curl
   & 在linux中curl是一个利用URL规则在命令行下工作的
@@ -48,7 +47,7 @@ E..$.L@.@......
   & 例子：       
     curl -i -X HEAD 192.168.2.100
     curl -i -X GET 192.168.2.100
-  & 用云主机来测试  
+  & 用老师的云主机来测试  
 [root@els11 ~]# curl -XPUT http://118.144.89.240/info.php
 <pre>
 [ REQUEST_METHOD] ==> PUT
