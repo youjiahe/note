@@ -138,6 +138,7 @@ SQL与NoSQL与ES对比
   
 ##################################################################################
 ● 安装ELK
+环境准备
 5台1.5G  ElasticSearch 集群
 1台1.5G  Kibana
 1台2G   Logstash 
@@ -226,7 +227,7 @@ ES集群安装  #5台
     – "number_of_nodes" : 5, 表示集群中节点的数量
     — 端口号：9200，9300
   & 命令行执行
-  [root@room11pc19 ~]# curl 192.168.1.13:9200/_cluster/health?pretty
+  [root@room11pc19 ~]# curl 192.168.1.13:9200/_cluster/health?pretty  #竖显示
   {
   "cluster_name" : "els1806",
   "status" : "green",          
@@ -250,12 +251,11 @@ ES集群安装  #5台
 ES插件的使用
 ● ES常用插件
   & head插件
-     – 它展现ES集群的拓扑结构,幵且可以通过它来进行索
+     – 它展现ES集群的拓扑结构,并且可以通过它来进行索
         引(Index)和节点(Node)级别的操作
-     – 它提供一组针对集群的查询API,幵将结果以json和表
+     – 它提供一组针对集群的查询API,并将结果以json和表
         格形式返回
      – 它提供一些快捷菜单,用以展现集群的各种状态
-
   & kopf插件
      – 是一个ElasticSearch的管理工具
      – 它提供了对ES集群操作的API
@@ -348,9 +348,114 @@ Installed plugins in /usr/share/elasticsearch/plugins:
   192.168.1.13 192.168.1.13 11 57 0.00 d m els13
 ##################################################################################
 ES插件的使用
-● 新建索引
+● 图形新建索引
   http://192.168.1.11:9200/_plugin/head/
    //效果请查看文件夹“Art3”图片
+   
+● 命令行创建索引
+   & 找一个文档写一个
+<------------------------------------------------------------------------
+curl -XPUT 192.168.1.11:9200/nsd1806 -d '
+{ "setting":{
+      "index":{
+         "number_of_shards":5,
+         "number_of_replicas":1
+      }
+    }
+}'
+------------------------------------------------------------------------>
+
+   & 新建索引nsd1806
+[root@els11 ~]# curl -XPUT 192.168.1.11:9200/nsd1806 -d '
+> { "setting":{
+>       "index":{
+>          "number_of_shards":5,
+>          "number_of_replicas":1
+>       }
+>     }
+> }'
+{"acknowledged":true}
+
+   & 删除索引
+[root@els11 ~]# curl -XDELETE 192.168.1.11:9200/index1
+##################################################################################
+ES插件的使用
+● 对索引(库)做增删改查
+ & 增 PUT
+ //t:表名；  1：_id值；  -d:上传数据
+ curl -XPUT 192.168.1.11:9200/nsd1806/t/1 -d '  
+{"姓名":"杨紫","身高":"167cm","出生年月":"1992年11月","职业":"演员、歌手"}'
+ curl -XPUT 192.168.1.11:9200/nsd1806/t/2 -d '
+ {"姓名":"迪丽热巴","身高":"168cm","出生年月":"1992年6月","职业":"演员"}'
+ 
+ & 查 GET
+   [root@els11 ~]# curl -XGET 192.168.1.11:9200/nsd1806/t/2
+{"_index":"nsd1806","_type":"t","_id":"2","_version":1,"found":true,"_source":
+ {"姓名":"迪丽热巴","身高":"168cm","出生年月":"1992年6月","职业":"演员"}}
+ 
+ [root@els11 ~]# curl -XGET 192.168.1.11:9200/nsd1806/t/2?pretty  
+{
+  "_index" : "nsd1806",
+  "_type" : "t",
+  "_id" : "2",
+  "_version" : 1,
+  "found" : true,
+  "_source" : {
+    "姓名" : "迪丽热巴",
+    "身高" : "168cm",
+    "出生年月" : "1992年6月",
+    "职业" : "演员"
+  }
+}
+
+ & 改 POST 
+ [root@els11 ~]# curl -XPOST 192.168.1.11:9200/nsd1806/t/1/_update -d '
+{"doc":{"代表作":"家有儿女"}}'
+
+ & 删 DELETE
+  [root@els11 ~]# curl -XDELETE els11:9200/nsd1806/t/4
+##################################################################################
+kibana
+Kibana安装与配置
+ & kibana是什么
+    – 数据可视化平台工具
+ & 特点:
+    – 灵活的分析和可视化平台
+    – 实时总结流量和数据的图表
+    – 为丌同的用户显示直观的界面
+    – 即时分享和嵌入的仦表板
+##################################################################################
+kibana
+● 安装  #在主机kibana上安装
+  & 装包
+   [root@kibana ~]# rpm -ivh /elk/kibana-4.5.2-1.x86_64.rpm  
+  
+  & 配置
+    kibana 默认安装在 /opt/kibana 下面,配置文件在
+    /opt/kibana/config/kibana.yml
+ & kibana.yml的配置
+   [root@kibana elk]# rpm -qc kibana
+   /opt/kibana/config/kibana.yml
+   
+   – server.port: 5601
+   – server.host: "0.0.0.0"
+   – elasticsearch.url: "http://els11:9200"   #记得写/etc/hosts
+   – kibana.index: ".kibana"
+   – kibana.defaultAppId: "discover"
+   – elasticsearch.pingTimeout: 1500
+   – elasticsearch.requestTimeout: 30000
+   //#只需要改 elasticsearch.url:
+   //其他项取消注释就可以
+   
+ & 起服务
+   [root@kibana ~]# systemctl restart kibana
+   [root@kibana ~]# systemctl enable kibana
+ & 
+  http://192.168.1.16:5601 
+
+
+
+
 
 
 
