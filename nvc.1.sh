@@ -5,6 +5,7 @@ if [ -z $1 ]||[ -z $2 ]||[ -z $3 ];then
 fi
 \cp ./static_ip.sh /var/ftp/share
 \cp -p /root/.ssh/id_rsa.pub /var/ftp/share/authorized_keys
+sleep 0.4
 expect << EOF
 spawn virsh console $1
 expect "
@@ -15,6 +16,7 @@ expect "Password:" {send "1\n"}
 expect "#"      {send "yum -y install wget\n"}
 expect "#"      {send "wget ftp://192.168.1.254/share/static_ip.sh -O /root/static_ip.sh\n"}
 expect "#"      {send "bash static_ip.sh $3\n"}
+expect "#"      {send "systemctl restart network\n"}
 expect "#"      {send "exit\r"}
 EOF
 
