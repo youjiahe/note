@@ -107,6 +107,22 @@ ES集群安装
   – 启动服务
   – 检查服务
 
+  mkdir /elk
+  70  tar -xf elk.tar  -C /elk/
+   71  ls /elk/
+   72  yum -y install createrepo
+   73  createrepo /elk/
+   74  vim /etc/yum.repos.d/centos7.repo 
+   75  yum repolist
+   76  cat /etc/hosts
+   77  yum list | grep java
+   78  yum list | grep jdk
+   79  yum -y install java-1.8.0-openjdk*
+   80  yum -y install elasticsearch.noarch 
+   81  vim /etc/elasticsearch/elasticsearch.yml 
+   82  systemctl restart elasticsearch.service 
+   83  ss -untlp | grep 9200
+
 
 
 
