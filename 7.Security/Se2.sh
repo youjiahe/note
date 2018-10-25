@@ -119,6 +119,8 @@ www.icbc.coe
   -i,指定监控的网络接口
   -w,把数据包写到文件
   -r,读取抓包的文件
+  -X,告诉tcpdump命令，需要把协议头和包内容都原原本本的显示出来
+     tcpdump会以16进制和ASCII的形式显示
  过滤条件:
    类型：host、net、port、portrange
    方向：src、dst
@@ -131,6 +133,16 @@ www.icbc.coe
 Authorization: Basic bmI6MQ==
 [root@proxy ~]# echo "bmI6MQ==" | base64 -d   #base64编码
 nb:1
+●网络重定向抓包
+[root@ansible ~]# echo nsd1806 >  /dev/udp/192.168.1.11/12121
+[root@web1 ~]# tcpdump -X  host 192.168.1.11 and udp portrange 0-20000
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
+18:21:11.084007 IP ansible.42900 > web1.nupaper-ss: UDP, length 8
+	0x0000:  4500 0024 97f4 4000 4011 1f6f c0a8 010a  E..$..@.@..o....
+	0x0010:  c0a8 010b a794 2f59 0010 8387 6e73 6431  ....../Y....nsd1
+	0x0020:  3830 360a 
+
 ##################################################################################
 wireshark
 
