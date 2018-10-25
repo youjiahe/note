@@ -408,7 +408,7 @@ ES插件的使用
   }
 }
 
- & 改 POST 
+ & 改 POST   _update
  [root@els11 ~]# curl -XPOST 192.168.1.11:9200/nsd1806/t/1/_update -d '
 {"doc":{"代表作":"家有儿女"}}'
 
