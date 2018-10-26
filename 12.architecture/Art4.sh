@@ -377,23 +377,16 @@ logstash 配置 过滤数据
 [root@logstash logstash]# pwd
 /opt/logstash
 [root@logstash logstash]# ls -R | grep pattern  #以下路径写了elk作者总结的正则，可调用
-./vendor/bundle/jruby/1.9/gems/logstash-patterns-core-2.0.5/lib/logstash/patterns
+./vendor/bundle/jruby/1.9/gems/logstash-patterns-core-2.0.5/patterns/grok-patterns 
 
-input {
-  file{ 
-    path => ["/var/log/httpd/access_log"]
-    sincedb_path => "/dev/null"  #指针文件，记录文件的偏移量
-    start_position => "beginning"
-    #logstash 从什么位置开始读取文件数据， 默认是end; beginning 从头开始
-    type => "weblog"
-   }
-}
  filter {
     if [type] == "weblog"
     grok {
+         match => ["message", ""] #
       }
  }
-
+###################################################################################
+● 插件 elasticsearch
 output {
 if [type] == "weblog"{
 elasticsearch {
@@ -418,35 +411,12 @@ codec => "json"   #监听http的话，去掉
       document_type: apachelog
     hosts: ["192.168.1.20:5044"]
 ###################################################################################
-案例2:综合练习
+案例2:综合练习 #请查看elk综合练习
 1. 练习插件
 2. 安装一台Apache服务并配置
 3. 使用filebeat收集Apache服务器的日志
 4. 使用grok处理filebeat发送过来的日志
 5. 存入elasticsearch
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
