@@ -374,6 +374,8 @@ logstash 配置 网络作为输入
 ###################################################################################
 logstash 配置 过滤数据
 ● 处理数据 filter grok插件
+[root@logstash logstash]# pwd
+/opt/logstash
 [root@logstash logstash]# ls -R | grep pattern  #以下路径写了elk作者总结的正则，可调用
 ./vendor/bundle/jruby/1.9/gems/logstash-patterns-core-2.0.5/lib/logstash/patterns
 
