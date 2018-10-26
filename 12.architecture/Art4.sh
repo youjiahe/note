@@ -372,7 +372,7 @@ logstash 配置 网络作为输入
     "severity_label" => "Informational"
    }
 ###################################################################################
-logstash 配置 过滤数据
+logstash 配置 过滤数据  #详见《Art4综合练习》
 ● 处理数据 filter grok插件
 [root@logstash logstash]# pwd
 /opt/logstash
