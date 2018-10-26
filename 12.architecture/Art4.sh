@@ -374,6 +374,8 @@ logstash 配置 网络作为输入
 ###################################################################################
 logstash 配置 过滤数据
 ● 处理数据 filter grok插件
+[root@logstash logstash]# ls -R | grep pattern  #以下路径写了elk作者总结的正则，可调用
+./vendor/bundle/jruby/1.9/gems/logstash-patterns-core-2.0.5/lib/logstash/patterns
 
 input {
   file{ 
@@ -409,7 +411,6 @@ codec => "json"   #监听http的话，去掉
    由于logstash依赖JAVA环境,而且占用资源非常大,
    因此会使用更轻量的filebeat替代
 ###################################################################################
-
 案例2:综合练习
 1. 练习插件
 2. 安装一台Apache服务并配置
