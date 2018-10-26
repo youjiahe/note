@@ -11,8 +11,11 @@ NSD ARCHITECTURE DAY03
 基础知识
 重定向
 ● 文件描述符 #看视频
-文件描述符0、1和2分别代表stdin、stdout和stderr。
-
+  文件描述符0、1和2分别代表stdin、stdout和stderr。
+ — 每个用户每次打开一个文件，就产生一个文件描述符，多次打开就产生多个文件描述符;
+ — 该文件描述符就记录了当前打开的文件的偏移量等数据。
+ — 所以一个i节点可以有0个或多个文件描述符。多个文件描述符可以对应一个i节点。
+ 
 ● 网络重定向
 [root@ansible ~]# echo nsd1806 >  /dev/udp/192.168.1.11/8888
 [root@web1 ~]# tcpdump -A  -i eth0 host 192.168.1.11 and udp portrange 0-29999
