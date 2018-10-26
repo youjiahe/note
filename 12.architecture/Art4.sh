@@ -412,6 +412,11 @@ codec => "json"   #监听http的话，去掉
 – 这个插件主要用来接收beats类软件发送过来的数据,
    由于logstash依赖JAVA环境,而且占用资源非常大,
    因此会使用更轻量的filebeat替代
+   
+[root@client ~]# sed -n '14p;72p;280p' /etc/filebeat/filebeat.yml
+      paths:
+      document_type: apachelog
+    hosts: ["192.168.1.20:5044"]
 ###################################################################################
 案例2:综合练习
 1. 练习插件
