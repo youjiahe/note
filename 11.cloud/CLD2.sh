@@ -281,7 +281,23 @@ Openstack环境准备_NTP服务
   cmdallow 127.0.0.1
  & 起服务
   [root@room11pc19 ~]# systemctl restart chronyd
+ & 查看是否连到外网NTP
+ [root@room11pc19 ~]# chronyc sources -v
+  210 Number of sources = 1
+  
+    .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+   / .- Source state '*' = current synced, '+' = combined , '-' = not combined,
+  | /   '?' = unreachable, 'x' = time may be in error, '~' = time too variable.
+  ||                                                 .- xxxx [ yyyy ] +/- zzzz
+  ||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+  ||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+  ||                                \     |          |  zzzz = estimated error.
+  ||                                 |    |           \
+  MS Name/IP address         Stratum Poll Reach LastRx Last sample               
+  ===================================================
+  ^* 120.25.115.20                 2   6   377    42   -418us[ -739us] +/- 5611us
 
+[root@room11pc19 ~]# chronyc sources -v
 ●客户端指定服务器
   [root@openstack ~]# sed -n '6p' /etc/chrony.conf
    server 192.168.1.254 iburst
@@ -340,6 +356,8 @@ python-setuptools #python 安装工具
    11 CONFIG_DEFAULT_PASSWORD=Taren1    #配置默认密码
    42 CONFIG_SWIFT_INSTALL=n   #禁用swift 对象存储模块 （要使用cinder-volumes卷组）
    75 CONFIG_NTP_SERVERS=192.168.1.254  #NTP服务器地址
+   98	CONFIG_COMPUTE_HOSTS=192.168.1.11,192.168.1.12
+   102 CONFIG_NETWORK_HOSTS=192.168.1.11,192.168.1.12
    554 CONFIG_CINDER_VOLUMES_CREATE=n   #禁用自动创建 cinder-volumns 卷组
    840 CONFIG_NEUTRON_ML2_TYPE_DRIVERS=flat,vxlan  #设置网络支持协议
    876 CONFIG_NEUTRON_ML2_VXLAN_GROUP=239.1.1.5    #设置组播地址

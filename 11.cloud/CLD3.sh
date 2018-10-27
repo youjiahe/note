@@ -128,6 +128,10 @@ CLOUD DAY03
 3.设置安全组规则
 4.添加额外节点
 nova 98 102行  #添加Ip
+• 修改配置文件
+[root@openstack ~] # vim answer.txt
+CONFIG_COMPUTE_HOST=192.168.1.10,192.168.1.11
+CONFIG_NETWORK_HOSTS=192.168.1.10,192.168.1.11
 ●安装openstack,nova01
 qemu-kvm
 libvirt-client
@@ -142,7 +146,7 @@ openstack-packstack
 
 5.云主机热迁移
 [root@nova01 ~]# rpm -qa | grep rhev  
-#如果以下两个包没有装，热迁移失败；装完后需要重启libvirtd
+#如果以下两个包没有装，热迁移失败；装完后需要重启libvirtd #也有可能是磁盘空间或者内存不足
 qemu-img-rhev-2.6.0-28.el7_3.6.x86_64
 qemu-kvm-rhev-2.6.0-28.el7_3.6.x86_64
 

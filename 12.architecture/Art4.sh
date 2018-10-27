@@ -321,6 +321,8 @@ output{
   [root@kibana ~]# exec 15<>/dev/udp/192.168.1.20/8888
   [root@kibana ~]# echo "uuuuuuuuuuuuuuu" >&14
   [root@kibana ~]# echo "udp" >&15
+  [root@kibana ~]# exec 14<&-  #取消文字描述符，并到logstash上查看 ss -ant;看ESTAB
+  [root@kibana ~]# exec 15<&-
 
   [root@logstash logstash]# logstash -f logstash.conf 
    {
