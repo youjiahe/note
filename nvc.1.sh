@@ -4,7 +4,7 @@ if [ -z $1 ]||[ -z $2 ]||[ -z $3 ];then
    exit 1
 fi
 \cp ./static_ip.sh /var/ftp/share
-\cp -p /root/.ssh/id_rsa.pub /var/ftp/share/authorized_keys
+\cp /root/.ssh/id_rsa.pub /var/ftp/share/authorized_keys
 sleep 0.4
 expect << EOF
 spawn virsh console $1
