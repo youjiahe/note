@@ -12,14 +12,12 @@ NSD ARCHITECTURE  DAY05
    已经到了一个非常庞大的地步,信息的增长也在不断
    的加快,随着互联网、物联网建设的加快,信息更是
    爆炸式增长,收集、检索、统计这些信息越发困难, 
-   必须使用新的技术来解决这些问题什么是大数据
+   必须使用新的技术来解决这些问题
 
 ● 什么是大数据
 • 大数据的定义
 – 大数据指无法在一定时间范围内用常规软件工具进行捕捉、
-   管理和处理的数据集合,需要新处理模式才能具有更强的
-   决策力、洞察发现力和流程优化能力的海量、高增长率和
-   多样化的信息资产
+   管理和处理的数据集合,需要新处理模式才能更好处理管理的信息资产
 
 • 大数据能做什么
 – 企业组织利用相关数据分析帮助他们降低成本、提高
@@ -177,42 +175,157 @@ Yarn
   – 用户不Yarn交互的客户端程序
   – 提交应用程序、监控应用程序状态,杀死应用程序等
 ##################################################################################、
-补充：
-drbd+heartbeat  可以做NFS高可用
-
-1 NFS高可用解决方案之DRBD+heartbeat搭建
-preface
-
-NFS作为业界常用的共享存储方案，被众多公司采用。
-我司也不列外，使用NFS作为共享存储，为前端WEB server提供服务，主要存储网页代码以及其他文件。
-
-高可用方案
-
-说道NFS，不得不说它的同步技术，同步技术有两种，
-
+补充：NFS高可用
 第一种就是借助RSYNC+inotify来实现主从同步数据。
 第二种借助DRBD，实现文件同步。
-##################################################################################、
+1 NFS高可用解决方案之DRBD+heartbeat搭建
+
+##################################################################################
 Hadoop安装与配置
-• Hadoop的部署模式有三种
+● Hadoop的部署模式有三种
   – 单机
   – 伪分布式
   – 完全分布式
 
-##################################################################################、
+● Hadoop配置文件及格式
+• 文件格式
+– Hadoop-env.sh  JAVA_HOME  HADOOP_CONF_DIR
+– xml文件配置格式  ----------------------------------------------------- #常用
+<property>
+   <name>关键字</name>
+   <value>变量值</value>
+   <description> 描述 </description>
+</property>
 
+<configuration>
+     <property>
+          <name></name>
+          <value></value>
+     </property>
+     <property>
+          <name></name>
+          <value></value>
+     </property>
+     <property>
+          <name></name>
+          <value></value>
+     </property>
+</configuration>
 
+● Hadoop配置文件
+  hadoop-env.sh   
+  core-site.xml   #全局配置文件
+  hdfs-site.xml
+  mapred-site-xml
+  yarn-site.xml
+  slaves
+##################################################################################
+单机安装
+● 安装
+  [root@hadoop0 ~]# unzip Hadoop.zip  #老师提供
+  [root@hadoop0 ~]# cd hadoop/
+  [root@hadoop0 hadoop]# ls
+  hadoop-2.7.6.tar.gz  kafka_2.10-0.10.2.1.tgz  zookeeper-3.4.10.tar.gz
+  [root@hadoop0 hadoop]# tar -xf hadoop-2.7.6.tar.gz
+  [root@hadoop0 hadoop]# mv hadoop-2.7.6 /usr/local/hadoop
+  [root@hadoop0 hadoop]# yum -y install java-1.8.0-openjdk-devel
+  
+● 配置
+  [root@nn01 ~]# vim /usr/local/hadoop/etc/hadoop/hadoop-env.sh  
+ 25 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64/jre/
+ 33 export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+  
+● 测试  
+  [root@hadoop0 hadoop]# pwd
+  /usr/local/hadoop
+  [root@hadoop0 hadoop]# ./bin/hadoop versions
+  Hadoop 2.7.6
 
+  [root@hadoop0 ~]# bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.6.jar worcount test.txt result1
+  //jar 算法程序的压缩格式
+  //wordcount  命令
+  //test.txt   源文件
+  //result1    结果输出文件
+##################################################################################
+HDFS
+● 系统规划
+          主机                            角色                软件
+   192.168.1.100  Nn01        NameNode          HDFS
+                         SecondaryNameNode   
+   192.168.1.101  Node1       DataNode          HDFS
+   192.168.1.102  Node2       DataNode          HDFS
+   192.168.1.103  Node3       DataNode          HDFS
+##################################################################################   
+● HDFS分布式文件系统
+• 基础环境准备
+   – 在4台机器上配置/etc/hosts
+   – 注意:所有主机都能ping通namenode的主机名,
+     namenode能ping通所有节点
+   – java -version 验证java安装 #java-1.8.0-openjdk-devel
+   – jps 验证角色
+   — ssh可以免密登陆
+   
+• 配置SSH信任关系(NameNode)
+– 注意:不能出现要求输入yes的情况,每台机器都要能
+   登录成功,包括本机!!!
+– ssh_config
+  StrictHostKeyChecking no
+  
+ [root@room11pc19 ~]# pssh -h hosts.txt "sed -i '/^Host /a  \
+ StrictHostKeychecking no' /etc/ssh/ssh_config"
+ [root@room11pc19 ~]# pssh -h hosts.txt "rm -rf /root/.ssh/know*"
 
+##################################################################################
+● 搭建完全分布式
+   // 可参考http://hadoop.apache.org/old  #找到2.7.6的hadoop,再找到configuration
+   
+  & 配置全局配置文件  core-site.xml
+  [root@nn01 hadoop]# vim etc/hadoop/core-site.xml
+<--------------------------------------------------------------------------------
+<configuration>
+   <property>
+      <name>fs.defaultFS</name>  #指定 默认存储,由value来设定
+      <value>hdfs://nn01:9000</value>    #默认存储为本地 存储可以写"file:///"
+      <description>文件系统</description> 
+   </property>     
+   <property>
+      <name>hadoop.tmp.dir</name>  #指定hadoop数据根目录
+      <value>/var/hadoop</value>    
+   </property>     
+</configuration>
+-------------------------------------------------------------------------------->
 
+  & 配置hdfs配置文件  hdfs-site.xml
+<--------------------------------------------------------------------------------  
+<configuration>
+     <property>
+          <name>dfs.namenode.http-address</name>
+          <value>192.168.1.100:50070</value>
+     </property>
+     <property>
+          <name>dfs.namenode.secondary.http-address</name>
+          <value>192.168.1.100:50090</value>
+     </property>
+     <property>
+          <name>dfs.replication</name>
+          <value>2</value>
+     </property>
+</configuration>
+  -------------------------------------------------------------------------------->
 
+  & 配置节点配置文件  slaves
+  [root@nn01 hadoop]# cat etc/hadoop/slaves 
+  node1
+  node2
+  node3
+  
+  & 把/usr/local/hadoop 拷贝到node1，node2，node3
+  [root@nn01 hadoop]# pscp.pssh -r -h /root/hosts.txt /usr/local/hadoop/ /usr/local/
 
-
-
-
-
-
-
+  & 格式化
+ [root@nn01 hadoop]# ./bin/hdfs namenode -format
+  & 起服务
+ [root@nn01 hadoop]# ./sbin/start-dfs.sh
 
 
 
