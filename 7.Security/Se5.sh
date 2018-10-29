@@ -139,7 +139,7 @@ yum -y install gcc pcre-devel
 tar -xf zabbix-3.4.4.tar.gz 
 cd zabbix-3.4.4/
 ./configure --enable-agent
-make install 
+make && make install 
 
 ●修改agent配置文件，启动Agent
 vim /usr/local/etc/zabbix_agentd.conf
