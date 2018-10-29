@@ -51,6 +51,8 @@ expect "#"  {send "pscp.pssh -x \"-o StrictHostKeyChecking=no\" -A -h $1 /root/.
 expect "Password:" {send "${pass}\n"}
 expect "#"  {send "pssh -A -h $1 \"cat /root/.ssh/id_rsa${p}.pub  >> /root/.ssh/authorized_keys\"\n"}
 expect "Password:" {send "${pass}\n"}
+expect "#"  {send "pssh -A -h $1 \"rm -rf /root/.ssh/id_rsa${p}.pub\"\n"}
+expect "Password:" {send "${pass}\n"}
 expect "#"  {send "exit\n"}
 EOF
 done

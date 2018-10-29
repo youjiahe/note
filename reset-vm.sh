@@ -6,7 +6,7 @@ cd /var/lib/libvirt/images
 for i in `seq $st $sp`
 do
    rm -rf host$i.img 
-   cp node_new.qcow2 host$i.img
+   qemu-img create -b node_new.qcow2 -f qcow2 host$i.img 20G
    virsh start host$i
    sleep 0.4
 done
