@@ -217,7 +217,7 @@ virsh -c qemu+ssh://176.121.211.201:792/system
   – net-list           #查看虚拟网络
   – net-define vbr.xml #创建虚拟网络
   – net-undefine vbr   #初除虚拟网络
-  – net-start vbr      #启劢虚拟网络
+  – net-start vbr      #启动虚拟网络
   – net-destroy vbr    #停止虚拟网络
   – net-edit vbr       #修改 vbr 网络的配置
   – net-autostart vbr  #设置 vbr 虚拟网络开机自启劢

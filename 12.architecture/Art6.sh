@@ -130,7 +130,7 @@ while inotifywait -rqq /usr/local/hadoop/etc/hadoop
  & 节点验证
   [root@nn01 hadoop]# ./bin/hdfs dfsadmin -report  
      
-  [root@nn01 hadoop]# ./bin/yarn node --list
+  [root@nn01 hadoop]# ./bin/yarn node -list
   18/10/30 18:02:42 INFO client.RMProxy: Connecting to ResourceManager at nn01/192.168.1.100:8032
   Total Nodes:3
   Node-Id	 Node-State	Node-Http-Address	Number-of-Running-Containers
@@ -199,7 +199,6 @@ while inotifywait -rqq /usr/local/hadoop/etc/hadoop
  3.hdfs namenode -format
  4.start-all.sh    
 ##################################################################################
-节点管理
 HDFS节点管理
 ● 增加节点
  & 新节点设置ssh无密码登陆
@@ -220,32 +219,187 @@ HDFS节点管理
   Filesystem          Size   Used  Available  Use%
   hdfs://nn01:9000  80.0 G  1.0 M     71.8 G    0%
   
+● 修复节点
+ & HDFS修复节点    
+    – 修复节点比较简单,与增加节点基本一致
+    – 注意:新节点的ip和主机名要与损坏节点的一致
+    – 启动服务
+      # ./sbin/hadoop-daemon.sh start datanode
+    – 数据恢复是自动的
+    – 上线以后会自动恢复数据,如果数据量非常巨大,可
+       能需要一定的时间
+
+● 删除节点
+   & 去掉之前添加的node4
+    [root@nn01 hadoop]# vim /usr/local/hadoop/etc/hadoop/slaves        
+    node1
+    node2
+    node3
+   & 在此配置文件里面加入下面四行   #同步到其他节点
+    [root@nn01 hadoop]# vim /usr/local/hadoop/etc/hadoop/hdfs-site.xml          
+    <property>                                      
+       <name>dfs.hosts.exclude</name>
+       <value>/usr/local/hadoop/etc/hadoop/exclude</value>
+    </property>  
+  & 指定删除的节点    
+    [root@nn01 hadoop]# vim /usr/local/hadoop/etc/hadoop/exclude
+    node4
+  & 导出数据
+    [root@nn01 hadoop]# ./bin/hdfs dfsadmin -refreshNodes
+    Refresh nodes successful
+    [root@nn01 hadoop]# ./bin/hdfs dfsadmin -report  
+      //查看node4显示Decommissioned
+      
+  & 查看node4显示Decommissioned后，停止datanode
+   [root@node4 hadoop]# ./sbin/hadoop-daemon.sh stop datanode 
+    stopping datanode
+ ##################################################################################      
+yarn节点管理    
+• yarn的相关操作
+– 由于Hadoop在2.x引入了yarn框架,对于计算节点的
+   操作已经变得非常简单
+– 增加节点
+   # sbin/yarn-daemon.sh start nodemanager
+– 删除节点
+   # sbin/yarn-daemon.sh stop nodemanager
+– 查看节点 (ResourceManager)
+   # ./bin/yarn node -list    
     
+##################################################################################
+NFS网关    
+    1.环境准备
+      两台机
+      NFSGW   192.168.1.110   装java-1.8.0-openjdk  卸载nfs-utils
+      client  192.168.1.111   装nfs-utils
+##################################################################################    
+NFS网关
+• NFS 网关用途  #代理整个namenode集群
+  – 用户可以通过操作系统兼容的本地NFSv3客户端来浏
+     览HDFS文件系统
+  – 用户可以从HDFS文件系统下载文档到本地文件系统
+  – 用户可以通过挂载点直接流化数据,支持文件附加,
+     但是不支持随机写
+  – NFS网关支持NFSv3和允许HDFS作为客户端文件系统
+     的一部分被挂载   
     
+• 特性
+  – HDFS超级用户是不NameNode进程本身具有相同标
+     识的用户,超级用户可以执行任何操作,因为权限检
+     查永远丌会认为超级用户失败   
+     
+• 注意事项
+  – 在非安全模式下,运行网关进程的用户是代理用户
+  – 在安全模式下,Kerberos keytab中的用户是代理用户  
+  
+• 调试
+  – 在配置NFS网关过程中经常会碰到各种各样的错误,如
+     果出现错误,打开调试日志是一个丌错的选择
+• 日志排错(log4j.property)
+  – log4j.logger.org.apache.hadoop.hdfs.nfs=DEBUG
+  – log4j.logger.org.apache.hadoop.oncrpc=DEBUG 
+##################################################################################    
+NFS网关
+● 配置代理用户
+  – 在NameNode和NFSGW上添加代理用户
+  – 代理用户的UID,GID,用户名必须完全相同  
+
+● 停止hadoop集群   
+  [root@nn01 hadoop]# ./sbin/stop-all.sh
     
+● 核心配置 core-site.xml    
+   hadoop.proxyuser.{代理用户}.groups
+   hadoop.proxyuser.{代理用户}.hosts
+    – 这里的{代理用户}是主机上真实运行的nfs3的用户
+    – 在非安全模式下,运行nfs网关的用户为代理用户
+    – groups为挂载点用户所使用的组
+    – hosts为挂载点主机地址
+
+[root@nn01 hadoop]# vim etc/hadoop/core-site.xml #实时同步到其他主机，主要是nfsgw
+   <property>
+      <name>hadoop.proxyuser.tedu.groups</name>
+      <value>*</value>
+   </property>
+   <property>
+      <name>hadoop.proxyuser.tedu.hosts</name>
+      <value>*</value>
+   </property>
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+● 启动 hdfs
+  # ./sbin/start-dfs.sh
+
+● 配置文件hdfs-site.xml
+  & 配置 * rw   #设置nfs的访问属性
+     ... ...
+    <property>
+         <name>nfs.exports.allowed.hosts</name>
+         <value>* rw</value>
+    </property>
+     ... ...
+
+  & 设定缓存用的临时文件夹  #中断后重新上传可以，有数据
+   – nfs.dump.dir
+    ... ...
+   <property> 
+         <name>nfs.dump.dir</name>
+         <value>/var/nfstmp</value>
+   </property>
+    ... ...
+
+● 修改权限
+  & 临时文件夹
+   [root@nn01 hadoop]# chown tedu:tedu /var/nfstmp/
+   
+  & 日志文件夹  #这样nfsgw主机才可以往这写日志  
+   [root@nfsgw hadoop]# setfacl -m u:tedu:rwx /usr/local/hadoop/logs/
+##################################################################################
+NFS启动与挂载
+● 使用root用户启动portmap服务  #主机nfsgw操作
+  [root@nfsgw hadoop]# ./sbin/hadoop-daemon.sh --script ./bin/hdfs start portmap
+  
+● 使用代理用户启动nfs3        #主机nfsgw操作
+  [root@nfsgw hadoop]# su -tedu
+  [tedu@nfsgw ~]$ cd /usr/local/hadoop/
+  [tedu@nfsgw hadoop]$ ./sbin/hadoop-daemon.sh --script ./bin/hdfs start nfs3
+  
+● 客户端挂载  #需要先装包 nfs-tuils
+[root@client ~]# mount -t nfs -o vers=3,proto=tcp,nolock,sync,noatime 192.168.1.110：/ /mnt
+
+  – 目前NFSGW只能使用v3版本
+     vers=3
+  – 仅使用TCP作为传输协议
+     proto=tcp
+  – 不支持NLM
+     nolock
+  – 禁用access time的时间更新  #节省资源
+     noatime
+  – 强烈建议使用安装选项sync,它可以最小化避免重排
+     序写入造成不可预测的吞吐量,未指定同步选项可能
+     会导致上传大文件时出现不可靠行为
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
