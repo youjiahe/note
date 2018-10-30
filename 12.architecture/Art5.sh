@@ -231,6 +231,9 @@ Hadoop安装与配置
   [root@hadoop0 hadoop]# yum -y install java-1.8.0-openjdk-devel
   
 ● 配置
+   [root@nn01 hadoop]# rpm -ql java-1.8.0-openjdk  #找到jdk家目录
+   /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64/jre/bin/policytool
+
   [root@nn01 ~]# vim /usr/local/hadoop/etc/hadoop/hadoop-env.sh  
  25 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-11.b12.el7.x86_64/jre/
  33 export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
@@ -241,10 +244,10 @@ Hadoop安装与配置
   [root@hadoop0 hadoop]# ./bin/hadoop versions
   Hadoop 2.7.6
 
-  [root@hadoop0 ~]# bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.6.jar worcount test.txt result1
+  [root@hadoop0 hadoop]# bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.6.jar worcount test.txt result1
   //jar 算法程序的压缩格式
   //wordcount  命令
-  //test.txt   源文件
+  //test.txt   源文件 
   //result1    结果输出文件
 ##################################################################################
 HDFS
@@ -285,7 +288,7 @@ HDFS
 <configuration>
    <property>
       <name>fs.defaultFS</name>  #指定 默认存储,由value来设定
-      <value>hdfs://nn01:9000</value>    #默认存储为本地 存储可以写"file:///"
+      <value>hdfs://nn01:9000</value>    #默认存储为本地 单机时可以写"file:///"
       <description>文件系统</description> 
    </property>     
    <property>
@@ -326,6 +329,37 @@ HDFS
  [root@nn01 hadoop]# ./bin/hdfs namenode -format
   & 起服务
  [root@nn01 hadoop]# ./sbin/start-dfs.sh
+##################################################################################
+• JPS验证角色
+– NameNode验证
+  [root@nn01 hadoop]# jps
+   29826 SecondaryNameNode
+   31237 Jps
+   29643 NameNode
+– DataNode验证
+  [root@node1 ~]# jps
+   24472 Jps
+   24027 DataNode
+
+• 节点验证
+– NameNode上
+– bin/hdfs dfsadmin -report
+  [root@nn01 hadoop]# bin/hdfs dfsadmin -report
+  Configured Capacity: 51505004544 (47.97 GB)
+  DFS Used: 733184 (716 KB)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

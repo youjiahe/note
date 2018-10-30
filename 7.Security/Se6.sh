@@ -121,7 +121,7 @@ Reading: 0 Writing: 7 Waiting: 42
 //Writing: nginx返回给客户端的Header信息数.
 //Waiting: 开启keep-alive的情况下,这个值等于 active – (reading + writing),
          意思就是nginx已经处理完成,正在等候下一次请求指令的驻留连接。
-         
+         passwd.line
 ●书写监控脚本
 curl -s #不输出流量信息
 -----------------------------------------------------------------------------
