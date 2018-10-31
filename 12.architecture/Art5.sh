@@ -157,7 +157,7 @@ Yarn
   – 处理客户端请求
   – 启动/监控ApplicationMaster
   – 监控NodeManager
-  – 资源分配不调度
+  – 资源分配与调度
 • NodeManager
   – 单个节点上的资源管理
   – 处理来自ResourceManager的命令
@@ -166,7 +166,7 @@ Yarn
 • Container
   – 对任务运行环境的抽象,封装了CPU 、内存等
   – 多维资源以及环境变量、启动命令等任务运行相关的
-     信息资源分配不调度
+     信息资源分配与调度
 • ApplicationMaster
   – 数据切分
   – 为应用程序申请资源,并分配给内部任务
@@ -198,18 +198,18 @@ Hadoop安装与配置
 </property>
 
 <configuration>
-     <property>
-          <name></name>
-          <value></value>
-     </property>
-     <property>
-          <name></name>
-          <value></value>
-     </property>
-     <property>
-          <name></name>
-          <value></value>
-     </property>
+    <property>
+         <name></name>
+         <value></value>
+    </property>
+    <property>
+         <name></name>
+         <value></value>
+    </property>
+    <property>
+         <name></name>
+         <value></value>
+    </property>
 </configuration>
 
 ● Hadoop配置文件
