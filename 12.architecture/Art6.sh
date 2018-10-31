@@ -283,9 +283,9 @@ NFS网关
      的一部分被挂载   
     
 • 特性
-  – HDFS超级用户是不NameNode进程本身具有相同标
+  – HDFS超级用户是与NameNode进程本身具有相同标
      识的用户,超级用户可以执行任何操作,因为权限检
-     查永远丌会认为超级用户失败   
+     查永远不会认为超级用户失败   
      
 • 注意事项
   – 在非安全模式下,运行网关进程的用户是代理用户
@@ -293,7 +293,7 @@ NFS网关
   
 • 调试
   – 在配置NFS网关过程中经常会碰到各种各样的错误,如
-     果出现错误,打开调试日志是一个丌错的选择
+     果出现错误,打开调试日志是一个不错的选择
 • 日志排错(log4j.property)
   – log4j.logger.org.apache.hadoop.hdfs.nfs=DEBUG
   – log4j.logger.org.apache.hadoop.oncrpc=DEBUG 
@@ -302,7 +302,7 @@ NFS网关
 ● 配置代理用户
   – 在NameNode和NFSGW上添加代理用户
   – 代理用户的UID,GID,用户名必须完全相同  
-
+    
 ● 停止hadoop集群   
   [root@nn01 hadoop]# ./sbin/stop-all.sh
     
