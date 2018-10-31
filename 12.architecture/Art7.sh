@@ -314,7 +314,7 @@ node3             DataNode
 ● yarn高可用
 yarn-site配置 
 ##################################################################################
-HDFS高可用集群初始化 
+HDFS高可用集群初始化   #保证数据一致
 //主要是journalnode初始化
 
 ● ALL:同步配置到所有集群机器
@@ -343,7 +343,7 @@ HDFS高可用集群初始化
     └── VERSION
 
 ● NN2: 数据同步到本地/var/hadoop/dfs
-  [root@nn02 ~]# rsync -aSH nn01:/var/hadoop/dfs /var/hadoop/ 
+  [root@nn02 ~]# rsync -aSH --delete nn01:/var/hadoop/dfs /var/hadoop/ 
  
 ● NN1: 初始化JNS
   [root@nn01 hadoop]# ./bin/hdfs namenode -initializeSharedEdits 
@@ -355,7 +355,7 @@ HDFS高可用集群初始化
  [root@node2 ~]# /usr/local/hadoop/sbin/hadoop-daemon.sh stop journalnode
  [root@node3 ~]# /usr/local/hadoop/sbin/hadoop-daemon.sh stop journalnode 
 ##################################################################################
-HDFS高可用集群启动
+HDFS高可用集群启动  
 ● 启动集群
  & NN1: 启动hdfs
    [root@nn01 hadoop]# ./sbin/start-dfs.sh
@@ -363,7 +363,7 @@ HDFS高可用集群启动
    [root@nn01 hadoop]# ./sbin/start-yarn.sh
  & NN2/NN1: 启动热备ResourceManager
    [root@nn02 hadoop]# ./sbin/yarn-daemon.sh start resourcemanager
-
+   [root@nn01 hadoop]# ./sbin/yarn-daemon.sh start resourcemanager
 ● 集群验证
  & 获取NameNode状态
   [root@nn01 hadoop]# ./bin/hdfs haadmin -getServiceState nn1
