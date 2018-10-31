@@ -162,13 +162,15 @@ Zookeeper集群
   – 异步通信
   
 ● Kafka角色
- & Kafka角色不集群结构
+ & Kafka角色与集群结构
    – producer:生产者,负责发布消息
    – consumer:消费者,负责读取处理消息
    – topic:消息的类别
-   – Parition:每个Topic包含一个戒多个Partition
-   – Broker:Kafka集群包含一个戒多个服务器
- & Kafka通过Zookeeper管理集群配置,选丼Leader
+   – Parition:每个Topic包含一个或多个Partition
+   – Broker:Kafka集群包含一个或多个服务器
+ & Kafka通过Zookeeper管理集群配置,选举Leader
+ 
+• Kafka角色与集群结构 
 ##################################################################################
  
  
