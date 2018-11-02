@@ -179,8 +179,9 @@ rpm -e   #
 rpm -qc  #查看软件包的配置文件
 
 ●源码------>RPM （用工具）
-  --压缩包
+  --压缩包    #把源码编译好的结果文件目录 打包 
   --描述信息
+●yumdownloader httpd  #下来httpd rpm包
 
 实现:
 1)装包rpm-bulid
@@ -193,28 +194,44 @@ BUILD  BUILDROOT  RPMS  SOURCES  SPECS  SRPMS
 3）修改配置文件
 vim nginx.spec,根据内容填写
 ------------------------------------------
-Name:nginx
+Name:nginx        
 Version:1.12.2
-Release:1
-Summary:A web server.
-License:GPL
-URL:www.nginx.org
+Release:    10
+Summary: Nginx is a web server software.    
+License:GPL    
+URL:    www.test.com    
 Source0:nginx-1.12.2.tar.gz
-
+#BuildRequires:    
+#Requires:    
+%description
+nginx [engine x] is an HTTP and reverse proxy server.
 %post
-useradd -s /sbin/nologin nginx #安装后脚本
-
-%setup -q  #解压并cd进去SOURCES的源码包
-%configure------------->\
-                                |
-./configure --with-http_ssl_module .. 
+useradd nginx                       //非必需操作：安装后脚本(创建账户)
+%prep
+%setup –q                            //自动解压源码包，并cd进入目录
+%build
+./configure
 make %{?_smp_mflags}
 %install
 make install DESTDIR=%{buildroot}
+cp /root/rpmbuild/SPECS/nginx.sh %{buildroot}/usr/local/nginx/    
+##注意，cp非必须操作，注意，这里是将一个脚本拷贝到安装目录，必须提前准备该文件
 %files
 %doc
-/usr/local/nginx/*
+/usr/local/nginx/*            //对哪些文件与目录打包
+%changelog
 --------------------------------------------------------------------
+
+4)安装依赖包
+   [root@web1 ~]# yum -y install  gcc  pcre-devel zlib-devel openssl-devel
+
+5）rpmbuild创建RPM软件包
+  [root@web1 ~]# rpmbuild -ba /root/rpmbuild/SPECS/nginx.spec
+  [root@web1 ~]# ls /root/rpmbuild/RPMS/x86_64/nginx-1.12.2-10.x86_64.rpm
+  [root@web1 ~]# rpm -qpi RPMS/x86_64/nginx-1.12.2-10.x86_64.rpm 
+
+6)[root@web1 ~]# rpm -qpl nginx-1.12.2-10.x86_64.rpm
+
 
 
 
