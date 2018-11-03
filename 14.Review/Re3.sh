@@ -67,13 +67,28 @@ while [ $c -lt $num ] &>/dev/null
   done
 ##################################################################################
 权限
-chmod 755 1.txt
 
-SUID:以所有者身份执行命令
-SGID
-Sticky bit
+rwx
 
+特殊权限
+SUID:以所有者身份执行命令;传递所有者身份  chmod u+s /usr/bin/ls
+SGID:文件目录递归继承属组
+Sticky bit:粘滞位；用户只能修改自己的文件
 
+例子1：   #SUID
+[root@room11pc19 ~]# chmod u+s /usr/bin/ls
+[root@room11pc19 ~]# chmod u+s /usr/bin/mkdir
+[root@room11pc19 ~]# ssh -p 792 user1@localhost
+user1@localhost's password: 
+Last login: Sat Nov  3 20:38:00 2018 from localhost'
+[user1@room11pc19 ~]$ mkdir you
+[user1@room11pc19 ~]$ ll
+总用量 8
+drwxrwxr-x 2 root  user1 4096 11月  3 20:41 you   #
+drwxr-xr-x 2 user1 user1 4096 10月 16 09:02 模板
+[user1@room11pc19 ~]$ ls /root
+555.txt                host2.txt             ping2.yml       就业动员
+87.蓝色多彩商务.docx   host30.txt            redis_host.txt  就业介绍
 
 
 
