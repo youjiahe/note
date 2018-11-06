@@ -8,4 +8,5 @@
 
 步骤4：每个ceph节点，手动安装
    yum -install ceph ceph-radosgw
-   
+
+之后的步骤一样 
