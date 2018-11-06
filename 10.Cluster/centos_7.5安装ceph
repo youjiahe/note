@@ -1,0 +1,11 @@
+按照CLT4.sh搭建ceph环境,并且需要链接外网
+再做以下步骤
+步骤1:下载leveldb包
+   https://pkgs.org/download/libleveldb.so.1()(64bit)
+步骤2：把包放到自定义yum源
+步骤3: 每个节点执行；要不然步骤4会报错
+   yum install -y yum-utils && yum-config-manager --add-repo https://dl.fedoraproject.org/pub/epel/7/x86_64/ && yum install --nogpgcheck -y epel-release && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 && rm -f /etc/yum.repos.d/dl.fedoraproject.org* && yum -y update
+
+步骤4：每个ceph节点，手动安装
+   yum -install ceph ceph-radosgw
+   

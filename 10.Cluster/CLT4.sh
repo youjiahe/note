@@ -131,8 +131,28 @@ gpgcheck=0
   [root@node1 ~]# systemctl restart chronyd
 ●准备磁盘 
   在图形环境中为虚拟机添加磁盘
-  [root@room11pc19 ~]# virt-manager
+ [root@room11pc19 ~]# virt-manager
   每台虚拟机都添加3块10G的磁盘
+##################################################################################
+云主机环境下的操作  centos 7.5
+yum install -y yum-utils 
+yum-config-manager --add-repo https://dl.fedoraproject.org/pub/epel/7/x86_64/ 
+yum install --nogpgcheck -y epel-release 
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 
+rm -f /etc/yum.repos.d/dl.fedoraproject.org*
+
+这一步非常重要，如果跳过这一步，直接进行ceph的安装，那么会报如下的错误：
+
+Error: Package: 1:ceph-common-10.2.10-0.el7.x86_64 (Ceph)
+           Requires: libbabeltrace.so.1()(64bit)
+Error: Package: 1:librados2-10.2.10-0.el7.x86_64 (Ceph)
+           Requires: liblttng-ust.so.0()(64bit)
+Error: Package: 1:librgw2-10.2.10-0.el7.x86_64 (Ceph)
+           Requires: libfcgi.so.0()(64bit)
+Error: Package: 1:librbd1-10.2.10-0.el7.x86_64 (Ceph)
+           Requires: liblttng-ust.so.0()(64bit)
+Error: Package: 1:ceph-common-10.2.10-0.el7.x86_64 (Ceph)
+           Requires: libbabeltrace-ctf.so.1()(64bit)
 ##################################################################################
 ceph 相关文件
   & 日志文件
