@@ -146,7 +146,9 @@ iptables -t nat -I POSTROUTING -s 192.168.2.0/24 -j SNAT --to-source 176.121.211
 虚拟机设置DNS,网关
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 ##################################################################################
-
+如何将本地80 端口的请求转发到8080 端口，当前主机IP 为192.168.2.1
+iptables -t nat -I PREROUTING -d 192.168.2.18 -p tcp --dport 80 -j DNAT --to
+127.0.0.1:8080
 
 
 
