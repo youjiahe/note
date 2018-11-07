@@ -27,10 +27,10 @@ expect "#"      {send "chmod 600 /root/.ssh/authorized_keys\n"}
 expect "#"      {send "hostnamectl set-hostname $2\n"}
 expect "#"      {send "wget -O /etc/yum.repos.d/rhel7.repo ftp://192.168.4.254/share/rhel7.repo\n"}
 expect "#"      {send "yum repolist\n"}
-expect "#"      {send "wget ftp://192.168.4.254/share/lnmp_soft.tar.gz"}
 expect "#"      {send "exit\r"}
 set timeout 3
 EOF
+#expect "#"      {send "wget ftp://192.168.4.254/share/lnmp_soft.tar.gz"}
 
 if [ ! -z $4 ];then
 ./ip.sh $4
