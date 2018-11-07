@@ -157,9 +157,78 @@ welcome.py
 hello.py
 
 ##############################################################################
-git 服务端
+搭建git 服务端
+环境准备
+● 准备一台虚拟机 4G内存 40G硬盘
+& 装包
+[root@python_git docker_pkgs]# ls  #老师提供
+container-selinux-2.42-1.gitad8f0f7.el7.noarch.rpm
+container-storage-setup-0.8.0-3.git1d27ecf.el7.noarch.rpm
+docker-1.13.1-53.git774336d.el7.centos.x86_64.rpm
+docker-client-1.13.1-53.git774336d.el7.centos.x86_64.rpm
+docker-common-1.13.1-53.git774336d.el7.centos.x86_64.rpm
+oci-register-machine-0-6.git2b44233.el7.x86_64.rpm
+oci-systemd-hook-0.1.15-2.gitc04483d.el7.x86_64.rpm
+oci-umount-2.3.3-3.gite3c9055.el7.x86_64.rpm
+skopeo-containers-0.1.28-1.git0270e56.el7.x86_64.rpm
 
+[root@python_git docker_pkgs]# yum -y install *.rpm
 
+& 导入镜像
+[root@python_git images]# systemctl restart docker
+[root@python_git images]# docker load < gitlab_zh.tar
+[root@python_git images]# docker images
+
+&修改ssh端口，非22就行
+[root@python_git ~]# vim /etc/ssh/sshd_config #修改22为2222
+[root@python_git ~]# systemctl restart sshd
+##############################################################################
+Gitlab使用
+●将docker主机ssh端口改为2222后,起动容器
+[root@python_git ~]# docker run -d -h gitlab \
+--name gitlab \
+-p 443:443 -p 80:80 -p 22:22 \
+--restart always \
+-v /srv/gitlab/config:/etc/gitlab \
+-v /srv/gitlab/logs:/var/log/gitlab \
+-v /srv/gitlab/data gitlab_zh:latest
+
+//--name gitlab:主机名
+//--restart always:容器故障自动充气
+
+●浏览器浏览虚拟机IP
+firefox 192.168.4.1  #会看到"GitLab 中文社区版"
+
+●密码大于8位，用root登陆、创建群组、创建项目、创建用户、添加用户到组
+##############################################################################
+●创建远程仓库
+[root@room9pc01 youjiahe]# git remote rename origin old-origin 
+error: 不能重命名配置小节 'remote.origin' 到 'remote.old-origin'
+[root@room9pc01 youjiahe]# git remote add origin http://192.168.4.1/nsd1806/core_py.git
+ 
+●往刚刚创建的项目中推送文件
+[root@room9pc01 youjiahe]# git push -u origin --all
+Username for 'http://192.168.4.1': root                           do
+Password for 'http://root@192.168.4.1':                          do
+
+●回到浏览器项目页面查看内容
+ 可以看到仓库文件
+
+●ssh免密钥登陆
+ 粘贴密钥到设置----ssh密钥
+
+●回到真机
+[root@room9pc01 youjiahe]# ssh-agent   #启动ssh代理程序
+[root@room9pc01 youjiahe]# ssh-add     #添加私钥，让代理程序托管
+
+ssh-agent 用于管理 ssh private keys，目的是对解密的私钥进行高速缓存。 
+ssh-add 提示并将用户使用的私钥添加到 ssh-agent 维护列表中，此后当公钥连接到远程 SSH 或 SCP 主机时，不再提示信息。
+ssh-add 命令是把专用密钥添加到ssh-agent的高速缓存中。该命令位置在/usr/bin/ssh-add。
+
+●管理区域(小扳手)----project-----选一个项目
+   可以看到多了 ssh一行
+##############################################################################
+●
 
 
 
