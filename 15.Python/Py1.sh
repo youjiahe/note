@@ -212,7 +212,8 @@ Gitlab启动
 -v /srv/gitlab/logs:/var/log/gitlab \
 -v /srv/gitlab/data gitlab_zh:latest
 
-//--name gitlab:主机名
+//-h:主机名
+//--name gitlab:UUID
 //--restart always:容器故障自动充气
 
 ●浏览器浏览虚拟机IP
