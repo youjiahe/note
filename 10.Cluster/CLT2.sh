@@ -65,7 +65,7 @@ LVS
  VS/DR   #节点服务器需要配置VIP，接到分发器请求后，节点服务器直接回应客户端
  VS/TUN  #隧道方式实现虚拟服务器。
             #用于LB集群的调度器，且不是同一台机器，不在同一机房
-
+ LVS/fullNAT  #相当于NAT加强版，具体见图片 FULLNAT
 ●LVS调度算法
  +常用:
    &轮询 (rr)
@@ -129,7 +129,7 @@ LVS/DR       real-server必须与LVS是同一VLAN，太容易网段
 LVS/TUN      real-server 必须绑定vip
              real-server 都必须与 lvs 简历 ipip 隧道连接 
 
-LVS/full-nat 
+LVS/full-nat  
         #基于centos 6.x开发的
 
 注：
