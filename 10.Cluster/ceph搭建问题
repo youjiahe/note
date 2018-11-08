@@ -1,0 +1,8 @@
+##############################################################
+搭建 mds服务器时：
+[ceph4][INFO  ] Running command: ceph --cluster ceph --name client.bootstrap-mds --keyring /var/lib/ceph/bootstrap-mds/ceph.keyring auth get-or-create mds.ceph4 osd allow rwx mds allow mon allow profile mds -o /var/lib/ceph/mds/ceph-ceph4/keyring
+[ceph4][ERROR ] 2018-11-06 23:39:51.212191 7f339468b700  0 librados: client.bootstrap-mds authentication error (1) Operation not permitted
+[ceph4][ERROR ] Error connecting to cluster: PermissionError
+[ceph4][ERROR ] exit code from command was: 1
+[ceph_deploy.mds][ERROR ] could not create mds
+[ceph_deploy][ERROR ] GenericError: Failed to create 1 MDSs
