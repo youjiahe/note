@@ -100,6 +100,9 @@ git remote add origin git@192.168.4.1:nsd1806/core_py.git
 git push -u origin --all
 git clone git@192.168.4.1:nsd1806/core_py.git
 git pull
+git reset HEAD hello.py    #撤出暂存区 
+git checkout -- hello.py   #撤出后恢复文件
+
 ##############################################################################
 git 客户端使用
 ● git pull 与 git clone 的区别
