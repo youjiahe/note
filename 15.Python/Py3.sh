@@ -516,9 +516,19 @@ def 函数名:(参数列表)
 	•  模块具有一个__name__特殊属性
 	•  当模块文件直接执行时,__name__的值为'__main__'
 	•  当模块被另一个文件导入时,__name__的值就是该模块的名字
-
-	if __name__=='__main__':   #模块主程序
-
+	mod_fibs
+	------------------------------------------------------------------
+	#!/usr/bin/env python3
+	def fib(num=12):
+		fibs=[0,1]
+		for i in range(num-2):  #追加10个元素
+		    fibs.append(fibs[-2]+fibs[-1])
+		print(fibs)
+	print(__name__)
+	if __name__=='__main__': #模块主程序
+		fib(4)
+		fib(15)
+	-------------------------------------------------------------------
 ##############################################################################
 
 模块加载(load)
@@ -534,15 +544,23 @@ def 函数名:(参数列表)
 2.  使用random的choice函数随机取出字符
 3.  改进程序,用户可以自己决定生成多少位的密码
 
-#!/usr/bin/env python3
-from random import choice
-from string import ascii_letters  #所有大小写字母函数
-print(ascii_letters)
+	#!/usr/bin/env python3
+	#string某块的ascii_letters函数:所有的大小写字母
+	#string某块的printable函数:所有的字符
+	#string某块的digits函数:所有的数字
+	from string import ascii_letters,digits
+	from string import printable
+	from random import choice
+	import sys
 
-输出结果
-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
-
-
+	listp=ascii_letters+digits
+	def password(num=8):
+		passwd=''
+		for i in range(num):
+		    p0=choice(listp)
+		    passwd += p0
+		return passwd
+	print(password())
 
 
 
