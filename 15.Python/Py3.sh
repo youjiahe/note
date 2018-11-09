@@ -534,9 +534,13 @@ def 函数名:(参数列表)
 2.  使用random的choice函数随机取出字符
 3.  改进程序,用户可以自己决定生成多少位的密码
 
+#!/usr/bin/env python3
+from random import choice
+from string import ascii_letters  #所有大小写字母函数
+print(ascii_letters)
 
-
-
+输出结果
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 
 
