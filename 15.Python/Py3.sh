@@ -483,7 +483,7 @@ def 函数名:(参数列表)
 
 ●导入模块(import)
   import  模块名
-  from 模块名  import  方法
+  from 模块名  import 属性
   
 
 
