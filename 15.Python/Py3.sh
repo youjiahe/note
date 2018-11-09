@@ -485,10 +485,9 @@ def 函数名:(参数列表)
   import  模块名
   from 模块名  import 属性
   
-
 	#!/usr/bin/env python3
-	import mod_fibs
-	import mod_fibs as f
+	import mod_fibs                #导入整个模块
+	import mod_fibs as f           #导入整个模块，取别名
 	from mod_fibs import fib
 
 	mod_fibs.fib()
