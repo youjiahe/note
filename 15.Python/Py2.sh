@@ -34,7 +34,7 @@ Python自动化运维 day02
            — 0  0.0  0+0j  False  ''  []  {}  () 都是False          
     float：浮点数
         — 小数点
-    complex：复数s
+    complex：复数
   & 字符串
     — 用引号定义，引号之间
     — 单引与双引意义一样
@@ -118,15 +118,15 @@ Python自动化运维 day02
 
 ●列表操作
 & 列表切片查找
-  >>> list=['you','￥15000/month',True]
+  >>> list=['you','￥5000/month',True]
   >>> list
-  ['you', '￥15000/month', True]
+  ['you', '￥5000/month', True]
   >>> list[2]
   True
   >>> list[0]
   'you'
   >>> list[1]
-  '￥15000/month'
+  '￥5000/month'
 
 & 列表嵌入列表
   >>> list=['you',[1,2,3],True]
