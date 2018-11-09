@@ -486,13 +486,14 @@ def 函数名:(参数列表)
   from 模块名  import 属性
   
 ●例子：
-   & 制作斐波那契数列
+   & 制作斐波那契数列模块
+   
    [root@room9pc01 python3]# cp mod_fibs.py /usr/local/lib/python3.6/
    --------------------------------------------------------------
 	#!/usr/bin/env python3
 	import mod_fibs                #导入整个mod_fibs模块
-	import mod_fibs as f           #导入整个模块，取别名
-	from mod_fibs import fib       #导入模块额的
+	import mod_fibs as f           #导入整个mod_fibs模块，取别名
+	from mod_fibs import fib       #导入模块mod_fibs的fib属性
 
 	mod_fibs.fib()
 	f.fib(5)
