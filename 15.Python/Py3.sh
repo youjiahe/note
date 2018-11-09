@@ -498,16 +498,19 @@ def 函数名:(参数列表)
 	mod_fibs.fib()
 	f.fib(5)
 	fib(10)
-
+    ------------------------------------------------------------
     输出结果：
 	[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 	[0, 1, 1, 2, 3]
 	[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 
-
-
-
-
+	[root@room9pc01 python3]# cat mod_fibs.py   #mod_fibs模块内容
+	#!/usr/bin/env python3
+	def fib(num=12):
+		fibs=[0,1]
+		for i in range(num-2):  #追加10个元素
+		    fibs.append(fibs[-2]+fibs[-1])
+		print(fibs)
 
 
 
