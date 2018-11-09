@@ -486,10 +486,19 @@ def 函数名:(参数列表)
   from 模块名  import 属性
   
 
+	#!/usr/bin/env python3
+	import mod_fibs
+	import mod_fibs as f
+	from mod_fibs import fib
 
+	mod_fibs.fib()
+	f.fib(5)
+	fib(10)
 
-
-
+    输出结果
+	[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+	[0, 1, 1, 2, 3]
+	[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 
 
 
