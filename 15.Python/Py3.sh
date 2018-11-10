@@ -529,6 +529,10 @@ def 函数名:(参数列表)
 		fib(4)
 		fib(15)
 	-------------------------------------------------------------------
+	
+   在别处调用的输出结果：
+   mod_fibs
+   
 ##############################################################################
 
 模块加载(load)
@@ -545,6 +549,10 @@ def 函数名:(参数列表)
 3.  改进程序,用户可以自己决定生成多少位的密码
 
 	#!/usr/bin/env python3
+	#该脚本实现
+	#输入数字，显示指定位数密码；
+	#输入非数字，显示提示输入数字；
+	#什么都没有输入，默认打印8位密码；
 	#string某块的ascii_letters函数:所有的大小写字母
 	#string某块的printable函数:所有的字符
 	#string某块的digits函数:所有的数字
@@ -555,16 +563,32 @@ def 函数名:(参数列表)
 
 	listp=ascii_letters+digits
 	def password(num=8):
-		passwd=''
-		for i in range(num):
-		    p0=choice(listp)
-		    passwd += p0
-		return passwd
-	print(password())
+	    passwd=''
+	    for i in range(num):
+		p0=choice(listp)
+		passwd += p0
+	    return passwd
+	if sys.argv.__len__() ==2:
+	    for i in sys.argv[1]:
+		if i not in digits:
+		    print('请输入一个数字')
+		    exit()
+	    else:
+		lo = int(sys.argv[1])
+		print(password(lo))
+	else:
+	    print(password())
 
-
-
-
+	[root@room9pc01 python3]# python3 randpass.py
+	WyLy3iiC
+	[root@room9pc01 python3]# python3 randpass.py 12
+	zFdpufVFIoVK
+	[root@room9pc01 python3]# python3 randpass.py 13
+	RQ3rUXrHWYo7C
+	[root@room9pc01 python3]# python3 randpass.py 50
+	Iqe8HZyI85TGyrRCo9444Uw5RsXSkDM43N0blXEXmqPjJU6kQ1
+	[root@room9pc01 python3]# python3 randpass.py 90yyyyy09
+	请输入一个数字
 
 
 

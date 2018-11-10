@@ -85,7 +85,7 @@ Python自动化运维 day02
 'z'
 >>> l[-1]
 'z'
->>> l[2:5]
+>>> l[2:5]  #起始下标包含，结束下标不包含
 'cde'
 >>> l[4:-1]
 'efghijklmnopqrstuvwxy'
@@ -96,6 +96,10 @@ Python自动化运维 day02
 'efghijklmnopqrstuvwxyz' #":"后不写，默认最后一个字符
 >>> l[:]
 'abcdefghijklmnopqrstuvwxyz'
+
+str='python'
+print(str[1::2])  #取出yhn 从下标1开始取到最后，步长为2
+print(str[:])     #取全部
 
 ●字符串拼接
   用数字运算符+，拼接
@@ -133,7 +137,9 @@ Python自动化运维 day02
   >>> list
   ['you', [1, 2, 3], True]
   >>> list[1]
-[  1, 2, 3]
+   [  1, 2, 3]
+  >>> list[1][2]
+   2
 
 & 列表索引赋值
   >>> list[2]=False

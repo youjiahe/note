@@ -224,7 +224,7 @@ playbook
 
 ● playbook 是什么?
   – playbook是ansible用于配置,部署和管理托管主机剧本,
-     通过playbook的详绅描述,执行其中的一系列tasks,可
+     通过playbook的详细描述,执行其中的一系列tasks,可
      以让进端主机达到预期状态
   – 也可以说,playbook字面意思即剧本,现实中由演员按
      剧本表演,在ansible中由计算机进行安装,部署应用,
@@ -342,10 +342,10 @@ playbook进阶
 变量
 ● 设密码
    – 解决密码明文问题
-   – user模块的password为什么丌能设置密码呢
-   – 绉过测试収现,password是把字符串直接写入
-    shadow,幵没有改发,而Linux的shadow密码是绉过
-     加密的,所以丌能使用
+   – user模块的password为什么不能设置密码呢
+   – 经过测试収现,password是把字符串直接写入
+    shadow,并没有改变,而Linux的shadow密码是经过
+     加密的,所以不能使用
   • 解决方案
    – 发量过滤器password_hash
     {{ 'urpassword' | password_hash('sha512')}}
@@ -449,7 +449,7 @@ when
    断,when正是解决这个问题的最佳选择,进程中的系统发
    量facts作为when的条件,可以通过setup模块查看
    – when 的样例
-   tashs:
+   tasks:
      - name: somecommand
        command: somecommand
        when: expr
