@@ -9,3 +9,30 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
       ExecStart=/usr/bin/dockerd --graph /home/docker  #先创建文件夹
   2.3 查看
      docker info | grep "\/home\/docker"
+
+3.mysql的innodb如何定位锁问题:
+  在使用 show engine innodb status检查引擎状态时，发现了死锁问题
+  在5.5中，information_schema 库中增加了三个关于锁的表（MEMORY引擎）
+
+  innodb_trx         ## 当前运行的所有事务
+
+  innodb_locks     ## 当前出现的锁
+
+  innodb_lock_waits  ## 锁等待的对应关系
+
+4.主从延迟原因及解决
+  原因：
+    1.单线程同步数据；
+        数据库版本是5.6前的；
+    2.网络延迟；
+    3.硬件性能，从库比主库差太多；
+    4.日志参数，写入、刷新策略太安全，不适用于并发量大的场合；
+    5.MyISAM表较多，锁冲突
+  解决方法：
+    1.1单线程转为多线程；调整参数解决；
+    1.2升级数据库到5.6或以上版本
+    2.网络设备升级；部署链路聚合；
+    3.服务器硬件升级；或部署专用的同步服务器
+    4.调整日志相关参数，使其释放更多的磁盘IO的同时，不影响并发访问性能。
+    5.根据实际调整使用MyISAM的表数量
+
