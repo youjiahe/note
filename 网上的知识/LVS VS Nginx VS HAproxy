@@ -13,10 +13,10 @@ Ngnix：
 2、也可以承担高的负载压力且稳定，一般能支撑超过1万次的并发；
 3、性能也较高、对内存和CPU资源消耗比较低
 4、对后端服务器的健康检查，只支持通过端口来检测，不支持通过url来检测。
-5、Nginx对请求的异步处理可以帮助节点服务器减轻负载；
-6、Nginx仅能支持http、https和Email协议，这样就在适用范围较小。
-7、不支持Session的直接保持；
-8、支持负载均衡算法：Round-robin（轮循）、Weight-round-robin（加权权轮循）、Ip-hash（Ip哈希）
+5、支持负载均衡算法：Round-robin（轮循）、Weight-round-robin（加权权轮循）、Ip-hash（Ip哈希）
+6、Nginx对请求的异步处理可以帮助节点服务器减轻负载；
+7、Nginx仅能支持http、https和Email协议，这样就在适用范围较小。
+8、不支持Session的直接保持；
 9、Nginx还能做Web服务器
 
 HAProxy的特点是：
