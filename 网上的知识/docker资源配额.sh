@@ -55,13 +55,13 @@ CPU配额
 ###############################################################################     
 磁盘IO配额控制 
 ● 相关配置项
-  & –device-read-bps
+  & --device-read-bps
        — 限制此设备上的读速度（bytes per second），单位可以是kb、mb或者gb。
-  & –device-write-bps 
+  & --device-write-bps 
        — 限制此设备上的写速度（bytes per second），单位可以是kb、mb或者gb。
      
 ● 示例       
-   docker run -tid –namedisk1 –device-write-bps /dev/sda:1mb centos:latest
+   docker run -tid --name disk1 --device-write-bps /dev/sda:1mb centos:latest
      
      
      
