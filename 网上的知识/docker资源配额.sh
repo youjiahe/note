@@ -1,17 +1,17 @@
 ##################################################################################
 CPU配额
 ● Docker_CPU份额控制
-  & –cpu-shares，在创建容器时指定容器所使用的CPU份额值。
+  & --cpu-shares，在创建容器时指定容器所使用的CPU份额值。
   & 说明
-  cpu-shares的值不能保证可以获得1个vcpu或者多少GHz的CPU资源，仅仅只是一个弹性的加权值。
+  --cpu-shares的值不能保证可以获得1个vcpu或者多少GHz的CPU资源，仅仅只是一个弹性的加权值。
    默认情况下，每个docker容器的cpu份额都是1024。
    单独一个容器的份额是没有意义的，只有在同时运行多个容器时，容器的cpu加权的效果才能体现出来。
    例如，两个容器A、B的cpu份额分别为1000和500，在cpu进行时间片分配的时候，
    容器A比容器B多一倍的机会获得CPU的时间片
 
 ● Docker_CPU周期控制
-  & -cpu-period
-  & -cpu-quota
+  & --cpu-period
+  & --cpu-quota
   & cpu-period的最小值为1000微秒，最大值为1秒（10^6 μs），默认值为0.1秒（100000 μs）。
   & cpu-quota的值默认为-1，表示不做控制。
 
@@ -25,8 +25,8 @@ CPU配额
    — cpu-quota设置为200000（0.2秒）。
 
 ● 示例
-  docker run -tid –cpu-shares 100 centos:latest
-  docker run -tid –cpu-period 100000 –cpu-quota 200000 censtos:latest
+  docker run -tid --cpu-shares 100 centos:latest
+  docker run -tid --cpu-period 100000 --cpu-quota 200000 censtos:latest
    
 ##################################################################################
 内存配额控制
@@ -47,7 +47,7 @@ CPU配额
   & 默认情况下，容器可以使用主机上的所有空闲内存。
 
 ● 示例
-   docker run -tid —name mem1 -m 128m centos:latest /bin/bash
+   docker run -tid --name mem1 -m 128m centos:latest /bin/bash
    docker run -it --rm -m 100M --memory-swap -1 centos:latest /bin/bash
    docker run -itd --memory-reservation 1G centos:latest /bin/bash
    docker run -it -m 500M --memory-reservation 200M centos:latest /bin/bash
