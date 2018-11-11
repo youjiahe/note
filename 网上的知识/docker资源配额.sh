@@ -31,27 +31,28 @@ CPU配额
 ##################################################################################
 内存配额控制
 ● 相关配置项
-  & –memory:
+  & –m，--memory= :
       — 设置容器使用的最大内存上限。默认单位为byte，可以使用K、G、M等带单位的字符串。
-  & –memory-reservation：
+  & --memory-reservation：
       — 启用弹性的内存共享，
       — 当宿主机资源充足时，允许容器尽量多地使用内存，
       — 当检测到内存竞争或者低内存时，强制将容器的内存降低到memory-reservation所指定的内存大小。
       — 按照官方说法，不设置此选项时，有可能出现某些容器长时间占用大量内存，导致性能上的损失。
-  & –memory-swap：
+  & --memory-swap：
       — 等于内存和swap分区大小的总和，
-      — 设置为-1时，表示swap分区的大小是无限的。
+      — 设置为-1时，表示swap分区的大小是无限的，宿主多少，容器就多少。
       — 默认单位为byte，可以使用K、G、M等带单位的字符串。
-      — 如果 -memory-swap的设置值小于 -memory的值，则使用默认值，为 -memory-swap值的两倍。
+      — 如果 --memory-swap的设置值小于 --memory的值，则使用默认值，为 --memory-swap值的两倍。
      
   & 默认情况下，容器可以使用主机上的所有空闲内存。
 
 ● 示例
-   docker run -tid —name mem1 —memory 128m censtos:latest /bin/bash
-   docker run -itd --memory-reservation 1G censtos:latest /bin/bash
-   docker run -it -m 500M --memory-reservation 200M ubuntu:14.04 /bin/bash
-   //-m 就是-memory
-##################################################################################     
+   docker run -tid —name mem1 -m 128m centos:latest /bin/bash
+   docker run -it --rm -m 100M --memory-swap -1 centos:latest /bin/bash
+   docker run -itd --memory-reservation 1G centos:latest /bin/bash
+   docker run -it -m 500M --memory-reservation 200M centos:latest /bin/bash
+   
+###############################################################################     
 磁盘IO配额控制 
 ● 相关配置项
   & –device-read-bps
@@ -59,8 +60,8 @@ CPU配额
   & –device-write-bps 
        — 限制此设备上的写速度（bytes per second），单位可以是kb、mb或者gb。
      
-● 内存配额控制使用示例       
-   docker run -tid –namedisk1 –device-write-bps /dev/sda:1mb ubuntu:stress
+● 示例       
+   docker run -tid –namedisk1 –device-write-bps /dev/sda:1mb centos:latest
      
      
      
