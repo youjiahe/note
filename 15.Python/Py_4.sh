@@ -429,7 +429,7 @@ shell相关模块——模块结构及布局
 	>>> print(alist)
 	[68, 3, 2, 1, 87]
 	
-& index()    #返回索引对应的值
+& index()    #返回元素对应的索引值
 	>>> print(alist)
 	[68, 3, 2, 1, 87]
 	>>> print(alist.index(2))
