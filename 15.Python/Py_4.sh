@@ -398,7 +398,7 @@ shell相关模块——模块结构及布局
 & append()  #向列表末尾追加一个元素
    >>> alist=[1,2,3]
 	>>> alist.append(4)
-	>>> alist.append([5,6])  #追加整个列表元素
+	>>> alist.append([5,6])  #追加整个元素
 	>>> print(alist)
 	[1, 2, 3, 4, [5, 6]]
 
@@ -411,7 +411,7 @@ shell相关模块——模块结构及布局
 	
 & insert(index,obj)  #在index位置插入对象obj
 	>>> alist=[1,2,3]
-	>>> alist.insert(0,0) 
+	>>> alist.insert(0,0)   #在索引 0 前插入 0
 	>>> alist.insert(-1,4)  #索引值为-1时，会在最后一个元素前插入；若想在末尾插入，则用append
 	>>> print(alist)
 	[0, 1, 2, 4, 3]
