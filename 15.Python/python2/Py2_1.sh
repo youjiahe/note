@@ -287,10 +287,10 @@ os模块
 	chdir()     #改变工作目录
 	remove()    #删除文件
 ● os模块方法 path
-os.path.isfile()
-os.path.isdir()
-os.path.exists()
-os.path.islink()
+	os.path.isfile()
+	os.path.isdir()
+	os.path.exists()
+	os.path.islink()
 
 ##############################################################################
 pickle模块方法
