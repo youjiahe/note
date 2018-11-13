@@ -284,11 +284,16 @@ os模块
 	symlink()   #创建符号链接
 	listdir()   #列出指定目录的文件
 	getcwd()    #返回当前工作目录    #相当于pwd
-	mkdir()     #创建目录
+	mkdir()     #创建单个目录
+	makedirs()  #创建多个目录
 	chmod()     #改变权限模式
 	getatime()  #返回最近访问时间
 	chdir()     #改变工作目录
 	remove()    #删除文件
+	removedirs()
+	mknod()     #相当于touch
+	chmod()     #修改权限，注意权限需要写8进制数，如0o777
+
 ● os模块方法 path
 	os.path.isfile()
 	os.path.isdir()
@@ -296,23 +301,44 @@ os模块
 	os.path.islink()
 	os.path.split()
 	os.path.join()
-	os.path.chdir()
 
+>>> import os
+>>> os.remove('/tmp/mima')
+>>> os.getcwd()  # 相当于是pwd
+>>> os.mkdir('/tmp/demo')
+>>> os.makedirs('/tmp/demo/aaa/bbb')
+>>> os.listdir()   # ls
+>>> os.listdir('/tmp/demo')
+>>> os.chdir('/tmp/demo')   # cd /tmp/demo
+>>> os.mknod('hello.txt')   # touch hello.txt
+>>> os.symlink('/etc/hosts', '/tmp/demo/zhuji')   # 软链接
+>>> os.remove('hello.txt')
+>>> os.chmod('aaa', 0o777)   # Linux的权限是8进制数
+>>> os.path.split('/tmp/demo/abc.txt')
+>>> os.path.join('/tmp/demo', 'abc.txt')
+>>> os.path.isfile('/etc/hosts')  # 是文件吗？
+>>> os.path.isdir('/etc/hosts')   # 是目录吗？
+>>> os.path.exists('/etc/')    # 存在吗？
 	
 ##############################################################################
 pickle模块方法
-•  分别调用dump()和load()可以存储、写入
+•  分别调用
+	dump()
+	load()
+	可以存储、写入
    — 存储的是什么数据类型，拿出来就是什么类型
 
-import pickle as p
-with open('1.txt','wb') as f:
-	p.dump({'name':'bob','age':25},f)
+	#!/usr/bin/env python3
+	import pickle as p
+	with open('/opt/test/1.txt','wb') as f:
+		p.dump({'name':'bob','age':25},f)
+	with open('/opt/test/1.txt','rb') as f1:
+		info=p.load(f1)
 
-with open('1.txt','rb') as f1:
-	p.load(f1)
+	print(info)
 
-
-
+	#运行结果：
+   {'name': 'bob', 'age': 25}
 
 
 
