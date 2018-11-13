@@ -294,8 +294,9 @@ os模块
 	os.path.isdir()
 	os.path.exists()
 	os.path.islink()
+	os.path.split()
+	os.path.join()
 	
-
 ##############################################################################
 pickle模块方法
 
