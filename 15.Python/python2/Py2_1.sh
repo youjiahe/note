@@ -299,13 +299,15 @@ os模块
 	
 ##############################################################################
 pickle模块方法
+•  分别调用dump()和load()可以存储、写入
+   — 存储的是什么数据类型，拿出来就是什么类型
 
 import pickle as p
 with open('1.txt','wb') as f:
 	p.dump({'name':'bob','age':25},f)
 
 with open('1.txt','rb') as f1:
-	p.load()
+	p.load(f1)
 
 
 
