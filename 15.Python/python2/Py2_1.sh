@@ -280,13 +280,13 @@ os模块
 	函数           作用
 	symlink()   #创建符号链接
 	listdir()   #列出指定目录的文件
-	getcwd()    #返回当前工作目录
+	getcwd()    #返回当前工作目录    #相当于pwd
 	mkdir()     #创建目录
 	chmod()     #改变权限模式
 	getatime()  #返回最近访问时间
 	chdir()     #改变工作目录
-
-
+	remove()    #删除文件
+● os模块 path
 
 
 
