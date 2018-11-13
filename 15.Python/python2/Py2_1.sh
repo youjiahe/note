@@ -296,6 +296,8 @@ os模块
 	os.path.islink()
 	os.path.split()
 	os.path.join()
+	os.path.chdir()
+
 	
 ##############################################################################
 pickle模块方法
