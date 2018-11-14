@@ -214,14 +214,14 @@ if __name__ == '__main__':
 	for i in newmg:
 		print(i)
 ##############################################################################
-● 闭包  难点、不是重点 #参考脚本 tkinter_test.py
+● 闭包  难点、不是重点，需要用到的时候，再看  #参考脚本 tkinter_test.py
 import tkinter
 def hello(word):
     def say_hi():
         lb.config(text=word)
     return say_hi         #没有加()
 
-
+##############################################################################
 
 
 
