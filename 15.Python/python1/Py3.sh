@@ -590,8 +590,17 @@ def 函数名:(参数列表)
 	[root@room9pc01 python3]# python3 randpass.py 90yyyyy09
 	请输入一个数字
 
+##############################################################################
+更加短的代码
 
-
+#!/usr/bin/env python3
+from string import ascii_letters,digits
+from random import random,choice,randint
+def randpa(num=8):
+    list=[choice(ascii_letters+digits) for i in range(num)]
+    return ''.join(list)
+if __name__ == '__main__':
+    print(randpa())
 
 
 

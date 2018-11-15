@@ -392,6 +392,13 @@ shell相关模块——模块结构及布局
 	>>> mystr='  hello   '
 	>>> print(mystr.strip())
 	hello
+& join()
+	>>> list=list('hello')
+	>>> list
+	['h', 'e', 'l', 'l', 'o']
+	>>> str=''
+	>>> print(str.join(list))
+	hello
 
 ##############################################################################	
 列表操作 方法函数		

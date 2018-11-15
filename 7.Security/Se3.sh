@@ -56,32 +56,39 @@ ausearch -k ssh_change -i #-k,标签；-i,可读编译；
 
 ##################################################################################
 加固常见服务的安全
+Nginx安全优化包括：删除不要的模块、修改版本信息、限制并发、拒绝非法请求、防止buffer溢出。
+
+MySQL安全优化包括：初始化安全脚本、密码安全、备份与还原、数据安全。
+
+Tomcat安全优化包括：隐藏版本信息、降权启动、删除默认测试页面.
 ##################################################################################
 Nginx安全
 ●删除不需要的模块
  --without-http_ssi_module  #禁用服务器端包含ssi的模块
  --without-http_autoindex_module #无首页文件时，列出根目录下的所有文件，不安全
-●查看网页头部信息
-[root@room11pc19 sh]# curl -I www.nginx.org  #-I，只显示头部信息；-i，显示头部及页面
+
 
 ●隐藏nginx版本号
+	查看网页头部信息
+	[root@room11pc19 sh]# curl -I www.nginx.org    #有版本信息，需要隐藏
+	#-I，只显示头部信息；-i，显示头部及页面
 1、进入nginx配置文件的目录
-在http 加上server_tokens off; 如
-http {
-server_tokens off;
-}
-●修改版本号显示内容
-修改源码
-# vim +48 src/http/ngx_http_header_filter_module.c   #+48，为直接进入48行
-//注意：vim这条命令必须在nginx-1.12源码包目录下执行！！！！！！
-//该文件修改前效果如下：
-static .."Server: nginx" CRLF;
-static .."Server: nginx" NGINX_VER CRLF;
-static .."Server: nginx" NGINX_VER_BUILD CRLF;
-//下面是我们修改后的效果：
-static .."Server: JD" CRLF;
-static .."Server: JD" CRLF;
-static .."Server: JD" CRLF;
+	在http 加上server_tokens off; 如
+	http {
+	server_tokens off;
+	}
+	2.修改版本号显示内容
+	修改源码
+	# vim +48 src/http/ngx_http_header_filter_module.c   #+48，为直接进入48行
+	//注意：vim这条命令必须在nginx-1.12源码包目录下执行！！！！！！
+	//该文件修改前效果如下：
+	static .."Server: nginx" CRLF;
+	static .."Server: nginx" NGINX_VER CRLF;
+	static .."Server: nginx" NGINX_VER_BUILD CRLF;
+	//下面是我们修改后的效果：
+	static .."Server: JD" CRLF;
+	static .."Server: JD" CRLF;
+	static .."Server: JD" CRLF;
 
 ● 限制单个IP并发量
 默认装ngx_http_limit_req_module，限制DDOS
@@ -95,16 +102,15 @@ limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s
     ..
    limit_req zone=one burst=5;    #burst=5，每秒处理1个请求，多与放进漏斗，其余不响应
  }
-##################################################################################
-httpd安全
-get,post,delete,put,head
+
 ● 拒绝非法的请求
-if($request_method !~ ^(GET|POST)){
+if($request_method !~ ^(GET|POST)){   #get,post,delete,put,head
    return 405;
 }
 
 curl -i -X HEAD 192.168.2.100
 curl -i -X GET 192.168.2.100
+
 ●防止buffer溢出（用的时候复制）
 当客户端连接服务器时，服务器会启用各种缓存，用来存放连接的状态信息。
 如果攻击者发送大量的连接请求，而服务器不对缓存做限制的话，内存数据就有可能溢出（空间不足）。
