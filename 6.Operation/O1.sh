@@ -32,6 +32,7 @@ root启动的程序，Liunx会自动把root降级为普通用户，具体是哪�
 /usr/local/nginx/sbin/nginx -s stop //停止服务
 /usr/local/nginx/sbin/nginx -s reload //不关服务的情况下，重新加载配置文件
 /usr/local/nginx/sbin/nginx -V //查看nginx版本
+/usr/local/nginx/sbin/nginx -T //查看nginx配置文件
   ###########################################
 步骤5：查看nginx服务状态
 
