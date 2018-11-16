@@ -98,18 +98,13 @@ index.jsp
 严格区分大小写
 test.jsp
 <html>
-<body bgcolor=black>
-<center>
-<h1>Now time is:<%=new java.util.Date()%></h1>
-</center>
-</body>
+    <body bgcolor=black>
+        <center>
+            <h1>Now time is:<%=new java.util.Date()%></h1>
+        </center>
+   </body>
 </html>
 #######################################################################
-Apache: httpd,80
-        tomcat,8080
-daemon
-memory
-#########################################################################
 ●Tomcat配置文件
 
 vim /usr/local/tomcat/conf/server.xml
@@ -137,49 +132,69 @@ age=16
 <women name=tom age=16 />
 
 #############################################################################
-●appbase定义
-Tomcat虚拟主机
-
-<Host name="www.a.com" appbase="a" .. />
-</Host>
+●Tomcat虚拟主机  #appbase定义
+	<Host name="www.a.com" appbase="a" .. />
+	</Host>
+	[root@web1 ~]# echo "root" > /usr/local/tomcat/a/ROOT/index.html
+	[root@web1 ~]# /usr/local/tomcat/bin/shutdown.sh
+	[root@web1 ~]# /usr/local/tomcat/bin/startup.sh
 #############################################################################
-●docbase,可以修改网页根目录
+●修改www.b.com网站的首页目录为base #docbase,可以修改网页根目录
 
-<Host name="www.b.com"  appBase="b"
- unpackWARs="true" autoDeploy="true">
-<Context path="" docBase="base" reloadable="true" />  #reloadable可写可不写
-</Host>
+1）使用docBase参数可以修改默认网站首页路径
+	[root@web1 ~]# vim /usr/local/tomcat/conf/server.xml
+	… …
+	<Host name="www.b.com" appBase="b" unpackWARS="true" autoDeploy="true">
+	<Context path="" docBase="base" reloadable="true"/>
+	</Host>
+	… …
+	[root@web1 ~]# mkdir  /usr/local/tomcat/b/base
+	[root@web1 ~]# echo "BASE" > /usr/local/tomcat/b/base/index.html
+	[root@web1 ~]# /usr/local/tomcat/bin/shutdown.sh
+	[root@web1 ~]# /usr/local/tomcat/bin/startup.sh
 
 ●Host与Host之间可以有很多个<Context>
-●访问 www.b.com:8080/test 可以访问到/var/www/html/index.html
-
+#############################################################################
+●访问www.a.com/test时，页面自动跳转到/var/www/html目录下的页面
+  [root@web1 ~]# vim /usr/local/tomcat/conf/server.xml
+	… …
+	<Host name="www.a.com" appBase="a" unpackWARS="true" autoDeploy="true">
+	<Context path="/test" docBase="/var/www/html/" />
+	</Host>
+	… …
+	[root@web1 ~]# echo "Test" > /var/www/html/index.html
+	[root@web1 ~]# /usr/local/tomcat/bin/shutdown.sh
+	[root@web1 ~]# /usr/local/tomcat/bin/startup.sh
 #############################################################################
 ●SSL虚拟主机
 命令选项帮助
 
-1）创建加密用的私钥和证书文件(不需要死记)
-keytool -genkeypair -help
-# keytool -genkeypair -alias tomcat -keyalg RSA -keystore /usr/local/tomcat/keystore                //提示输入密码为:123456
-//-genkeypair     生成密钥对
-//-alias tomcat     密钥别名
-//-keyalg RSA     定义密钥算法为RSA算法
-//-keystore         定义密钥文件存储在:/usr/local/tomcat/keystore
+	1）创建加密用的私钥和证书文件(不需要死记)
+	keytool -genkeypair -help
+	# keytool -genkeypair -alias tomcat -keyalg RSA -keystore /usr/local/tomcat/keystore                //提示输入密码为:123456
+	//-genkeypair     生成密钥对
+	//-alias tomcat     密钥别名
+	//-keyalg RSA     定义密钥算法为RSA算法
+	//-keystore         定义密钥文件存储在:/usr/local/tomcat/keystore
 
-2）密钥文件/usr/local/tomcat/keystore
+	2）密钥文件/usr/local/tomcat/keystore
 
-3）修改配置文件(去掉注释，加两句话)
-只要定义一个<Connectorport>,全部虚拟主机都有效
+	3）修改配置文件(去掉注释，加两句话)
+	只要定义一个<Connectorport>,全部虚拟主机都有效
 
-<!--
-    <Connector port="8443" protocol=".. ..".....
-      keystoreFile="/usr/local/tomcat/     keystore" keystorePass="123456"/>
-    -->
+	<!--
+		<Connector port="8443" protocol=".. ..".....
+		  keystoreFile="/usr/local/tomcat/     keystore" keystorePass="123456"/>
+		-->
 
 #############################################################################
 ●更改访问日志名字                           #只需要在对应虚拟主机，加上<Valve... />
-<Valve ..directory="a"
-prefix="www_a" suffix=".txt"      #主要更改这几个参数
-/>
+	<Valve ..directory="aa"
+	prefix="www_a" suffix="log"      #主要更改这几个参数
+	/>
+
+	[root@jiahe ~]# ls /usr/local/tomcat/aa/  #日志文件存在 directory 定义目录下
+	base  www_a.2018-11-16.log
 
 #############################################################################
 ●补充：
@@ -196,9 +211,13 @@ nginx【代理】             #适合做集群
 varnish【代理】+缓存         #适合做缓存服务器，加速服务器，缓存服务器的数据
 ●默认缓存到内存
 
-例子：优酷总部在北京，主服务器也在北京。为了不需要全球都跑过来访问北京的主服务器，减轻压力。可以在世界各地搭建Varnish代理服务器。就可以在任何时候，缓存主服务器的数据，当地用户需要看视频时，就可以近距离高速地访问网站
+	例子：优酷总部在北京，主服务器也在北京。
+	为了不需要全球都跑过来访问北京的主服务器，减轻压力。
+	可以在世界各地搭建Varnish代理服务器。
+	就可以在任何时候，缓存主服务器的数据，
+	当地用户需要看视频时，就可以近距离高速地访问网站
 
-●类比 DNS 分离解析
+●结合 DNS 分离解析可以做到不同地方访问不同的服务器，就近原则
 [root@room11pc19 ~]# nslookup www.tmooc.cn
 Server:		176.121.0.100
 Address:	176.121.0.100#53
@@ -241,7 +260,7 @@ backend default {
  }
 
 ●步骤6：起服务
-varnishd  -f /usr/local/etc/default.vcl
+varnishd  -f /etc/varnish.conf
 //varnishd命令的其他选项说明如下：
 //varnishd –s malloc,128M                #定义varnish使用内存作为缓存，空间为128M
 //varnishd –s file,/var/lib/varnish_storage.bin,1G #定义varnish使用文件作为缓存

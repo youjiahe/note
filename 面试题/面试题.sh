@@ -36,3 +36,47 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
     4.调整日志相关参数，使其释放更多的磁盘IO的同时，不影响并发访问性能。
     5.根据实际调整使用MyISAM的表数量
 
+5.Nginx php-fpm 经常出现的错误是 502 和 504，分别出现在什么情况？
+
+
+6.RedHat6版本与RedHat7版本区别
+  6.1 引导程序：RHEL6 使用grub引导程序；RHEL7使用 grub2   
+     #grub2更强大，支持MBR、GPT、NTFS、BIOS
+  6.2 服务管理：
+ 
+7.网站上线流程
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
