@@ -14,7 +14,7 @@ re模块  正则匹配
    — re.findall('regexp',data)  #返回一个匹配对象的列表
    — re.finditer('regexp',data) #与findall()功能相同,返回迭代器非列表;
 	— re.split('分隔符',data)      #分隔数据
-   — re.sub('regexp',dst,'')    #把字符串中所有匹配正则表达式的地方替换成新的字符串
+   — re.sub(pattern,repl,string)    #把字符串中所有匹配正则表达式的地方替换成新的字符串
 	— *.group()
 	— compile函数
 
