@@ -105,6 +105,19 @@ dict.items()
 	>>> print(adict)
 	{'name': 'youjiahe', 'age': 25, 'email': 'you@126.com'}
 
+● 把dict.values()  转换为列表
+	>>> dict1={"name":"you","age":25}
+	>>> dict1.values()
+	dict_values(['you', 25])
+	#下面命令，把元组 dict_values 转换为列表
+	>>> dict1_list=list(dict1.values())  
+	>>> dict1_list
+	['you', 25]
+	>>> dict1_list[0]
+	'you'
+	>>> dict1_list[1]
+	25
+
 ##############################################################################
 ● 案例1:模拟用户登陆信息系统  #请看github   pyhon2/day1
 	1.  支持新用户注册,新用户名和密码注册到字典中
@@ -154,7 +167,7 @@ dict.items()
 		    n=0
 ##############################################################################
 ● 集合
-
+# 集合相当于是无值的字典，所以也用{}表示
 a=set('a')
 b=set('b')
 c=set(['abc','123',123,True])
