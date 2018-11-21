@@ -1,3 +1,4 @@
+https://blog.csdn.net/fsx2550553488/article/details/80603497  #题目比较全的网址
 ##################################################################################
 1.如何控制容器占用系统资源的份额？  #更详细请看网上知识文件夹下的《docker资源配额》
 docker run -tid –cpu-shares 100 centos:latest  #在创建容器时指定容器所使用的CPU份额值，权重值0
@@ -125,34 +126,53 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
 		 sys.setdefaultencoding(default_encoding)
 		 
 11.请写出一段python代码实现删除一个list里面的重复元素
+  1.方法1：
 	for i in list1:
 		 if i not in list2:
 			 list2.append(i)
 		 else:
 			  continue
 	list1=list2
+  2.方法2
+     list(set(list))
 ##################################################################################
 12.如何根据容器的名字列出容器状态
 	docker status 容器id
 ##################################################################################
 13.Linux 开机过程
-    1. BIOS     硬件检测，加载MBR
-    2. MBR      存储BootLoader信息，加载GRUB
-    3. GRUB     查找并加载kernel
-    4. Kernel   装载驱动，挂载rootfs，执行/sbin/init
+	1. BIOS     硬件检测，加载MBR
+	2. MBR      存储BootLoader信息，加载GRUB
+	3. GRUB     查找并加载kernel
+	4. Kernel   装载驱动，挂载rootfs，执行/sbin/init
+	5. Init     OS初始化，执行runlevel相关程序
+	6. Runlevel 启动指定级别的服务
+##################################################################################
+14.修改内核如何生效
+	sysctl -p
+##################################################################################
+15、git初始化和更新子模块
+	git submodule init 初始化子模块
+	git submodule update 更新子模块
+##################################################################################
+16、在10.0.0.8/8中划分出3个子网，保证每个子网有4089个私有ip
 
+##################################################################################
 
+17.keepalived工作原理
+Layer3,4,&5工作早IP/TCP协议栈的IP层，TCP层，及应用层
+原理：
+Layer3:keepalived使用layer3的方式工作时，keepalived会定期向服务器群中发送一个ICMP的数据包（即我们平时用的ping程序），如果发现某台服务器的IP地址没有激活，keepalived便会报告这台服务器是小，并将他从服务器群中剔除。Layer3的方式是以服务器的IP第孩子是否有效作为服务器工作正常与否的标准。
 
+Layer4:主要以TCP端口的状态来决定服务器工作正常与否。如web sercer的服务端口一般是80.如果keepalived检测到80端口没有启动，则keepalived将这台服务器从服务群中删除。
 
+Layer5:layer5就是工作载具体的应用层，比layer3,4要复杂一点，载网络上占用的宽带也要打一些。Keepalived将根据用户的设定检查服务器的运行是否正常。如果设定不相符，则keepalived将把服务器从群中踢除。
+##################################################################################
+SQL的四大功能：
 
-
-
-
-
-
-
-
-
+数据定义：DDL(data definition language)，定义三大模式结构、两级映射、约束等。以CREATE、ALTER、DROP、COMMIT、TRUNCATE等为主
+数据操作：DML(data manipulation language)，增删改查等功能，以INSERT、UPDATE、DELETE、SELECT、LOCK等主为
+数据控制：DCL(data control language )，包括对基本表和视图的授权，完整性规则的描述，事务控制等内容，以GRANT、REVOKE等为主
+事务操作：DTL 事务命令 roll back
 
 
 
