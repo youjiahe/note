@@ -1,7 +1,8 @@
+##################################################################################
 1.如何控制容器占用系统资源的份额？  #更详细请看网上知识文件夹下的《docker资源配额》
 docker run -tid –cpu-shares 100 centos:latest  #在创建容器时指定容器所使用的CPU份额值，权重值0
 docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程每1秒使用单个CPU的0.2秒时间
-
+##################################################################################
 2.如何修改docker默认存储设置
   2.1 修改docker.service文件.
      vim /usr/lib/systemd/system/docker.service
@@ -9,7 +10,7 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
       ExecStart=/usr/bin/dockerd --graph /home/docker  #先创建文件夹
   2.3 查看
      docker info | grep "\/home\/docker"
-
+##################################################################################
 3.mysql的innodb如何定位锁问题:
   在使用 show engine innodb status检查引擎状态时，发现了死锁问题
   在5.5中，information_schema 库中增加了三个关于锁的表（MEMORY引擎）
@@ -19,7 +20,7 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
   innodb_locks     ## 当前出现的锁
 
   innodb_lock_waits  ## 锁等待的对应关系
-
+##################################################################################
 4.主从延迟原因及解决
   原因：
     1.单线程同步数据；
@@ -35,16 +36,115 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
     3.服务器硬件升级；或部署专用的同步服务器
     4.调整日志相关参数，使其释放更多的磁盘IO的同时，不影响并发访问性能。
     5.根据实际调整使用MyISAM的表数量
-
+##################################################################################
 5.Nginx php-fpm 经常出现的错误是 502 和 504，分别出现在什么情况？
 
-
+##################################################################################
 6.RedHat6版本与RedHat7版本区别
-  6.1 引导程序：RHEL6 使用grub引导程序；RHEL7使用 grub2   
-     #grub2更强大，支持MBR、GPT、NTFS、BIOS
-  6.2 服务管理：
- 
+	1.引导程序
+	   6： grub  7：grub2
+	2.主机名q
+	  6. /etc/sysconfig/network   HOSTNAME
+	       sysctl  kernel.hostname
+	   7  /etc/hostname  马上生效
+	      hostnamectl
+	3.上帝进程  
+	    6：initd   7：systemd
+	4.服务管理
+	   6：  service chkconfig    7.systemctl  
+	5.防火墙
+	   6：iptables    7：firewalld
+	6.普通用户uid
+	   6：500   7：1000
+##################################################################################	 
 7.网站上线流程
+
+##################################################################################
+8.Docker镜像构建的优化总结
+ 一、镜像最小化
+	1、选择最精简的基础镜像
+		选择体积最小的基础镜像可有效降低镜像体积。如：alpine、busybox等
+	2、清理镜像构建的中间产物。
+		构建镜像的过程中，当dockerfile的指令执行完成后，删除镜像不需要用的的文件。
+		如使用yum安装组件，最后可使用yum clean all镜像清理不需要的文件
+	3、减少镜像的层数
+		镜像是一个分层存储的文件，并且镜像对层数也是有一定数量的限制，
+		当前镜像的层数最高是127层，如果不多加注意，将会导致镜像越来越臃肿。
+		在使用dockerfile构建镜像时，dockerfile中的每一条指令都会生成一个层，
+		因此可以通过合并dockerfile中可合并的指令，减少最终生成镜像的层数。
+		例如：在dockerfile中使用RUN执行shell命令是，可以用"&&"将多条命令连接起来。
+
+二、构建速度最快化
+	1、充分利用镜像构建缓存
+		我们可以利用构建的缓存来加快镜像构建速度，Docker构建默认会开启缓存，
+		缓存生效有三个关键点，镜像父层没有发生变化，构建指令不变，添加文件校验和一致。
+		只要一个构建指令满足这三个条件，这一层镜像构建就不会再执行，它会直接利用之前构建的结果。
+	
+	2、删除构建目录中（默认：Dockerfile所在目录）不需要用的的文件。
+
+	3、注意优化网络请求
+		我们使用一些镜像源或者在dockerfile中使用互联网上的url时，
+		去用一些网络比较好的开源站点，这样可以节约时间、减少失败率
+
+三、dockerfile指令优化
+	1.尽量使用COPY，少用ADD
+	2.CMD 与 ENTRYPOINT的区别
+		2.1 CMD应该尽量使用 JSON 格式
+		2.2 当需要把容器当作命令行使用，推荐通过 ENTRYPOINT 指令设置镜像入口程序
+	http://blog.51cto.com/aaronsa/2132222
+##################################################################################
+9.redis的并发竞争问题如何解决
+	方案一：可以使用独占锁的方式，类似操作系统的mutex机制。
+	（网上有例子，http://blog.csdn.net/black_ox/article/details/48972085 
+	不过实现相对复杂，成本较高）
+
+	方案二：使用乐观锁的方式进行解决（成本较低，非阻塞，性能较高）
+		如何用乐观锁方式进行解决？
+		本质上是假设不会进行冲突，使用redis的命令watch进行构造条件。伪代码如下：
+		watch price
+
+		get price $price
+
+		$price = $price + 10
+
+		multi
+
+		set price $price
+
+		exec
+
+		解释一下：
+		watch这里表示监控该key值，后面的事务是有条件的执行，
+		如果从watch的exec语句执行时，watch的key对应的value值
+##################################################################################
+10.Python处理中文时出现错误
+	import sys
+	default_encoding = 'utf-8'
+	if sys.getdefaultencoding() != default_encoding:
+		 reload(sys)
+		 sys.setdefaultencoding(default_encoding)
+		 
+11.请写出一段python代码实现删除一个list里面的重复元素
+	for i in list1:
+		 if i not in list2:
+			 list2.append(i)
+		 else:
+			  continue
+	list1=list2
+##################################################################################
+12.如何根据容器的名字列出容器状态
+	docker status 容器id
+##################################################################################
+13.Linux 开机过程
+    1. BIOS     硬件检测，加载MBR
+    2. MBR      存储BootLoader信息，加载GRUB
+    3. GRUB     查找并加载kernel
+    4. Kernel   装载驱动，挂载rootfs，执行/sbin/init
+
+
+
+
+
 
 
 
