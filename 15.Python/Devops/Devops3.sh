@@ -7,7 +7,7 @@ NSD DEVOPS DAY03
 urllib 总结
 — from urllib import request
 — html=request.urlopen('https://www.jd.com')  #访问网页
-— req=request.Request(url,headers=header)  #模拟客户端 
+— req=request.Request(url,headers=header)  #模拟客户端，添加request对象
 — req=request.Request(url)             #python正常访问url
 
 — from urllib import request
