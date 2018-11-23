@@ -23,7 +23,7 @@ NSD DEVOPS DAY05
    1. 程序员提交代码更新到软件仓库(SVN/GIT) <-----------------+
   2. CI服务器基于计划任务查询仓库，并下载代码            |
   3. CI服务器运行构建过程并生成软件包(war包)             |
-   4. 向开发团队发送构建通知 -------------------------------------------+
+   4. 向开发团队发送构建通知 -------------------------------------+
                                                                                 
 ##################################################################################
 扩展知识
@@ -62,7 +62,7 @@ NSD DEVOPS DAY05
    & 修改管理员密码
 ##################################################################################   
 使用Jenkins  
-●模拟程序员  
+●模拟程序员 上传代码
 	[root@room8pc16 day12]# git init /tmp/devops
 	[root@room8pc16 day12]# cd /tmp/devops/
 	[root@room8pc16 devops]# vim index.html
@@ -78,8 +78,117 @@ NSD DEVOPS DAY05
 	[root@room8pc16 devops]# git tag 2.0
 	[root@room8pc16 devops]# git log   # 查看
 	[root@room8pc16 devops]# git tag
-	程序员将本地代码推送到gitlab服务器
+	
+●程序员将本地代码推送到gitlab服务器
+	[root@room8pc16 ~]# cd /tmp/devops/
+	[root@room8pc16 devops]# git remote rename origin old-origin
+	[root@room8pc16 devops]# git remote add origin http://192.168.4.1/nsd1806/devops.git
+	[root@room8pc16 devops]# git push -u origin --all
+	[root@room8pc16 devops]# git push -u origin --tags
 
+●gitlab中重要的概念
+	群组group：可以为一个团队创建一个群组
+	项目project：一个团队可以开发多个项目
+	成员member：为团队成员创建的账号
+
+●gitlab设置
+	创建名为nsd1806的group，再从组中创建名为devops的项目
+	创建用户，将用户加入到项目，为其指定角色为主程序员
+##################################################################################  
+使用Jenkins  
+● 配置Jenkins访问Gitlab
+   & 实现以下目标
+     — Jenkins 访问 gitlab 将代码下载
+     — 下载代码时，可以选择版本(tag)
+     — 下载的代码默认存在 /var/lib/jenkins/workspace目录下的项目有目录下
+         ，需要在它下面创建子目录
+     — 下载的代码需要打tar包 保存到web服务器网站目录下 以供下载
+     — 计算tar包的Md5值，保存到文件中，以便下载时校验
+     — 将软件最新版本写到Live_version
+     — 将前一个版本写到last_version文件中
+  
+&步骤：
+	 1.安装 git 和 httpd
+	  [root@jenkins devops]# yum -y install httpd
+	  [root@jenkins devops]# yum -y install git
+	 2.启动httpd
+	 3.创建目录
+	  [root@jenkins devops]# mkdir -pv /var/www/html/deploy/packages
+	  # 目录/var/www/html/deploy 用于保存live_version 和 last_version文件
+	  # 目录/var/www/html/deploy/packages 用于保存tar包和md5值文件
+	  
+	 4.修改新建目录属者属组
+	 [root@jenkins devops]# chown -R jenkins.jenkins /var/www/html/deploy/
+	 
+	 5.在Jenkins中创建一个“自由风格”的软件项目 
+	 6.勾选参数化构建过程--------[parameter type ] 选 [Branch or tag]
+	 7.源码管理选 [Git] -------> 填写Repository URL(必须加.git结尾)
+	   ------->Branch Specifier 写git parameter名称
+	 8.保存 ----->进到 工程 构建
+	 9.配置------>构建 ----->选择执行shell ---->为了实现上述目标，添加以下脚本
+	deploy_dir=/var/www/html/deploy/packages
+	cp -r web_pro${mytag} $deploy_dir
+	rm -rf $deploy_dir/web_pro${mytag}/.git
+	cd $deploy_dir
+	tar -czf web_pro${mytag}.tar.gz web_pro${mytag}
+	rm -rf web_pro${mytag}
+	md5sum web_pro${mytag}.tar.gz | awk '{print $1}' > web_pro${mytag}.tar.gz.md5
+	[ -f live_version ] && cat live_version > last_version 
+	echo $mytag > live_version
+	
+   10.构建
+################################################################################## 
+在应用服务器上编写python工具，实现软件自动部署
+	1.检查是否有新版本
+	2.如果有新版本下载新版本
+	3.校验下载的程序包是否损坏
+	4.如果没有损坏、部署
+	5.更新本地live_version
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
