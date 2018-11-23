@@ -121,7 +121,7 @@ Memory(用得很少)
   --Isolation 隔离性
      不同用户的事务相互不影响
   --Durability  持久性
-    数据一旦提交，就不能改变   #所有的操作都需要
+    数据一旦提交，就不能改变,永久改变表数据   
 ●关闭自动提交功能     #关闭autocommit,后需要手动执行commit才会提交修改
   mysql> show variables like "%commit%";
   set autocommit=off;
