@@ -14,6 +14,8 @@ SECURITY
 CLOUD
 ARCHITECTURE
 PROJECT2
+PYTHON1、Python2
+Devops、Devweb
 
 #ADMIN
 01： 云计算介绍 、TCP/IP协议及配置	
@@ -130,4 +132,33 @@ PROJECT2
 04： web集群 session共享 redis集群	
 05： haproxy高可用 共享文件系统	
 
+#PYTHON1
+01： Python概述 环境准备 使用git Pthon起步	  
+02： 数据类型概述 判断语句 while循环	  
+03： for循环 文件对象 函数基础 模块基础	  
+04： shell相关模块 字符串详解 列表和元组
+
+#PYTHON2
+01： 字典和集合 时间方法 异常处理 文件系统相关模块	  
+02： 函数基础 函数高级应用	  
+03： 模块 OOP基础 OOP进阶	  
+04： re模块 socket模块	  
+
+#DEVOPS
+01： 多进程编程 多线程编程	  
+02： PyMySQL模块 SQLAlchemy基础 SQLAlchemy进阶	  
+03： HTTP客户端 urllib模块 paramiko模块	  
+04： 邮件和JSON requests模块 zabbix编程	  
+05： Jenkins基础 准备git仓库 应用jenkins 管理应用服务器	  
+06： Ansible基础 Ansible编程 编写ansible模块	  
+
+#DEVWEB
+01： WEB概述 HTML快速入门 基本标签用法 Form表单及控件	  
+02： CSS概述 CSS基础语法 尺寸与框模型 常用样式属性	  
+03： 定位 Bootstrap起步 全局CSS样式 组件与插件	  
+04： 部署django Django应用基础 Django模型	  
+05： Django API 视图和模板 使用表单	  
+06： 入口映射 模板详解 模型详解	  
+07： CMDB异步架构 CMDB主机管理	
+08： CMDB任务部署 CMDB文件传输及命令执行
 
