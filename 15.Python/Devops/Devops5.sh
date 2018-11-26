@@ -22,8 +22,9 @@ NSD DEVOPS DAY05
 ●持续集成流程
    1. 程序员提交代码更新到软件仓库(SVN/GIT) <-----------------+
   2. CI服务器基于计划任务查询仓库，并下载代码            |
-  3. CI服务器运行构建过程并生成软件包(war包)             |
-   4. 向开发团队发送构建通知 -------------------------------------+
+  3. CI服务器运行构建过程并生成软件包(war包)            |
+  4. CI服务器进行单元和集成测试,存储测试结果             |
+   5. 向开发团队发送构建通知 -------------------------------------+
                                                                                 
 ##################################################################################
 扩展知识
@@ -40,11 +41,7 @@ NSD DEVOPS DAY05
           当开发人员在自己的开发机器上调试所有代码并通过后，
           为了交给测试人员测试和未来进行产品发布，都需要将开发人员的源码打包成War进行发布。
           War包可以放在Tomcat下的webapps或者word目录下，随着tomcat服务器的启动，它可以自动被解压。
-  		
-●web项目上线的步骤： #参考上述持续集成
-  1. 程序员，测试人员把web程序文件发布到github上；
-  2. Jenkins服务器从github拉取web项目文件；
-  3. web服务器从就近的Jenkins服务器拉取文件，更新自己的文件；
+
 ##################################################################################
 部署Jenkin服务器
 ●准备3台虚拟机，并且能够连接外网  
@@ -144,6 +141,90 @@ NSD DEVOPS DAY05
 	3.校验下载的程序包是否损坏
 	4.如果没有损坏、部署
 	5.更新本地live_version
+
+需要从jenkins运行构建过程
+
+#!/usr/bin/env python3
+import os
+import requests
+import hashlib
+import tarfile
+def check_version(ver_url,fname):
+    #如果版本文件不存在，则表示需要更新
+    if not os.path.isfile(fname):
+        return True
+
+    #如果线上版本与web服务器版本(本地)不一致，则需要更新
+    f=requests.get(ver_url)
+    with open(fname) as fobj:
+        local_ver=fobj.read()
+    if f.text!=local_ver:
+        return True
+    return False
+
+def download(url,fname):  #从jenkins服务器下载软件包，版本信息
+    r = requests.get(url)
+    with open(fname,'wb') as fobj:
+        fobj.write(r.content)
+
+def check_md5(url,fname):
+    m=hashlib.md5()
+    with open(fname,'rb') as fobj:
+        while True:
+            data=fobj.read(1024)
+            if not data:
+                break
+            m.update(data)
+    file_md5=m.hexdigest()
+
+    r = requests.get(url)
+    if r.text.strip()==file_md5:
+        return True   #文件未损坏，返回True
+    return False      #文件损坏，返回False
+
+def deploy(deploy_dir,link,app_fname):
+    os.chdir(deploy_dir)
+    tar = tarfile.open(app_fname,'r:gz')
+    tar.extractall()
+    tar.close()
+
+    if os.path.islink(link):
+        os.unlink(link)
+
+    src=app_fname.split('/')[-1].replace('.tar.gz','')
+    src=os.path.join(deploy_dir,src)
+    dst=link
+    os.symlink(src,dst)
+
+if __name__ == '__main__':
+    deploy_dir = '/var/www/deploy'
+    download_dir='/var/www/download'
+    link = '/var/www/html/nsd1806'
+
+    ver_url='http://192.168.4.3/deploy/live_version'
+    fname='%s/live_version' % deploy_dir
+    new_version = check_version(ver_url,fname)
+    if not new_version:
+        print('没有新版本更新!')
+        exit(1)
+
+    r = requests.get(ver_url)
+    app_url='http://192.168.4.3/deploy/packages/web_pro%s.tar.gz' % r.text.strip()
+    app_fname=app_url.split('/')[-1]
+    app_fname=os.path.join(download_dir,app_fname)
+    download(app_url,app_fname)
+
+    md5_url='http://192.168.4.3/deploy/packages/web_pro%s.tar.gz.md5' % r.text.strip()
+    md5 = check_md5(md5_url,app_fname)
+    if not md5:
+        print('文件有损坏')
+        exit(2)
+
+    deploy(deploy_dir,link,app_fname)
+
+    #更新本地version文件
+    download(ver_url,fname)
+    print('新版本部署完成')
 
   
   
