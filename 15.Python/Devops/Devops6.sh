@@ -1,6 +1,8 @@
 运维开发实战
 NSD DEVOPS DAY06
 1.ansible回顾
+2.python-ansible 模块使用
+3.自定义ansible模块
 ##################################################################################
 使用ansible
 ●安装ansible
@@ -63,9 +65,47 @@ NSD DEVOPS DAY06
 		    dest: /etc/yum.repos.d/server.repo
 	[root@room8pc16 myansible]# ansible-playbook --syntax-check sys_init.yml
 	[root@room8pc16 myansible]# ansible-playbook sys_init.yml -k
-●
+
 ##################################################################################	
+●ansible 文档
+	http://docs.ansible.com/  -> Ansible Documentation ->搜索python api
+●使用python 运性ansible命令
+  & 命名的元组：
+	传统的元组是序列对象，通过下标访问；命名元组扩展了传统的元组，为每个元素添加了额
+	外的名称，仍可以按传统的方式访问。
+	>>> from collections import namedtuple
+	>>> point = namedtuple('point', ['x', 'y', 'z'])
+	>>> a = point(10, 20, 25)
+	>>> a[0]
+	10
+	>>> a[1:]
+	(20, 25)
+	>>> a.x
+	10
+	>>> a.z
+	25
+
+  & ansible-cmdb
+     — 作用：收集ansible 的 setup 模块信息，并且分析信息，导出web页面
+	[root@room8pc16 day14]# pip3 install ansible-cmdb
+	[root@room8pc16 day14]# mkdir /tmp/ansi_cmdb
+	[root@room8pc16 myansible]# ansible all -m setup --tree /tmp/ansi_cmdb/out
+	[root@room8pc16 myansible]# ansible-cmdb /tmp/ansi_cmdb/out/ > /tmp/ansi_cmdb/out.html
+	[root@room8pc16 myansible]# firefox /tmp/ansi_cmdb/out.html
 	
+  & 问题的解决：
+	1、mako
+	[root@room8pc16 myansible]# pip3 install mako
+	2、运行ansible-cmdb出错
+	[root@room8pc16 myansible]# which ansible-cmdb
+	[root@room8pc16 myansible]# vikm /usr/local/bin/ansible-cmdb
+	将PY_BIN=$(which python) 修改为
+	PY_BIN=$(which python3)
+##################################################################################
+编写ansible模块
+●创建自定义模块路径
+●设置环境变量，ANSIBLE_LIBRARY=./mymodule
+●编写模块，用于实现本地文件拷贝
 	
 	
 	
