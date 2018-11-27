@@ -127,20 +127,65 @@ Web 服务器   Web 浏览器
       <b><u>top</u></b>   <!--在顶部设置标签名,点击‘top’就会跳到顶部--> 
    </a>
 ##############################################################################
+表格 创建一个五行三列的表格
+<table border="60px" width="500px">
+	tr*5>td*3 TAB键
+<table>
+##############################################################################
+列表
+    <ul type="square">    #无序列表
+        <li>哈利波特</li>
+        <li>赫敏</li>
+        <li>马尔福</li>
+        <li>伏地魔</li>
+        <li>邓布利多</li>
+    </ul>
+    <hr>
+    <ol type="I" start="1">  #有序列表
+        <li>哈利波特</li>
+        <li>赫敏</li>
+        <li>马尔福</li>
+        <li>伏地魔</li>
+        <li>邓布利多</li>
+    </ol>
+##############################################################################
+Form表单及控件
+#搜索栏
+<form action="https://www.baidu.com/s" target="_blank">
+    <input type="text" placeholder="关键字" name="wd">
+    <input type="submit" value="百度搜索">
+</form>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#登录栏
+<form action="">
+    <p><label >用户:</label><input type="text" placeholder="用户名"></p>
+    <p><label >密码:</label><input type="password" placeholder="密码"></p>
+    <!--密码用password 类型-->
+    <p><input type="submit" value="登录" ></p>
+</form>
+##############################################################################
+文本框、选择框  需要结合表单使用  #请参考 devweb/myform.html
+<input type="text"  placeholder="关键字" name="q">    #文本输入框
+<input type="radio" name="question3" value="A">      #单选框
+<input type="checkbox" name="question3" value="A">   #多选框
+<input type="password" placeholder="密码">           #以点代替显示内容
+<input type="submit" value="百度搜索">                #提交数据到 action
+<input type="reset" value="重置">                    #重置输入内容
+<input type="button" value="警告" onclick="showme()"> #按钮， onclick之后执行脚本
+<input type="file">   #浏览文件系统，通过 input的submit类型上传
+##############################################################################
+选项框
+<form action="">
+    <select name="老师" id="teacher" multiple>
+        <option value="nb">牛犇</option>
+        <option value="wk">王凯</option>
+        <option value="dmy">丁明一</option>
+        <option value="plj">庞丽静</option>
+        <option value="lx">李欣</option>
+    </select>
+</form>
+##############################################################################
+多行文本框
 
 
 
