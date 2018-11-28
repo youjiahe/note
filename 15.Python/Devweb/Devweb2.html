@@ -1,0 +1,136 @@
+运维开发实战
+NSD DEVweb DAY02
+参考菜鸟教程  http://www.runoob.com/
+1. CSS 概述
+2. CSS 基础语法
+3. 尺寸与框模型
+4. 常用样式属性
+##############################################################################	
+● CSS 概述
+ — CSS层叠样式表
+● CSS 样式表
+ — 内联方式    <!--样式定义在单个的 HTML元素中-->  尽量少用
+   <span style="color: blue; background:orange; font-size: 22px">css</span>
+
+ — 内部方式    <!--样式定义在头部 元素中-->  尽量少用
+  <head>
+     <style type="text/css">
+        body{
+            background: #fffbea;
+            color:blue;
+        }
+        hr{
+            color:red;
+        }
+     </style>
+  </head>
+
+ — 外部样式表    推荐使用
+    将样式定义在一个外部的 CSS 文件中(.css 文件)
+    由 HTML 页面引用样式表文件    
+	<head>
+	    <link rel="stylesheet" href="mycss.css">
+	</head>
+	
+	
+	以下是 mycss.css  
+	h1{
+    color: darkmagenta;
+	}
+	body{
+		background: blanchedalmond;
+	}
+	
+##############################################################################
+CSS 语法规范  PPT
+CSS 样式特性
+ — 继承性： 子标签可以集成父标签的样式
+ — 层叠性： 如果内容处在多个标签内部，所有标签的样式都将产生作用
+ — 优先级： 离元素最近的样式优先生效
+##############################################################################
+选择器：
+ 1. 通用选择器
+   *表示所有的标签。一般来说，可以取消各种标签的默认样式，以便以后自己设置，也可以自定义样式
+	*{
+		font-size: 15pt;  /*所有属性字号，默认15pt*/
+	}
+
+ 2. 元素选择器  /body/p/h1
+	p{
+		background: aquamarine;
+		text-align: left;
+	}
+
+ 3. 类选择器，以‘.’开头
+   &  类：分组
+   	<div class="mycalss">div1</div>
+   	-------------------------------------------------------
+	.mycalss{
+		font-size: 4pc;
+		background: #fdffb5;
+	}
+
+   &  一个元素可以属于多个类
+   <div class="warning important">Warning!</div>
+   -----------------------------------------------------------------------------------------
+  .warning{
+		color: red;
+		text-align: right;
+	}
+	.important{
+		font-weight: bold;
+		text-align: center;
+	}
+ 
+     
+ 4. 元素中的类选择器   #只有对应类指定了 class，才会生效
+   <p class="myclass2">段落三</p>
+    -------------------------------------------------------
+	p.myclass2{
+		color: blue;
+	}
+
+ 5. 多个选择器，可以用逗号分开
+  <p>段落二</p>
+  <div class="myclass3">DIV3</div>
+   -------------------------------------------------
+   p, .myclass3{
+    font-family: Symbol;
+    font-size: 6pc;
+	}
+
+ 6. 用空格分开表示该标签的内部选择器
+	 <!--只有第一个p 生效，因为是p中的inner-->
+	<p>这是 <span class="inner">CSS</span>样式表</p>   
+	<p class="inner">这是一个测试</p>
+	<div class="inner">这是一个div</div>
+	<p>段落A</p>
+	<div>这是 <span class="inner">CSS</span>样式表</div>
+	<hr>
+	---------------------------------------------------------------------------------------------
+	p .inner{
+		color: darkgoldenrod;
+	}
+
+ 7. id选择器，需要使用‘#’号标识
+	 <div id="pid">88888</div>
+	 ----------------------------------------------------
+ 	#pid{
+    color: darkgreen ;
+    font-size: 5pc;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
