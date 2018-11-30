@@ -5,6 +5,7 @@ Django 有很多资料
    1.1 django 概述  MVC模式  MTV模式
 2. 安装django
 3. 管理应用
+4. 编辑应用
 ##############################################################################	
 django介绍
 ● Django概述
@@ -170,8 +171,6 @@ Django简介
 		... ...
 		'poll',
 	]
-
-●   
 ##############################################################################
 练习
 	1、新建虚拟环境
@@ -251,7 +250,7 @@ Django简介
 		from . import views
 		urlpatterns=[
 		   #将url为 http://127.0.0.1/poll 的请求都转发到 index 函数处理， 这个url叫 index
-			url('^$', view.index, name='index')
+			url('^$', views.index, name='index')
 		]  
    (2)修改 poll/view.py 创建简单首页 测试视图  
 	  from django.shortcuts import render, HttpResponse
