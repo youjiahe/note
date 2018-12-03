@@ -4,6 +4,7 @@ NSD DEVweb DAY06
 2.模板详解
 3.模型详解
 https://docs.djangoproject.com/zh-hans/2.0/  #django中文文档  最下面 '开始'
+django2byexample 翻译 -> http://www.conyli.cc/
 ##############################################################################	
 Django 博客应用
 ● 创建虚拟环境并且激活
