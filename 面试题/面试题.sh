@@ -6,6 +6,8 @@ https://blog.csdn.net/fsx2550553488/article/details/82053051
 #mysql数据库占cpu过高问题
 https://blog.csdn.net/sjhnanwang/article/details/37883147
 https://blog.csdn.net/nuli888/article/details/52435807
+#Python面试题
+https://mp.weixin.qq.com/s?__biz=MzA3NzIwNDg3NQ==&mid=2649971855&idx=1&sn=46dca7fb20fe0ec64d3ab3ad88dd6721&chksm=8752606bb025e97d9d55f133768b71f6dad76292d6349ec9ba453e79942b2a5700cf270d4c71&mpshare=1&scene=23&srcid=0716eFGeqS982p33kldeM4uZ&pass_ticket=gll6PzEJT%2FLDJpgg5eIlZUab3WcYZ%2FPz4wuL2VzBfZXhV1HDZ5KKjTIQPFlk1%2FUr#rd
 ##################################################################################
 ●如何控制容器占用系统资源的份额？  #更详细请看网上知识文件夹下的《docker资源配额》
 docker run -tid –cpu-shares 100 centos:latest  #在创建容器时指定容器所使用的CPU份额值，权重值0
