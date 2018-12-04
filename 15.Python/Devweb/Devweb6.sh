@@ -206,6 +206,8 @@ http://www.runoob.com/w3cnote/restful-architecture.html
 	def results(request):
     questions = Questions.objects.order_by('pub_date')
     return render(request,'results.html',{'questions':questions})
+##############################################################################
+
 ● 渲染模板
 	#一旦拥有一个Template对象,就可以通过给一个context来给它传递数据
 	#在Django模板系统中处理复杂数据结构的关键是使用(.)字符
@@ -264,6 +266,70 @@ http://www.runoob.com/w3cnote/restful-architecture.html
 ● 使用过滤器
 	换行 {{ article.text |linebreaksbr}}
 	只显示部分字	{{ article.text |linebreaksbr | truncatewords:10 }}
+##############################################################################
+模拟用户是否已登陆
+1、制作2个页面
+/article/home/    -> 显示登陆表单
+/article/protected/    -> 该页面只有用户登陆以后才能访问
+2、编写url
+/aritcle/home/    -> 显示登陆表单
+/article/protected/    -> 该页面只有用户登陆以后才能访问
+/article/login/    -> 判断用户登陆是否成功，成功就跳转到protected，否则回到home
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+    url(r'^hello/$', views.hello, name='hello'),
+    url(r'^home/$', views.home, name='home'),
+    url(r'^login/$', views.login, name='login'),
+    url(r'^protected/$', views.protected, name='protected'),
+]
+3、创建模板文件
+# home.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+</head>
+<body>
+<form action="{% url 'login' %}" method="post">
+    用户:<input type="text" name="username">
+    密码:<input type="password" name="password">
+    <input type="submit" value="登 陆">
+</form>
+</body>
+</html>
+
+# protected.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>受保护页面</title>
+</head>
+<body>
+如果登陆成功，才能看到此页面。
+</body>
+</html>
+
+4、编写视图函数
+def home(request):
+    return render(request, 'home.html')
+
+def login(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    if username == 'user1' and password == '123456':
+        request.session['IS_LOGINED'] = True
+        return redirect('protected')
+
+    return redirect('home')
+
+def protected(request):
+    is_logined = request.session.get('IS_LOGINED', False)
+    if is_logined:
+        return render(request, 'protected.html')
+    return redirect('home')
 ##############################################################################
 模板继承
 1.创建基本模板，再用block替代内容
