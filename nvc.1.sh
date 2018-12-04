@@ -17,6 +17,7 @@ expect "#"      {send "yum -y install wget\n"}
 expect "#"      {send "wget ftp://192.168.1.254/share/static_ip.sh -O /root/static_ip.sh\n"}
 expect "#"      {send "bash static_ip.sh $3\n"}
 expect "#"      {send "systemctl restart network\n"}
+expect "#"      {send "echo\r"}
 expect "#"      {send "exit\r"}
 EOF
 
