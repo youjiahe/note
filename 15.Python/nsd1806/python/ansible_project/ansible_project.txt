@@ -139,15 +139,224 @@ def index(request):
 1、将day17的static复制到webansi目录下
 # cp -r ../../day17/static/ webansi/
 2、修改index.html
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <style>
+        .banner{
+            background-image: url("{% static 'imgs/banner.jpg' %}");
+            background-size: 100%;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="banner"></div>
+    <div class="main h3">这是首页</div>
+    <div class="footer h4 text-center">
+        <a href="http://linux.tedu.cn">达内云计算学院</a> 客服电话：400-111-8989 邮箱：admin@tedu.cn
+    </div>
+</div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>
+3、生成banner.png图片，替换index.html的banner背景图
+# python
+>>> with open('/etc/hosts') as f:
+...   data = f.read()
+>>> import wordcloud
+>>> w = wordcloud.WordCloud(width=1000, height=100)
+>>> w.generate(data)
+>>> w.to_file('banner.png')
+# mv banner.png webansi/static/imgs/  # 把生成的图片拷贝到imgs中
+修改banner.html，将背景图换成刚生成的banner.png
+4、在index.html中，修改<div class="main">部分内容
+<div class="row">
+    <div class="col-md-3 text-center">
+        <a href="#">
+            <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>主机信息
+        </a>
+    </div>
+    <div class="col-md-3 text-center">
+        <a href="#">
+            <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>添加主机
+        </a>
+    </div>
+    <div class="col-md-3 text-center">
+        <a href="#">
+            <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>添加模块
+        </a>
+    </div>
+    <div class="col-md-3 text-center">
+        <a href="#">
+            <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>执行任务
+        </a>
+    </div>
+</div>
+
+九、实现模板继承
+1、将index.html拷贝一份，改名为base.html
+2、将base.html中个性化的内容删除，使用block代替。需要更改的是title和main部分
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <style>
+        .banner{
+            background-image: url("{% static 'imgs/banner.png' %}");
+            background-size: 100%;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="banner"></div>
+    <div class="main h4">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="footer h4 text-center">
+        <a href="http://linux.tedu.cn">达内云计算学院</a> 客服电话：400-111-8989 邮箱：admin@tedu.cn
+    </div>
+</div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>
+3、index.html中，把base.html已有部分删除，只通过block保留有变化的部分
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}首页{% endblock %}
+{% block content %}
+    <div class="row">
+            <div class="col-md-3 text-center">
+                <a href="#">
+                    <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>主机信息
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
+                <a href="#">
+                    <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>添加主机
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
+                <a href="#">
+                    <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>添加模块
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
+                <a href="#">
+                    <img width="150px" src="{% static 'imgs/linux.jpg' %}"><br>执行任务
+                </a>
+            </div>
+        </div>
+{% endblock %}
+
+十、配置ansible
+1、创建三台虚拟机
+2、配置三台虚拟的IP地址、yum、免密登陆
+3、在manage.py同级的目录下创建ansible的工作目录
+# mkdir ansicfg
+# vim ansicfg/ansible.cfg
+[defaults]
+inventory = dhosts.py
+remote_user = root
+4、创建动态主机清单脚本
+# touch ansicfg/dhosts.py
+# chmod +x ansicfg/dhosts.py
+dhosts.py执行后，要求的输出格式如下：
+{
+    "webservers": {
+        "hosts": ["192.168.4.1", "192.168.4.2"]
+    },
+    "dbservers": {
+        "hosts": ["192.168.4.3"]
+    }
+}
+# vim ansicfg/dhosts.py
+#!/opt/djenv/bin/python
+
+import json
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine(
+    'sqlite:////var/ftp/nsd2018/nsd1806/python/ansible_project/myansible/db.sqlite3',
+    encoding='utf8',
+)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
+
+class HostGroup(Base):
+    __tablename__ = 'webansi_hostgroup'
+    id = Column(Integer, primary_key=True)
+    groupname = Column(String(50), unique=True)
+
+    def __str__(self):
+        return self.groupname
+
+class Host(Base):
+    __tablename__ = 'webansi_host'
+    id = Column(Integer, primary_key=True)
+    hostname = Column(String(50), unique=True)
+    ipaddr = Column(String(15))
+    group_id = Column(Integer, ForeignKey('webansi_hostgroup.id'))
+
+    def __str__(self):
+        return "<%s: %s>" % (self.hostname, self.ipaddr)
+
+if __name__ == '__main__':
+    result = {}
+    session = Session()
+    qset = session.query(Host.ipaddr, HostGroup.groupname)\
+        .join(HostGroup, HostGroup.id==Host.group_id)
+    for ip, group in qset:
+        if group not in result:
+            result[group] = {}   # {'dbservers': {}}
+            result[group]['hosts'] = []  # {'dbservers': {'hosts': []}}
+        result[group]['hosts'].append(ip)
+
+    print(json.dumps(result))
 
 
 
 
+十一、制作webansi应用的首页
+1、编写url
+# webansi/urls.py
+urlpatterns = [
+    url(r'^$', views.home, name='polls_index'),
+]
+2、编写视图函数
+# websnsi/views.py
+from django.shortcuts import render
 
-实现模板继承
-
-
-
+def home(request):
+    return render(request, 'home.html')
+3、编写模板
+(1)安装ansible-cmdb
+# pip install ansible-cmdb
+(2)收集被管理的服务器信息
+# cd ansicfg/
+# ansible all -m ping   # 测试动态主机清单文件和连通性
+# ansible all -m setup --tree out/
+(3)生成home.html
+# ansible-cmdb out/ > /var/ftp/nsd2018/nsd1806/python/ansible_project/myansible/webansi/templates/home.html
+(4)修改index.html，将“主机信息”的超链接指向home.html
+<a href="{% url 'polls_index' %}">
 
 
 

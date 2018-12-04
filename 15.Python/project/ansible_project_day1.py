@@ -146,7 +146,274 @@ NSD Porject day1
 	
 ● 引入bootstrap
   拷贝老师的static文件夹
-● 
+#############################################################################
+● 修改首页文件
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}">
+    <style>
+        .banner{
+            background-image: url("{%  static 'imgs/banner.png' %}");
+            background-size: 100% ;
+            height: 190px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="banner">
+        头部
+    </div>
+    <hr>
+    <div class="main h3">
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg'%}" width="150px" alt="imgs/linux.jpg">
+                    <br>
+                    主机信息
+                </a>
+
+            </div>
+            <div class="col-md-3 text-center ">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg' %}"  width="150px" alt="imgs/linux.jpg">
+
+                <br>
+                添加主机
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg'%}" width="150px" alt="imgs/linux.jpg">
+                    <br>
+                    添加模块
+                </a>
+
+            </div>
+            <div class="col-md-3 text-center ">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg' %}"  width="150px" alt="imgs/linux.jpg">
+                <br>
+                执行任务
+                </a>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="footer h4 text-center">
+        <a href="http://www.tmocc.cn">达内云计算</a>达内云计算学院.达内时代科技集团
+    </div>
+</div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>
+#############################################################################
+● 创建模板页面文件  base.html
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="{%  static 'css/bootstrap.min.css' %}">
+    <style>
+        .banner{
+            background-image: url("{%  static 'imgs/banner.png' %}");
+            background-size: 100% ;
+            height: 190px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="banner">头部</div>
+    <hr>
+    <div class="main h3">{% block content %}{% endblock %}</div>
+    <hr>
+    <div class="footer h4 text-center">
+        <a href="http://www.tmocc.cn">达内云计算</a><br>
+        <label class="text-info h5">客服电话：400-111-8989 邮箱：admin@tedu.cn</label>
+    </div>
+</div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>
+#############################################################################
+● 再次修改首页文件，继承模板 base.html
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}首页_mod{% endblock %}
+{% block content %}
+     <div class="row">
+            <div class="col-md-3 text-center">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg'%}" width="150px" alt="imgs/linux.jpg">
+                    <br>
+                    主机信息
+                </a>
+
+            </div>
+            <div class="col-md-3 text-center ">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg' %}"  width="150px" alt="imgs/linux.jpg">
+
+                <br>
+                添加主机
+                </a>
+            </div>
+            <div class="col-md-3 text-center">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg'%}" width="150px" alt="imgs/linux.jpg">
+                    <br>
+                    添加模块
+                </a>
+
+            </div>
+            <div class="col-md-3 text-center ">
+                <a href="">
+                    <img src="{% static 'imgs/linux.jpg' %}"  width="150px" alt="imgs/linux.jpg">
+                <br>
+                执行任务
+                </a>
+            </div>
+        </div>
+{% endblock  %}
+#############################################################################
+● 配置ansible
+	1、创建三台虚拟机
+	2、配置三台虚拟的IP地址、yum、免密登陆
+	3、在manage.py同级的目录下创建ansible的工作目录
+
+	# mkdir ansicfg
+	# vim ansicfg/ansible.cfg
+	[defaults]
+	inventory = dhosts.py
+	remote_user = root
+
+#############################################################################
+● 创建动态主机清单脚本
+# touch ansicfg/dhosts.py
+# chmod +x ansicfg/dhosts.py
+dhosts.py执行后，要求的输出格式如下：
+{
+    "webservers": {
+        "hosts": ["192.168.4.1", "192.168.4.2"]
+    },
+    "dbservers": {
+        "hosts": ["192.168.4.3"]
+    }
+}
+# vim ansicfg/dhosts.py
+#!/opt/djenv/bin/python
+
+import json
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine(
+    'sqlite:////var/ftp/nsd2018/nsd1806/python/ansible_project/myansible/db.sqlite3',
+    encoding='utf8',
+)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
+
+class HostGroup(Base):
+    __tablename__ = 'webansi_hostgroup'
+    id = Column(Integer, primary_key=True)
+    groupname = Column(String(50), unique=True)
+
+    def __str__(self):
+        return self.groupname
+
+class Host(Base):
+    __tablename__ = 'webansi_host'
+    id = Column(Integer, primary_key=True)
+    hostname = Column(String(50), unique=True)
+    ipaddr = Column(String(15))
+    group_id = Column(Integer, ForeignKey('webansi_hostgroup.id'))
+
+    def __str__(self):
+        return "<%s: %s>" % (self.hostname, self.ipaddr)
+
+if __name__ == '__main__':
+    result = {}
+    session = Session()
+    qset = session.query(Host.ipaddr, HostGroup.groupname)\
+        .join(HostGroup, HostGroup.id==Host.group_id)
+    for ip, group in qset:
+        if group not in result:
+            result[group] = {}   # {'dbservers': {}}
+            result[group]['hosts'] = []  # {'dbservers': {'hosts': []}}
+        result[group]['hosts'].append(ip)
+
+    print(json.dumps(result))
+
+#############################################################################
+● 制作webansi应用的首页
+1、编写url
+	# webansi/urls.py
+	urlpatterns = [
+		url(r'^$', views.home, name='polls_index'),
+	]
+2、编写视图函数
+	# websnsi/views.py
+	from django.shortcuts import render
+
+	def home(request):
+		return render(request, 'home.html')
+		
+3、编写模板
+	(1)安装ansible-cmdb
+		# pip install ansible-cmdb
+	(2)收集被管理的服务器信息
+		# cd ansicfg/
+		# ansible all -m ping   # 测试动态主机清单文件和连通性
+		# ansible all -m setup --tree out/
+	(3)生成home.html
+		# ansible-cmdb out/ > /var/ftp/nsd2018/nsd1806/python/ansible_project/myansible/webansi/templates/home.html
+	(4)修改index.html，将“主机信息”的超链接指向home.html
+		<a href="{% url 'polls_index' %}">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
