@@ -1,20 +1,16 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block title %}添加主机(组){% endblock %}
+{% block title %}添加模块{% endblock %}
 {% block content %}
     <form action="" method="post" class="form-inline" style="margin-bottom: 10px">
         {% csrf_token %}
         <div class="form-group">
-            <label>主机名：</label>
-            <input class="form-control" type="text" name="host">
+            <label>模块：</label>
+            <input class="form-control" type="text" name="module">
         </div>
         <div class="form-group">
-            <label>ip地址：</label>
-            <input class="form-control" type="text" name="ip">
-        </div>
-        <div class="form-group">
-            <label>主机组：</label>
-            <input class="form-control" type="text" name="group">
+            <label>参数：</label>
+            <input class="form-control" type="text" name="arg">
         </div>
         <div class="form-group">
             <input class="btn btn-primary" type="submit" value="提 交">
@@ -22,16 +18,16 @@
     </form>
     <table class="table table-bordered table-striped table-hover">
         <tr class="info">
-            <th>主机组</th>
-            <th>主机</th>
+            <th>模块</th>
+            <th>参数</th>
         </tr>
-        {% for group in groups %}
+        {% for mod in mods %}
             <tr>
-                <td>{{ group.groupname }}</td>
+                <td>{{ mod.module_name }}</td>
                 <td>
                     <ul class="list-unstyled">
-                        {% for host in group.host_set.all %}
-                            <li>{{ host.hostname }}: {{ host.ipaddr }}</li>
+                        {% for arg in mod.modulearg_set.all %}
+                            <li>{{ arg.arg_text }}</li>
                         {% endfor %}
                     </ul>
                 </td>
