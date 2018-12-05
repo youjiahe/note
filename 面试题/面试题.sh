@@ -14,12 +14,25 @@ docker run -tid –cpu-shares 100 centos:latest  #在创建容器时指定容器
 docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程每1秒使用单个CPU的0.2秒时间
 ##################################################################################
 ●如何修改docker默认存储设置
-  2.1 修改docker.service文件.
-     vim /usr/lib/systemd/system/docker.service
-  2.2 在里面的EXECStart的后面增加后如下:
-      ExecStart=/usr/bin/dockerd --graph /home/docker  #先创建文件夹
-  2.3 查看
-     docker info | grep "\/home\/docker"
+	如果是centos7：
+
+	修改docker.service文件，使用-g参数指定存储位置
+
+	vi /usr/lib/systemd/system/docker.service  
+
+	ExecStart=/usr/bin/dockerd --graph /new-path/docker 
+
+	 // reload配置文件 
+
+	systemctl daemon-reload 
+
+	 // 重启docker 
+
+	systemctl restart docker.service
+
+	//查看 Docker Root Dir: /var/lib/docker是否改成设定的目录/new-path/docker 
+
+	docker info
 ##################################################################################
 ●Docker镜像构建的优化总结   #自动化运维非常重要的工具
  一、镜像最小化
@@ -48,7 +61,8 @@ docker run -tid –cpu-period 1000000 –cpu-quota 200000 centos #容器进程�
 		去用一些网络比较好的开源站点，这样可以节约时间、减少失败率
 
 三、dockerfile指令优化
-	1.尽量使用COPY，少用ADD
+	1.尽量使用COPY，少用ADD；
+           因为使用ADD命令时，会创建更多的镜像层，当然镜像的也会更大； 官方推荐wget、curl代替ADD从远程拷贝文件
 	2.CMD 与 ENTRYPOINT的区别
 		2.1 CMD应该尽量使用 JSON 格式
 		2.2 当需要把容器当作命令行使用，推荐通过 ENTRYPOINT 指令设置镜像入口程序
@@ -96,10 +110,14 @@ Dockerfile指令
 	USER：指定镜像以什么用户身份运行，默认是root
 ##################################################################################
 ●mysql的innodb如何定位锁问题:
+  死锁一般是事务相互等待对方资源，最后形成环路造成的。
+
   在使用 show engine innodb status检查引擎状态时，发现了死锁问题
+  在打印出来的信息中找到“LATEST DETECTED DEADLOCK”一节内容，看图中红线
+
   在5.5中，information_schema 库中增加了三个关于锁的表（MEMORY引擎）
 
-  innodb_trx         ## 当前运行的所有事务
+  innodb_trx         ## 当前运行的所有事务，找出线程号与  上述命令一致且状态为sleep的进程号
 
   innodb_locks     ## 当前出现的锁
 
