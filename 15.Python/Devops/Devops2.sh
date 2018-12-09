@@ -7,7 +7,7 @@ NSD DEVOPS DAY02
 [root@localhost ~]# mkdir ~/.pip/	
 [root@localhost ~]# vim ~/.pip/pip.conf		
 [global]	
-index-url=hKp://pypi.douban.com/simple/	
+index-url=http://pypi.douban.com/simple/	
 [install]	
 trusted-host=pypi.douban.com	
 

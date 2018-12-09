@@ -1,5 +1,4 @@
 hello github
-本仓库本人在达内学习的笔记
 ADMIN
 ENGINEER
 SERVICES
