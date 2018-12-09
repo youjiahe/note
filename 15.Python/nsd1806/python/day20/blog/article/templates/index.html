@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}My Blog{% endblock %}
+{% block content %}
+<div>
+    <form action="" method="post">
+        <label>标题：</label><input type="text" name="title"><br>
+        <textarea name="content" cols="50" rows="10"></textarea><br>
+        <input type="submit" value="发 布">
+    </form>
+</div>
+<hr>
+{% for article in articles %}
+    <div>
+        <h3>{{ article.title }}</h3>
+        <h5>{{ article.pub_date }}</h5>
+        {{ article.text | linebreaks | truncatewords:30}}
+{#        {{ article.text | linebreaks}}#}
+    </div>
+{% endfor %}
+{% endblock %}
