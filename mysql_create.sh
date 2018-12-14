@@ -25,5 +25,4 @@ sed -i '/\[mysqld\]/a validate_password_policy=0' /etc/my.cnf
 systemctl restart mysqld
 systemctl enable  mysqld
 pass=`grep "tem.* password" /var/log/mysqld.log  |sort -n | awk '{print $NF}' |tail -1`
-echo "alter user root@localhost identified by '123456';" | mysql -uroot -p$pass --connect-expired-password
-mysql -u root -p123456
+ON  perl-Data-Dumper.x86_64 net-toolsperl-JSON  perl-Data-Dumper.x86_64 net-toolsperl-JSON  perl-Data-Dumper.x86_64 net-tools
