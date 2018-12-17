@@ -21,7 +21,7 @@ ROLLBACK（回滚）命令。
   clob         #存储大的文本，比如存储非结构化的 XML 文档
   BLOB         #存储二进制对象，如图形、视频、声音等。
 
-1.1 日期
+2.1 日期
   对于日期类型，可以使用 sysdate 内置函数可以获取当前的系统日期和时间，返回 DATE类型，
   用 systimestamp 函数可以返回当前日期、时间和时区。
   
@@ -33,3 +33,40 @@ ROLLBACK（回滚）命令。
   16-DEC-18
   16-DEC-18 11.42.50.350052 PM +08:00
 ######################################################
+3. Oracle 创建表和约束
+
+案例1：创建一个学生信息（INFOS）表和约束
+create table infos(
+  stuid varchar2(7) not null,
+  stuname varchar2(10) not null,
+  gender varchar(2) not null,
+  age number(2) not null,
+  seat number(2) not null,
+  intodate date,
+  stuadress varchar2(50) default '地址不详',
+  classno number(4) not null
+)
+create table infos(
+  stuid varchar2(7) not null,
+  stuname varchar2(7) not null,
+  gender varchar2(2) not null,
+  age number(2) not null,
+  seat number(2) not null,
+  indate date,
+  stuadress varchar2(50) default '地址不详',
+  classno varchar(4) not null
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
