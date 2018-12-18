@@ -102,3 +102,68 @@ SQL> startup nomount;
 
       user_dump_dest                用户审计文件，例如： SQL>alter session set events 'immediate trace name controlf level 12';--sid_ora_xx.trc
 ####################################################################
+2. 启动时报错 error in identifying control file
+ & 启动报错
+  SQL> startup;
+  ORACLE instance started.
+  
+  Total System Global Area 1068937216 bytes
+  Fixed Size          2220200 bytes
+  Variable Size         616566616 bytes
+  Database Buffers      444596224 bytes
+  Redo Buffers            5554176 bytes
+  ORA-00205: error in identifying control file, check alert log for more info
+ 
+ & 查看 alert log  
+  [oracle@db_1 ~]$ tail -20 /opt/app/oracle/diag/rdbms/wetalk/wetalk/trace/alert_wetalk.log
+
+  ORA-00210: cannot open the specified control file
+  ORA-00202: control file: '/opt/app/oracle/oracle/oradata/control02.ctl'
+  ORA-27037: unable to obtain file status
+  Linux-x86_64 Error: 2: No such file or directory
+  Additional information: 3
+  ORA-205 signalled during: ALTER DATABASE   MOUNT...
+
+ & 登陆sysdba 创建文件
+   [oracle@db_1 ~]$ sqlplus / as sysdba
+
+ & 关闭oracle
+   SQL> shutdown abort;
+   ORACLE instance shut down.
+
+ & 创建pfile，并且创建control_file
+   SQL>startup nomount
+   SQL>create pfile='/opt/app/oracle/product/11.2.0/db_1/dbs/pfilewebtalk.ora' from spfile='/opt/app/oracle/product/11.2.0/db_1/dbs/spfilewebtalk.ora';
+   
+   [oracle@db_1 ~]$ vim /opt/app/oracle/product/11.2.0/db_1/dbs/pfilewebtalk.ora
+   *.control_files='/opt/app/oracle/oradata/wetalk/control01.ctl','/opt/app/oracle/oradata/wetalk/control02.ctl'
+    
+ & 创建pfile,spfile,并且修改control_files路径
+   SQL> startup pfile='/opt/app/oracle/product/11.2.0/db_1/dbs/pfilewebtalk.ora' 
+   SQL> create spfile='/opt/app/oracle/product/11.2.0/db_1/dbs/spfilewebtalk.ora' from pfile='/opt/app/oracle/product/11.2.0/db_1/dbs/pfilewebtalk.ora';  #若报错，则到目录下创建.ctl文件
+   SQL>  alter system set control_files='/opt/app/oracle/oradata/wetalk/control01.ctl','/opt/app/oracle/oradata/wetalk/control02.ctl' scope=spfile; 
+
+ & 重启数据库
+   SQL> shutdown abort;
+   ORACLE instance shut down.
+   SQL> startup
+   ORACLE instance started
+
+   Total System Global Area 1068937216 bytes
+   Fixed Size           2220200 bytes
+   Variable Size          616566616 bytes
+   Database Buffers   444596224 bytes
+   Redo Buffers         5554176 bytes
+   Database mounted.
+   Database opened.
+
+####################################################################
+
+
+
+
+
+
+
+
+

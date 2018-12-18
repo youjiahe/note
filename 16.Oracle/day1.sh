@@ -46,27 +46,10 @@ create table infos(
   stuadress varchar2(50) default '地址不详',
   classno number(4) not null
 )
-create table infos(
-  stuid varchar2(7) not null,
-  stuname varchar2(7) not null,
-  gender varchar2(2) not null,
-  age number(2) not null,
-  seat number(2) not null,
-  indate date,
-  stuadress varchar2(50) default '地址不详',
-  classno varchar(4) not null
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
+create table scores(
+stuid varchar2(7) not null,
+chinese_score number(3) not null,
+math_score number(3) not null,
+english_score number(3) not null
+);
 
