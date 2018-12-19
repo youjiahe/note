@@ -1,6 +1,26 @@
 0.oracle安装
    https://www.cnblogs.com/yingsong/p/6031235.html
+  & 内核参数解析：
+    #vi/etc/sysctl.conf  
+    net.ipv4.ip_local_port_range= 9000 65500 #本地临时端口，对并发连接数有影响
+    fs.file-max = 6815744      #最大打开文件数
+    kernel.shmall = 10523004   #共享内存总量
+    kernel.shmmax = 6465333657 #共享内存最大值
+    kernel.shmmni = 4096       #共享内存最小值
+    kernel.sem = 250 32000 100128 
+    net.core.rmem_default=262144  #接收套接字缓冲区大小默认值,字节
+    net.core.wmem_default=262144  #为TCP socket预留用于发送缓冲的内存数量,字节
+    net.core.rmem_max=4194304     #接收套接字缓冲区大小最大值
+    net.core.wmem_max=1048576     #为TCP socket预留用于发送缓冲的内存数量,最大值
+    fs.aio-max-nr = 1048576       #此参数限制并发未完成的异步请求数目，应该设置避免I/O子系统故障。
+   & 静默安装 命令
+   /home/oracle/database/runInstaller -silent -ignorePrereq -responseFile /home/oracle/database/response/db_install.rsp
 
+   & 配置监听文件
+   netca  /silent /responsefile /home/oracle/database/response/netca.rsp
+
+   & SID最好不要使用网页的 webtalk，使用 orcl11g
+######################################################
 1.Oracle SQL 语句由如下命令组成：
   数据定义语言（DDL），包括 CREATE（创建）命令、ALTER（修改）命令、DROP（删
 除）命令等。
