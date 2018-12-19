@@ -53,23 +53,29 @@ ROLLBACK（回滚）命令。
   16-DEC-18
   16-DEC-18 11.42.50.350052 PM +08:00
 ######################################################
-3. Oracle 创建表和约束
+用户与授权
+######################################################
+表空间
+  ● 默认表空间 
+    ― oracle用户中的默认表空间： 
+      ☆ 默认永久性表空间system 
+      ☆ 默认临时表空间temp
 
-案例1：创建一个学生信息（INFOS）表和约束
-create table infos(
-  stuid varchar2(7) not null,
-  stuname varchar2(10) not null,
-  gender varchar(2) not null,
-  age number(2) not null,
-  seat number(2) not null,
-  intodate date,
-  stuadress varchar2(50) default '地址不详',
-  classno number(4) not null
-)
-create table scores(
-stuid varchar2(7) not null,
-chinese_score number(3) not null,
-math_score number(3) not null,
-english_score number(3) not null
-);
+     如果所有用户都使用oracle默认表空间,会增加system与temp表空间的竞争性
 
+  ● 查询默认表空间 
+    ― 当前用户的默认表空间 
+      SQL> select default_tablespace from user_users;
+      
+      DEFAULT_TABLESPACE
+      ------------------------------
+      SYSTEM
+   
+    ― 默认表空间
+      select property_name,property_value from database_properties where property_name in ('default_permanent_tablespace','default_temp_tablespace');
+
+  ● 设置默认表空间
+    ― 就是修改database_properties数据字典的值
+    ― 命令:
+      alter database default temporary tablespace MY_SPACE; #临时表空间
+      alter database default tabelspace MY_P_SPACE;         #永久表空间
