@@ -64,4 +64,18 @@ DML：
   select empname,salary,(salary*12+2000) as sumincome from emps;  #四则运算
   select (empname || ' is a '|| job) from emps;   #连接字符串
   select chinese,math from scores where stus_stuid=scores_stuid;  #多表查询
+6.连接查询
+  create table emps(
+  empid varchar2(7) not null,
+  empname varchar2(10) not null,
+  job varchar(10) not null,
+  salary number(6),
+  beizhu varchar2(50),
+  deptid number(3)
+  )
+  alter table emps add (deptid number(3) not null); #添加字段
+
+  create table depts(
+    deptid varchar2(7) not null,  
+  )
 
