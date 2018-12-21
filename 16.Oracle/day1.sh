@@ -54,6 +54,35 @@ ROLLBACK（回滚）命令。
   16-DEC-18 11.42.50.350052 PM +08:00
 ######################################################
 用户与授权
+   在一个数据库中，不同的项
+   目由不同的用户访问，每一个用户拥有自身创建的数据库对象，因此用户的概念在 Oracle
+   中非常重要。Oracle 的用户可以用 CREATE USER 命令来创建。其语法是：
+   ● 语法结构：创建用户
+     CREATE USER 用户名 IDENTIFIED BY 口令 [ACCOUNT LOCK|UNLOCK]
+     connect/resource/dba 角色
+   ● 语法结构：授权
+     SQL> GRANT CONNECT TO jerry;
+     授权成功。
+     SQL> GRANT RESOURCE TO jerry;
+     授权成功。
+
+   ● 语法结构：其他操作
+     //回收权限
+     REVOKE 角色|权限 FROM 用户（角色）
+     //修改用户的密码
+     ALTER USER 用户名 IDENTIFIED BY 新密码
+     //修改用户处于锁定（非锁定）状态
+     ALTER USER 用户名 ACCOUNT LOCK|UNLOCK
+
+   ● 实例：
+     create user jerry identified by qqqA account unlock;
+     create user jack identified by qqqA account lock;
+     grant connect,resource to jerry;
+     grant dba to jack;
+     revoke resource from jerry;
+     alter user jack identified by 888888; 
+     alter user jerry identified by 888888; 
+
 ######################################################
 表空间
   ● 默认表空间 

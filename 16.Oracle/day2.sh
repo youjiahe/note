@@ -65,6 +65,7 @@ DML：
   select (empname || ' is a '|| job) from emps;   #连接字符串
   select chinese,math from scores where stus_stuid=scores_stuid;  #多表查询
 6.连接查询
+  #建表
   create table emps(
   empid varchar2(7) not null,
   empname varchar2(10) not null,
@@ -74,8 +75,29 @@ DML：
   deptid number(3)
   )
   alter table emps add (deptid number(3) not null); #添加字段
-
+  alter table add contraints FK_EMPS_DEPTS foreign key(deptid) references depts(deptid);
+  
   create table depts(
     deptid varchar2(7) not null,  
-  )
+    deptname varchar2(6) not null
+  );
+  insert into depts values(1,'ops');
+  insert into depts values(2,'dev');
+  insert into depts values(3,'acc');
+  insert into depts values(4,'gong');
+  insert into depts values(5,'market');
+  insert into depts values(6,'sells');
+  insert into emps values('1000','youjiahe','engineer',11500,null,1);
+  insert into emps values('1001','chenchuwen','engineer',11000,null,1);
+  insert into emps values('1002','hehui','hr',9000,null,2);
+  insert into emps values('1003','heihei','hr',7000,null,3);
+
+  #多表查询
+#@ 内联接 
+  select e.empname,e.salary,e.job,d.deptname from emps e ,depts d where e.deptid=d.deptid and e.salary>=8000;
+  select e.empname,e.salary,e.job,d.deptname from emps e LEFT JOIN depts d on e.deptid=d.deptid and e.salary>=8000;
+
+#@外联接
+  select e.empname,e.salary,e.job,d.deptname from emps e,depts d where e.deptid(+)=d.deptid;
+  select e.empname,e.salary,e.job,d.deptname from emps e RIGHT join depts d on e.deptid=d.deptid;
 
