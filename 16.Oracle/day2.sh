@@ -100,4 +100,32 @@ DML：
 #@外联接
   select e.empname,e.salary,e.job,d.deptname from emps e,depts d where e.deptid(+)=d.deptid;
   select e.empname,e.salary,e.job,d.deptname from emps e RIGHT join depts d on e.deptid=d.deptid;
+##################################################################
+#子查询
+  SELECT ENAME,JOB,SAL FROM EMP 
+  WHERE DEPTNO=(SELECT DEPTNO FROM DEPT WHERE DNAME='SALES')
+
+#ANY 子查询
+  SQL> SELECT ENAME,JOB,SAL FROM EMP
+  2 WHERE SAL<ANY (SELECT SAL FROM EMP WHERE JOB='SALESMAN') 
+  3 /
+
+#ALL 子查询
+  SQL> SELECT ENAME,JOB,SAL FROM EMP
+  2 WHERE SAL>ALL (SELECT SAL FROM EMP WHERE JOB='SALESMAN') 
+  3 /
+ 
+select ename,job,sal from emp where sal<any (select sal from emp where job='SALESMAN');
+select ename,job,sal from emp where sal>all (select sal from emp where job='SALESMAN');
+##################################################################
+#伪列
+  #rowid
+  select rowid,ename,job from emp;
+
+  #rownum
+  select rownum,ename,job from emp;
+
+  select rownum,T.* from (select ename,job,sal from emp order by sal desc) T where rownum<=5;
+  select * from (select rownum R,ename,job,sal from emp where rownum<=10 ) where R>5;
+
 

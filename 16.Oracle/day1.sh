@@ -76,6 +76,17 @@ ROLLBACK（回滚）命令。
    ● 查看用户权限角色
       select * from user_users;
       select  * from resource_users;
+      select * from session_privs;   #查看当前用户的权限
+      select * from all_tables where owner='scott';
+   ● 查看当前用户的所有表
+     SQL> select * from tab;
+
+     TNAME                 TABTYPE  CLUSTERID
+     ------------------------------ ------- ----------
+     BONUS                 TABLE
+     DEPT                  TABLE
+     EMP                   TABLE
+     SALGRADE              TABLE
    ● 实例：
      create user jerry identified by qqqA account unlock;
      create user jack identified by qqqA account lock;
