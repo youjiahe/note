@@ -73,7 +73,9 @@ ROLLBACK（回滚）命令。
      ALTER USER 用户名 IDENTIFIED BY 新密码
      //修改用户处于锁定（非锁定）状态
      ALTER USER 用户名 ACCOUNT LOCK|UNLOCK
-
+   ● 查看用户权限角色
+      select * from user_users;
+      select  * from resource_users;
    ● 实例：
      create user jerry identified by qqqA account unlock;
      create user jack identified by qqqA account lock;
@@ -82,7 +84,7 @@ ROLLBACK（回滚）命令。
      revoke resource from jerry;
      alter user jack identified by 888888; 
      alter user jerry identified by 888888; 
-
+     
 ######################################################
 表空间
   ● 默认表空间 
