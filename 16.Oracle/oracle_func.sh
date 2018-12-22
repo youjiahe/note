@@ -48,3 +48,80 @@
     ROUND(x[,y])  x 在第 y 位四舍五入  ROUND(3.456,2)=3.46
     SQRT(x)  x 的平方根  SQRT(4)=2
     TRUNC(x[,y])  x 在第 y 位截断  TRUNC(3.456,2)=3.45
+ 
+【日期函数】
+    日期函数
+    日期函数对日期进行运算。常用的日期函数有：
+  1.  ADD_MONTHS(d,n)，在某一个日期 d 上，加上指定的月数 n，返回计算后的新日期。d 表示日期，n 表示要加的月数。
+
+    SQL> select sysdate,add_months(sysdate,5) from dual;
+
+    SYSDATE        ADD_MONTHS(SYSDATE
+    ------------------ ------------------
+    21-DEC-18      21-MAY-19
+  
+  2. EXTRACT  #提取日期中的特定部分。
+     select sysdate "date",
+            extract(year from sysdate) "year",
+            extract(month from sysdate) "month",
+            extract(day from sysdate) "day",
+            extract(hour from systimestamp) "hour",
+            extract(minute from systimestamp) "min",
+            extract(second from systimestamp) "sec"
+     from dual;
+
+【转换函数】
+   1.TO_CHAR
+     把日期和数字转换为制定格式的字符串。fmt 是格式化字符串
+     select to_char(sysdate,'YYYY"年"MM"月"DD"日"HH24:MI:SS') "date" from dual;
+     date
+     -------------------------
+     2018年12月22日18:26:09
+     
+     select to_char(-12345.67,'L9.9EEEEPR')
+     TO_CHAR(-12345.67
+     --------------------
+	  <$1.2E+04>
+     //L:   数字开头凡会一个美元符号；
+     //9.9: 指定返回格式为9.9的数字；
+     //EEEE:科学计数法；
+     //PR:如果数字为负数，则用<>括起来；
+
+   2.TO_NUMBER
+     
+     select to_number('$11,500.67','$99999.99') num from dual;
+
+     NUM
+     ----------
+     11500.67
+
+   3. TO_DATE
+     select to_date('2018-09-11 23:00:01','YYYY-MM-DD HH24:MI:SS') to_date_ from dual;
+
+     TO_DATE_
+     ------------------
+     11-SEP-18
+【其他单行函数】
+   1.NVL
+    select * from (select rownum R,ename,job,sal,nvl(comm,2000) from emp where rownum<=14) where R>=7;
+
+    	 R ENAME      JOB	       SAL NVL(COMM,2000)
+---------- ---------- --------- ---------- --------------
+	 7 CLARK      MANAGER	      2450	     2000
+	 8 SCOTT      ANALYST	      3000	     2000
+	 9 KING       PRESIDENT       5000	     2000
+	10 TURNER     SALESMAN	      1500		0
+	11 ADAMS      CLERK	      1100	     2000
+	12 JAMES      CLERK	       950	     2000
+	13 FORD       ANALYST	      3000	     2000
+	14 MILLER     CLERK	      1300	     2000
+#################################################################
+【聚合函数】
+   1. count
+     select count(ename) from emp;
+   2. sum,avg,max,min,
+     select sum(sal) sum_sal from emp;
+     select avg(sal) avg_sal from emp;
+     select max(sal) max_sal from emp;
+     select min(sal) min_sal from emp;
+
