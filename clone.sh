@@ -13,7 +13,7 @@ while [ $j -le $n ]
       cd /etc/libvirt/qemu
       virsh define  host${i}.xml  &>/dev/null
       sleep 0.3
-      [ $? -eq 0 ] && echo -e "\033[32m虚拟机host$i 创建成功[OK]\033[0m" ||  echo -e "\033[31m虚拟机host$i 创建失败[NG]\033[0m"
+      [ $? -eq 0 ] && echo -e "虚拟机host$i\033[32m   创建成功[OK]\033[0m" ||  echo -e "\033[31m虚拟机host$i 创建失败[NG]\033[0m"
       let j++
    else 
          let i++
