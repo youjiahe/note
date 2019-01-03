@@ -226,8 +226,39 @@ open_file_cache          max=2000  inactive=20s;
 //文件句柄的有效时间是60秒，60秒后过期
 //只有访问次数超过5次会被缓存
 } 
+###########################################################################
+●proxy_set_header的理解
+●总结：proxy_set_header 就是可设置请求头-并将头信息传递到服务器端。
+      不属于请求头的参数中也需要传递时 重定义下就行啦。
+http {
+  ... ...
+  location / {
+  proxy_set_header   Host             $host:$server_port;    
+  #给头部信息添加 代理服务器IP及port；
+  proxy_set_header   X-Real-IP        $remote_addr;          
+  #重定义了 X-Real-IP 并传递$remote_addr，以便应用获取客户端IP；
+  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+  #
+  ... ...
+  }
+}
+###########################################################################
+X-Forwarded-For 和 X-Real-IP 的区别？
+一般来说，X-Forwarded-For是用于记录代理信息的，每经过一级代理(匿名代理除外)，
+代理服务器都会把这次请求的来源IP追加在X-Forwarded-For中
 
+●例子：
+   来自4.4.4.4的一个请求，header包含这样一行
 
+  & X-Forwarded-For: 1.1.1.1, 2.2.2.2, 3.3.3.3
+     代表 请求由1.1.1.1发出，经过三层代理，
+          第一层是2.2.2.2，第二层是3.3.3.3，而本次请求的来源IP4.4.4.4是第三层代理
 
+  & X-Real-IP，
+     没有相关标准，上面的例子，如果配置了X-Read-IP，可能会有两种情况
 
+     // 最后一跳是正向代理，可能会保留真实客户端IP
+        X-Real-IP: 1.1.1.1
+     // 最后一跳是反向代理，比如Nginx，一般会是与之直接连接的客户端IP
+        X-Real-IP: 3.3.3.3
 
