@@ -1,0 +1,29 @@
+useradd -s /sbin/nologin nginx
+
+unzip /data/pkgs/08a395c66e42.zip -d /data/module/nginx     #包在U盘,github
+cd /data/module/nginx
+mv nginx-goodies-nginx-sticky-module-ng-08a395c66e42/ nginx-sticky-module-ng
+chown -R nginx:nginx /data/module/nginx
+cd /home/nfdw/pkgs/
+tar -xf nginx-1.12.2.tar.gz
+cd /home/nfdw/pkgs/nginx-1.12.2
+
+./configure --prefix=/data/nginx 
+--user=nginx --group=nginx \
+--with-http_stub_status_module \
+--with-http_ssl_module \
+--with-stream \
+--without-http_ssi_module \
+--without-http_autoindex_module \
+--add-module=/data/module/nginx/nginx-sticky-module-ng
+
+make && make install 
+
+chown -R nginx:nginx /data/nginx
+echo "export 'PATH=$PATH:/data/nginx/sbin/'" >> /etc/profile
+source /etc/profile
+nginx
+curl localhost
+#\cp nginx.conf /data/nginx/conf/  #看nginx.conf模板,在u盘，github
+#chown -R nginx.nginx /data/nginx
+
