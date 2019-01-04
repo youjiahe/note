@@ -1,0 +1,2 @@
+host4 storage2 192.168.1.14
+host5 storage3 192.168.1.15

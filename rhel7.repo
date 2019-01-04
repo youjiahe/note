@@ -1,0 +1,5 @@
+[rhel7]
+name=rhel7
+baseurl=ftp://192.168.4.254/rhel7
+enable=1
+gpgcheck=0
