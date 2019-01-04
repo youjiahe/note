@@ -1,0 +1,124 @@
+######################################################################   ●MySQL搭建
+与右边软件包有版本冲突  #mariadb-server.x86_64
++步骤1：装包
+     &解压：mysql-5.7.17.tar
+	 mysql-community-client-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-common-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-devel-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-embedded-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-embedded-compat-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-embedded-devel-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-libs-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-libs-compat-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-minimal-debuginfo-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-server-5.7.17-1.el7.x86_64.rpm
+	 mysql-community-test-5.7.17-1.el7.x86_64.rpm
+
+    --mysql-community-server #提供MySQL服务
+    --mysql-community-client #提供命令的包
+
+     &安装依赖包：yum -y install perl-JSON
+     &升级安装：rpm -Uvh mysql-community-*.rpm #升级安装避免版本冲突
+######################################################################
+●搭建phpMyAdmin                                     
+ 步骤1：搭建LAMP
+      yum -y install httpd php php-mysql
+      systemctl restart httpd
+ 步骤2：解包                         
+      tar -xf phpMyAdmin-2.11.11-all-languages.tar.gz -C /var/www/html/                          
+ 步骤3：配置php
+    cd /var/www/html/ 
+    mv phpMyAdmin-2.11.11-all-languages/ phpMyAdmin 
+    cp config.sample.inc.php config.inc.php
+    vim config.inc.php
+     ----------------------------------------------------------------------------------
+    <?php
+    17 $cfg['blowfish_secret'] = '123456';   #填充单引号，内容随便,加密                           
+    31 $cfg['Servers'][$i]['host'] = 'localhost';  #数据库服务器IP地址  
+     ?>                            
+     ----------------------------------------------------------------------------------                                
+●phpMyAdmin使用
+  浏览器登陆操作,图形操作
+192.168.4.50/phpMyAdmin
+######################################################################
+第三方percona-xtrabackup备份                     
+●装包                                 
+    yum -y install 
+    perl-DBD-MySQL.x86_64              #光盘自带依赖包
+    perl-Digest-MD5                    #光盘自带依赖包
+    libev-4.15-1.el6.rf.x86_64.rpm     #需要下载
+    percona-xtrabackup-24-2.4.7-1.el7.x86_64.rpm   #需要下载
+######################################################################
+MySQL读写分离    
+&装包
+maxscale-2.1.2-1.rhel.7.x86_64.rpm
+######################################################################
+●搭建多实例
+  +装包
+   tar -xf mysql-5.7.20-linux-glibc2.12-x86_64
+   mv mysql-5.7.20-linux-glibc2.12 /usr/local/mysql
+ ######################################################################
+部署高可用集群环境
+●公共配置：在所有主机上安装软件软件包
+]# cd  mha-soft-student
+]# ls  *.rpm
+mha4mysql-node-0.56-0.el6.noarch.rpm
+perl-Config-Tiny-2.14-7.el7.noarch.rpm          
+perl-Mail-Sender-0.8.23-1.el7.noarch.rpm       
+perl-MIME-Types-1.38-2.el7.noarch.rpm
+perl-Email-Date-Format-1.002-15.el7.noarch.rpm  
+perl-Mail-Sendmail-0.79-21.el7.art.noarch.rpm  
+perl-Parallel-ForkManager-1.18-2.el7.noarch.rpm
+perl-Log-Dispatch-2.41-1.el7.1.noarch.rpm       
+perl-MIME-Lite-3.030-1.el7.noarch.rpm
+]# yum -y  install  *.rpm
+
+配置manager56主机
+●配置manager56主机 无密码ssh登录 所有数据库主机
+●在主机mgm56上安装管理工具
+  ]# yum -y  install    perl-ExtUtils-*     perl-CPAN*
+  ]#tar  -zxvf  mha4mysql-manager-0.56.tar.gz
+  ]#cd  mha4mysql-manager-0.56
+  ]#perl  Makefile.PL             #mha4mysql-manager是用perl语言写的源码包
+  ]#make && make install
+]#ln -s bin/* /usr/local/bin/   #把mha4mysql-manager命令做软连接到PATH下,可以不做
+
+######################################################################
+数据分片实现
+搭建mycat
+●装包
+  yum -y install java-1.8.0-openjdk java-1.8.0-openjdk-headless
+●mycat服务软件解包
+  ~]# tar -xf Mycat-server-1.4-beta-20150604171601-linux.tar.gz
+  ~]# mv mycat/ /usr/local/
+  ~]# ls /usr/local/
+bin catlet conf lib logs version.txt
+######################################################################
+部署Redis服务
+#在50上搭建
+●装包
+  +安装依赖包
+    ~]# yum -y install gcc gcc-c++
+  +解包
+    ~]# tar -xf redis-4.0.8.tar.gz
+  +编译
+    redis-4.0.8]# cd redis-4.0.8/
+    redis-4.0.8]# make && make install
+
+●初始化设置
+redis-4.0.8]# ./utils/install_server.sh      #全部默认   
+######################################################################
+部署MongoDB
+●装包
+ +解包
+   tar -xvf mongodb-linux-x86_64-rhel70-3.6.3.tgz
+ +部署mongodb脚本，各种程序
+   mkdir /etc/mongodb
+cp mongodb-linux-x86_64-rhel70-3.6.3.tgz/bin /etc/mongodb
+
+
+
+
+
+
+

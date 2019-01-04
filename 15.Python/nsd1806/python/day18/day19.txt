@@ -1,0 +1,277 @@
+django api
+1、启动python shell
+[root@room8pc16 mysite]# source /opt/djenv/bin/activate
+(djenv) [root@room8pc16 mysite]# python manage.py shell
+2、导入模型
+>>> from polls.models import Question, Choice
+3、使用模型管理器
+每一个模型默认都有一个叫作objects的管理器，通过它，可以对模型实现增删改查
+返回Question、Choice所有对象的查询集，查询集中的每个项目是类的一个实例，
+该实例对应成数据库中的一行记录
+>>> Question.objects.all()
+>>> Choice.objects.all()
+4、创建Question，方法一
+>>> q1 = Question(question_text='你心仪的公司是哪家？', pub_date='2018-12-1')
+>>> q1.save()
+5、创建Question，方法二
+>>> Question.objects.create(question_text='散伙饭去哪吃？', pub_date='2018-11-28')
+6、创建Choice
+(1)实例化的方式
+>>> c1 = Choice(choice_text="阿里", vote=0, question=q1)
+>>> c1.save()
+(2)能过objects管理器
+>>> Choice.objects.create(choice_text="达内", vote=0, question=q1)
+(3)通过问题创建选项
+问题实例都有一个 xxxx_set(本例中是choice_set)，这个xxx_set也是一个像objects
+一样的管理器，只不过是固定某一个问题实例的Choice管理器
+>>> q1.choice_set.all()
+>>> q1.choice_set.create(choice_text='网易', vote=0)
+7、修改问题
+>>> q1.question_text = "你期待哪家公司给你发offer？"
+>>> q1.save()
+8、查询所有的问题
+>>> Question.objects.all()
+9、使用get方法，注意，它必须返回一个结果，是一个实例。
+>>> q1 = Question.objects.get(id=1)
+>>> q1.question_text
+>>> q1.pub_date
+>>> q2 = Question.objects.get(question_text="散伙饭去哪吃？")
+>>> q2.question_text
+>>> q2.pub_date
+>>> Question.objects.get(id__gt=2)  # 查询id大于2的项目，报错，因为不只一项
+10、排序，返回查询集
+>>> Question.objects.order_by('pub_date')    # 升序
+>>> Question.objects.order_by('-pub_date')   # 降序
+>>> qset1 = Question.objects.order_by('-pub_date')
+>>> len(qset1)
+>>> q1 = qset1[0]
+>>> q1.question_text
+>>> q1.pub_date
+>>> q2 = qset1[len(qset1) - 1]
+>>> q2.pub_date
+11、filter过滤，返回查询集
+>>> qset2 = Question.objects.filter(pub_date__month=11)
+>>> q3 = qset2[0]
+>>> q3.question_text
+
+双下划线是属性，如字符串的属性有startswith，标准写法是
+>>> s = q3.question_text
+>>> s.startswith('当你')
+django中的写法是
+>>> Question.objects.filter(question_text__startswith='当你')
+
+
+12、为模型增加方法
+判断问题是不是7天内发布的
+发布时间 >= 当前时间 - 7天
+# vim polls/models.py
+from django.db import models
+from django.utils import timezone
+from datetime import timedelta
+
+class Question(models.Model):
+    question_text = models.CharField(max_length=200)
+    pub_date = models.DateTimeField()
+
+    def was_pub_recently(self, days=7):
+        return self.pub_date >= timezone.now() - timedelta(days=days)
+
+    def __str__(self):
+        return "<问题：%s>" % self.question_text
+
+class Choice(models.Model):
+    choice_text = models.CharField(max_length=200)
+    vote = models.IntegerField(default=0)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "<%s: %s>" % (self.question, self.choice_text)
+
+13、重新导入Question，测试问题
+(djenv) [root@room8pc16 mysite]# python manage.py shell
+>>> from polls.models import Question, Choice
+>>> qset = Question.objects.all()
+>>> q1 = qset[0]
+>>> q1.was_pub_recently()
+>>> q1.pub_date
+>>> qset1 = Question.objects.filter(pub_date__month=10)
+>>> q2 = qset1[0]
+>>> q2.pub_date
+datetime.datetime(2018, 10, 30, 12, 0)
+>>> q2.was_pub_recently()
+False
+
+
+视图和模板
+1、编辑index视图，返回所有的问题给模板
+from django.shortcuts import render
+from .models import Question
+
+def index(request):
+    questions = Question.objects.order_by('-pub_date')
+    return render(request, 'index.html', {'questions': questions})
+2、修改模板，显示问题
+# vim polls/templates/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>投票首页</title>
+</head>
+<body>
+<h1>这是投票首页</h1>
+{{ questions }}
+</body>
+</html>
+3、模板语言的常用语法
+<body>
+<h1>这是投票首页</h1>
+{% for question in questions %}
+    <p>{{ question.question_text }} {{ question.pub_date }}</p>
+{% endfor %}
+<hr>
+{% for question in questions %}
+    {% if question.was_pub_recently %}
+        <p>{{ question.question_text }} {{ question.pub_date }}</p>
+    {% endif %}
+{% endfor %}
+
+<hr>
+{{ questions }}
+</body>
+
+4、规划详情页
+(1)编辑urls.py
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+    url(r'^(?P<question_id>\d+)/$', views.detail, name='detail'),
+]
+使用\d+匹配问题编号，然后把这个编号保存到一个名为question_id的变量中，交给
+views.detail函数，作为它的参数
+(2)创建函数
+def detail(request, question_id):
+    question = Question.objects.get(id=question_id)
+    return render(request, 'detail.html', {'question': question})
+(3)修改index.html视图
+将
+{% for question in questions %}
+    <p><a href="/polls/{{ question.id }}/" target="_blank">{{ question.question_text }}</a> {{ question.pub_date }}</p>
+{% endfor %}
+近一步修改为
+{% for question in questions %}
+    <p><a href="{% url 'detail' question_id=question.id %}" target="_blank">{{ question.question_text }}</a> {{ question.pub_date }}</p>
+{% endfor %}
+(4)创建视图
+# vim templates/detail.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>投票详情页</title>
+</head>
+<body>
+<h1>{{ question.question_text }}</h1>
+<ul>
+    {% for choice in question.choice_set.all %}
+        <li>{{ choice.choice_text }}</li>
+    {% endfor %}
+</ul>
+</body>
+</html>
+
+5、规划结果页
+(1)编辑urls.py
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+    url(r'^(?P<question_id>\d+)/$', views.detail, name='detail'),
+    url(r'^(?P<question_id>\d+)/result/$', views.result, name='result'),
+]
+(2)编写视图函数
+def result(request, question_id):
+    question = Question.objects.get(id=question_id)
+    return render(request, 'result.html', {'question': question})
+(3)创建模板文件
+# vim polls/templates/result.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>投票结果页</title>
+</head>
+<body>
+<h1>{{ question.question_text }}</h1>
+<table border="1px">
+    <tr>
+        <td>选项</td>
+        <td>票数</td>
+    </tr>
+    {% for choice in question.choice_set.all %}
+        <tr>
+            <td>{{ choice.choice_text }}</td>
+            <td>{{ choice.vote }}</td>
+        </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>
+
+为投票详情编写表单
+1、修改详情页
+<body>
+<h1>{{ question.question_text }}</h1>
+<form action="/polls/{{ question.id }}/vote/" method="post">
+    {% for choice in question.choice_set.all %}
+        <div>
+            <label>
+                <input type="radio" name="choice_id" value="{{ choice.id }}"> {{ choice.choice_text }}
+            </label>
+        </div>
+    {% endfor %}
+    <input type="submit" value="提 交">
+</form>
+</body>
+2、为表单的action编写url
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.index, name='index'),
+    url(r'^(?P<question_id>\d+)/$', views.detail, name='detail'),
+    url(r'^(?P<question_id>\d+)/result/$', views.result, name='result'),
+    url(r'^(?P<question_id>\d+)/vote/$', views.vote, name='vote'),
+]
+3、表单的action可以改为以下样式
+<form action="{% url 'vote' question_id=question.id %}" method="post">
+4、编写投票函数
+from django.shortcuts import render, redirect
+
+def vote(request, question_id):
+    question = Question.objects.get(id=question_id)  # 获取问题
+    choice_id = request.POST.get('choice_id')     # 获取选项的ID
+    choice = question.choice_set.get(id=choice_id)  # 取获选项实例
+    choice.vote += 1   # 将选项票数加1
+    choice.save()
+    # redirect是重定向，相当于是打开新的网址
+    # 'result'是URL的名字，在urls.py中定义的
+    return redirect('result', question_id=question_id)
+
+
+http://yiyibooks.cn/   找到django1.11.6手册
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

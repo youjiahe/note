@@ -1,0 +1,182 @@
+ansible
+1、安装
+[root@room8pc16 day14]# pip3 install ansible
+2、准备3台虚拟机: 配置IP地址和主机名
+node3: 192.168.4.3
+node4: 192.168.4.4
+node5: 192.168.4.5
+3、配置名称解析
+[root@room8pc16 devops]# for i in {1..254}
+> do
+> echo -e "192.168.4.$i\tnode$i.tedu.cn\tnode$i" >> /etc/hosts
+> done
+4、基础配置
+[root@room8pc16 day14]# mkdir myansible
+[root@room8pc16 day14]# cd myansible
+[root@room8pc16 myansible]# vim ansible.cfg
+[defaults]
+inventory = hosts
+remote_user = root
+[root@room8pc16 myansible]# vim hosts
+[webservers]
+node3.tedu.cn
+node4.tedu.cn
+
+[dbservers]
+node5.tedu.cn
+5、收集主机密钥
+[root@room8pc16 myansible]# ssh-keyscan node{3..5}.tedu.cn >> ~/.ssh/known_hosts
+6、ad-hoc方式
+[root@room8pc16 myansible]# ansible all -m ping -k
+7、配置vim
+[root@room8pc16 myansible]# vim ~/.vimrc
+set ai     # 自动缩进
+set ts=4   # tab键是4个空格
+set et     # tab键转成空格
+autocmd FileType yaml setlocal sw=2 ts=2 et ai   # yml文件生效
+8、创建playbook，用于免密登陆、配置yum
+[root@room8pc16 myansible]# mkdir files
+[root@room8pc16 myansible]# vim files/server.repo
+[server]
+name=server
+baseurl=ftp://192.168.4.254/rhel7.4
+enabled=1
+gpgcheck=0
+[root@room8pc16 myansible]# vim sys_init.yml
+---
+- name: init system
+  hosts: all
+  tasks:
+    - name: upload public key
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+    - name: upload yum configure file
+      copy:
+        src: files/server.repo
+        dest: /etc/yum.repos.d/server.repo
+[root@room8pc16 myansible]# ansible-playbook --syntax-check sys_init.yml
+[root@room8pc16 myansible]# ansible-playbook sys_init.yml -k
+
+9、配置web/db服务器
+web: 装软件、上传网站、启动服务
+db: 装软件、启动服务
+[root@room8pc16 myansible]# vim lamp.yml
+---
+- name: configure web service
+  hosts: webservers
+  tasks:
+    - name: install apache pkgs
+      yum:
+        name: [httpd, php, php-mysql]
+        state: latest
+    - name: upload web files
+      copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+    - name: manage web service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+- name: configure db service
+  hosts: dbservers
+  tasks:
+    - name: install db pkgs
+      yum:
+        name: mariadb-server
+        state: present
+    - name: manage db service
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+[root@room8pc16 myansible]# vim files/index.html
+<h1>my web site</h1>
+[root@room8pc16 myansible]# ansible-playbook --syntax-check lamp.yml
+[root@room8pc16 myansible]# ansible-playbook lamp.yml
+
+http://docs.ansible.com/  -> Ansible Documentation ->搜索python api
+
+命名的元组：
+传统的元组是序列对象，通过下标访问；命名元组扩展了传统的元组，为每个元素添加了额
+外的名称，仍可以按传统的方式访问。
+>>> from collections import namedtuple
+>>> point = namedtuple('point', ['x', 'y', 'z'])
+>>> a = point(10, 20, 25)
+>>> a[0]
+10
+>>> a[1:]
+(20, 25)
+>>> a.x
+10
+>>> a.z
+25
+
+
+ansible-cmdb
+[root@room8pc16 day14]# pip3 install ansible-cmdb
+[root@room8pc16 day14]# mkdir /tmp/ansi_cmdb
+[root@room8pc16 myansible]# ansible all -m setup --tree /tmp/ansi_cmdb/out
+[root@room8pc16 myansible]# ansible-cmdb /tmp/ansi_cmdb/out/ > /tmp/ansi_cmdb/out.html
+[root@room8pc16 myansible]# firefox /tmp/ansi_cmdb/out.html
+问题的解决：
+1、mako
+[root@room8pc16 myansible]# pip3 install mako
+2、运行ansible-cmdb出错
+[root@room8pc16 myansible]# which ansible-cmdb
+[root@room8pc16 myansible]# vim /usr/local/bin/ansible-cmdb
+将PY_BIN=$(which python) 修改为
+PY_BIN=$(which python3)
+
+创建自定义模块
+1、创建自定义模块路径
+[root@room8pc16 myansible]# mkdir mymodules
+2、设置环境变量，当ansible搜索模块时，也会到自定义的路径下搜索
+[root@room8pc16 myansible]# export ANSIBLE_LIBRARY=./mymodules
+3、编写模块，用于实现本地文件拷贝
+# vim ./mymodules/mycopy.py
+#!/usr/bin/env python3
+# coding: utf8
+
+import shutil
+from ansible.module_utils.basic import AnsibleModule
+
+def main():
+    '函数名是main，必须的'
+    module = AnsibleModule(
+        argument_spec=dict(
+            yuan=dict(required=True, type='str'),
+            mubiao=dict(required=True, type='str')
+        )
+    )
+    shutil.copy(module.params['yuan'], module.params['mubiao'])
+    module.exit_json(changed=True)
+
+if __name__ == '__main__':
+    main()
+
+4、设置执行权限
+[root@room8pc16 myansible]# chmod +x mymodules/mycopy.py
+5、测试
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,259 @@
+django
+1、配置虚拟环境并激活
+[root@room8pc16 python]# python3 -m venv /opt/djenv
+[root@room8pc16 python]# source /opt/djenv/bin/activate
+2、在虚拟环境中安装django1.11.6
+(djenv) [root@room8pc16 day18]# pip3 install django==1.11.6
+>>> import django
+>>> django.__version__
+'1.11.6'
+3、创建项目
+一个项目就是django实例的各种设置集合
+(djenv) [root@room8pc16 day18]# django-admin startproject mysite
+4、运行项目
+django为了方便程序员可以看到页面效果，内建了一个简单的web服务器，纯粹用于开发环境
+的测试。如果是生产环境，需要把django项目部署在apache/nginx上。
+(djenv) [root@room8pc16 day18]# cd mysite/
+(djenv) [root@room8pc16 mysite]# python manage.py runserver
+5、访问
+http://127.0.0.1:8000/
+6、如果启动项目时报错，是因为没有sqlite数据库的支持，两种解决办法
+(1)重新编译python3
+# yum install -y sqlite-devel
+# ./configure --prefix=/usr/local/
+# make && make install
+(2)使用mysql数据库
+(djenv) [root@room8pc16 mysite]# mysql -uroot -ptedu.cn
+MariaDB [(none)]> CREATE DATABASE dj1806 DEFAULT CHARSET utf8;
+7、修改django配置
+# vim mysite/settings.py
+ALLOWED_HOSTS = '*'       # 允许全部的客户端访问
+MIDDLEWARE = [            # 关闭跨站攻击的安全配置
+    ... ...
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    ... ...
+]
+DATABASES = {             # 配置django使用的数据库是mysql
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dj1806',
+        'USER': 'root',
+        'PASSWORD': 'tedu.cn',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
+LANGUAGE_CODE = 'zh-hans'       # 使用中文
+TIME_ZONE = 'Asia/Shanghai'     # 时区
+USE_TZ = False                  # 配置django使用本地时区
+8、重新运行开发环境
+(djenv) [root@room8pc16 mysite]# systemctl stop httpd
+(djenv) [root@room8pc16 mysite]# python manage.py runserver 0:80
+0:80是0.0.0.0:80的简写
+如果报以下错误：
+Did you install mysqlclient or MySQL-python?
+解决办法如下：
+(djenv) [root@room8pc16 mysite]# pip3 install pymysql
+# vim mysite/__init__.py
+import pymysql
+pymysql.install_as_MySQLdb()
+再次运行开发环境
+(djenv) [root@room8pc16 mysite]# python manage.py runserver 0:80
+
+9、创建相关的数据库表
+(djenv) [root@room8pc16 day18]# mysql -uroot -ptedu.cn
+MariaDB [(none)]> use dj1806;
+MariaDB [dj1806]> show tables;   # 只有一张表
+(djenv) [root@room8pc16 mysite]# python manage.py migrate
+MariaDB [dj1806]> show tables;    # 创建多张表
+MariaDB [dj1806]> select * from auth_user;   # 没有用户
+10、创建管理员帐号
+(djenv) [root@room8pc16 mysite]# python manage.py createsuperuser
+密码要求8位以上，满足复杂度要求，否则无法创建
+MariaDB [dj1806]> select * from auth_user \G;   # 已存在管理员帐号
+11、访问后台管理界面
+http://192.168.4.254/admin
+
+12、创建应用：一个项目有很多的功能，可以将这些功能编写成一个个的应用。每个应用都是
+可重用的。如果其他项目也需要有完全一样的功能，只要加载这个应用即可。
+(djenv) [root@room8pc16 mysite]# python manage.py startapp polls
+13、将应用安装到项目中
+创建应用后，应用不会自动成为项目的一员。需要修改配置文件
+# vim mysite/settings.py
+INSTALLED_APPS = [
+    ... ...
+    'polls',
+]
+
+练习：
+1、新建虚拟环境
+2、在虚拟环境中安装django和pymysql
+3、激活虚拟环境
+4、创建一个项目mysite
+5、如果使用的是mysql数据库，需要在mysql中再创建一个新的数据库
+6、编辑项目配置文件
+7、创建数据库
+8、创建管理员用户
+9、启动开发环境
+10、访问django和后台管理界面
+11、创建应用，并将应用加入到项目中
+
+
+编辑应用
+1、创建投票应用
+当你从达内云计算毕业后，你期待第一份工作的工资是多少？
+5000
+5000~7000
+7000~8000
+8000~10000
+10000+
+2、投票应用需要在数据库中创建两张表
+问题表: 问题编号、内容、发布时间
+选项表：选项编号、选项内容、问题编号、所得票数
+3、URL设计
+http://127.0.0.1/polls/            ->列出所有的问题
+http://127.0.0.1/polls/1/          ->列出1号问题的详细信息
+http://127.0.0.1/polss/1/result    ->显示1号问题的投票结果
+4、模板设计
+首页（列出所有问题的页面）：index.html
+问题详情页：detail.html
+投票结果页：result.html
+5、配置URLConf，将以http://127.0.0.1/polls/开头的网址都交给polls应用处理
+# vim mysite/urls.py
+from django.conf.urls import url, include
+from django.contrib import admin
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^polls/', include('polls.urls')),
+]
+6、在应用中创建urls.py
+# vim polls/urls.py
+from django.conf.urls import url
+urlpatterns = [
+]
+7、创建首页
+(1)在polls/urls.py中创建url和函数的声明
+from django.conf.urls import url
+from . import views
+urlpatterns = [
+    # 访问http://127.0.0.1/polls/，由views.index函数处理，这个URL的名字叫index
+    url(r'^$', views.index, name='index'),
+]
+(2)在views.py中创建函数
+from django.shortcuts import render, HttpResponse
+def index(request):
+    return HttpResponse('<h1>Polls首页</h1>')
+(3)访问http://127.0.0.1/polls/
+(4)创建模板，用户访问主页的时候，用index.html响应
+(djenv) [root@room8pc16 mysite]# mkdir polls/templates
+# vim polls/templates/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>投标首页</title>
+</head>
+<body>
+这是投票首页
+</body>
+</html>
+(5)修改index函数，将index.html网页返回给用户
+# vim polls/views.py
+def index(request):
+    return render(request, 'index.html')
+
+8、创建模型（数据库）
+(1)编写模型代码
+# vim polls/models.py
+from django.db import models
+
+class Question(models.Model):
+    question_text = models.CharField(max_length=200)
+    pub_date = models.DateTimeField()
+
+    def __str__(self):
+        return "<问题：%s>" % self.question_text
+
+class Choice(models.Model):
+    choice_text = models.CharField(max_length=200)
+    vote = models.IntegerField(default=0)
+    q = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "<%s: %s>" % (self.q, self.choice_text)
+(2)生成数据库表
+生成修改数据库的脚本文件
+(djenv) [root@room8pc16 mysite]# python manage.py makemigrations
+真正地操作数据库
+(djenv) [root@room8pc16 mysite]# python manage.py migrate
+MariaDB [dj1806]> show tables;   # 查看到新出现了两张表
+
+9、数据库分析
+(1)数据表
+MariaDB [dj1806]> show tables;
+polls_question      polls_choice
+通过第8步生成的表名： 应用名_类名
+(2)polls_question的字段
+MariaDB [dj1806]> desc polls_question;
+id: int  ->django自动生成的主键
+question_text: varchar(200)   # 类属性
+pub_date: datetime            # 类属性
+(3)polls_choice的字段
+MariaDB [dj1806]> desc polls_choice;
+id: int  ->django自动生成的主键
+choice_text: varchar(200)     # 类属性
+vote: int      # 类属性
+q_id: int      # django根据主外键约束，自动生成的外键字段
+
+10、修改数据库字段
+class Choice(models.Model):
+    ... ...
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+        def __str__(self):
+        return "<%s: %s>" % (self.question, self.choice_text)
+
+(djenv) [root@room8pc16 mysite]# python manage.py makemigrations
+(djenv) [root@room8pc16 mysite]# python manage.py migrate
+MariaDB [dj1806]> desc polls_choice;
+原来的q_id变成了question_id
+
+11、将模型注册到管理后台
+# vim polls/admin.py
+from django.contrib import admin
+from .models import Question, Choice
+
+admin.site.register(Question)
+admin.site.register(Choice)
+
+12、定制后台管理界面
+from django.contrib import admin
+from .models import Question, Choice
+
+# admin.site.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    # 后台显示哪些字段
+    list_display = ['question_text', 'pub_date']
+    # 可以根据发布时间过滤问题
+    list_filter = ['pub_date']
+    # 显示时间轴，点选时间，查看某年、某月、某日发布的问题
+    date_hierarchy = 'pub_date'
+    # 添加搜索框，根据问题内容进行搜索
+    search_fields = ['question_text']
+    # 根据发布时间进行降序排序，没有-号，默认是升序
+    ordering = ['-pub_date']
+
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Choice)
+
+
+
+
+
+
+
+
+
+
+
+

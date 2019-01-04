@@ -1,0 +1,199 @@
+ ##############################################
+目录结构
+认识Linux目录结构
+/boot                 #存放系统引导必须的文件，包括内核，启动配置
+/bin  /sbin            #存放各种命令程序
+/dev                  #主要存放各种设备文件 
+/etc                   #存放系统重要文件及各种程序配置文件 
+/root、	/home/用户名  #分别存放管理员root，普通用户的默认家目录
+/var                   #存放日志文件，邮件目录等经常变化的文件
+/proc                  #存放内存中的映射数据，不占用磁盘
+/tmp                   #存放临时文件
+ 
+ ##############################################
+建立教学环境服务端
+在真机搭建yum服务端，用ftp服务共享
+1.装包 vsftpd
+2.起服务vsftpd
+3.共享光盘所有内容
+ 服务端：1.众多的软件包；2.仓库清单文件；3.共享的服务
+ /var/ftp/rhel7
+ /var/lib/libvirt/images/iso  #为了建立双系统用，才把镜像放到这
+ 
+---------/etc/fstab  配置文件
+/var/lib/libvirt/images/iso/rhel-server-7.4-x86_64-dvd.iso /var/ftp/rhel7 iso9660 defaults 0 0 
+
+4.检测  
+  Firefox ftp://127.0.0.1/rhel7 
+ 
+ #############################################
+利用真机，共享rhel6与CentOS7光盘全部内容，用FTP
+
+ #############################################
+教学环境客户端搭建
+
+虚拟机A：
+ 1.主机名：svr7.tedu.cn
+ 2.配置IP地址：192.168.4.7/24
+ 3.搭建yum
+虚拟机B：
+ 1.主机名：pc207.tedu.cn
+ 2.配置IP地址：192.168.4.8/24
+
+快速克隆虚拟机(真机写了脚本）
+[root@room11pc31 images]# clone-vm
+正确的命令为： 
+  clone-vm6  可以快速产生一台RHEL6虚拟机 
+  clone-vm7  可以快速产生一台RHEL7虚拟机 
+  clone-auto6  可以快速产生多台RHEL6虚拟机 
+  clone-auto7  可以快速产生多台RHEL7虚拟机
+
+虚拟机A开机：
+（1）配置主机名
+（2）配置静态IP
+（3）搭建yum
+新机需要先配主机名，静态IP
+
+ ##############################################
+补充内容技巧：
+远程复制文件
+[root@svr7~]#scp /etc/yum.repos.d/rhel7.repo root@192.168.4.207:/etc/yum.repos.d/rhel7.repo
+ ##############################################
+权限标示方法
+数字 rwx=421
+ ##############################################
+管理/调用曾经执行过的命令
+-history
+-!str #执行最近以‘str’开头命令
+#更多用于重启服务，如!sys
+-history 默认记录1000条
+-可以修改/etc/profile,调整命令记录数
+杀死进程 killall  oneko   #杀死所有运行的oneko
+-kill httpd
+Oneko &   #让程序在后台运行
+
+
+统计目录大小
+-du -sh
+
+date,查看/调整系统日期时间
+– date +%F、date +%R、date +%T
+– date +"%Y-%m-%d %H:%M:%S"
+– date -s "yyyy-mm-dd HH:MM:SS"
+— date +%s 时间戳
+
+[root@room11pc19 ~]# date +%F
+2018-10-25
+[root@room11pc19 ~]# date +%R
+08:32
+[root@room11pc19 ~]# date +%T
+08:32:56
+[root@room11pc19 ~]# echo `date +%Y-%m-%d`
+2018-10-25
+[root@room11pc19 ~]# echo `date +%H:%M:%S`
+08:34:35
+[root@room11pc19 ~]# date +%s
+1540428870
+[root@room11pc19 ~]# date +%s
+1540428873
+ ############################################
+制作快捷方式
+-ln -s    软链接发送快捷方式
+-ln       硬连接发送快捷方式
+-ls -l   查看快捷方式路径
+
+软链接与硬连接的区别（面试）
+---i节点，ls -i   #查看目录文件i节点编号
+-rm -rf 删除的是i节点的记录，数据不会丢
+软链接是对原始文档做的快捷方式，
+硬连接是对i节点做的快捷方式 
+快捷方式只是在i节点表做记录，而复制是会占用磁盘实际空间
+
+[root@docker02 ~]# ln -s /etc/hosts ./
+[root@docker02 ~]# ln /etc/hosts ./h
+[root@docker02 ~]# ll -ih /etc/hosts ./h ./hosts
+   7433 -rw-r--r-- 2 root root 203 10月 19 09:49 /etc/hosts
+   7433 -rw-r--r-- 2 root root 203 10月 19 09:49 ./h
+1115715 lrwxrwxrwx 1 root root  10 10月 19 15:57 ./hosts -> /etc/hosts
+
+归档+压缩操作  zip
+--zip -r   压缩包括文件夹
+--unzip  解压
+
+
+Man帮助
+提供了9种帮助信息
+1---命令帮助信息
+5---配置文件帮助信息 #[Man 5 passwd  #会显示passwd配置文件帮助信息，用得比较多]
+
+ ##############################################
+Vim技巧
+    命令模式操作：
+复制/粘贴
+-yy #yy    复制光标处的一行、#行
+-p，P       粘贴到文本后，前
+-u          撤销
+-dd,#dd    删除光标所在行，#所在行
+-C          删除光标后内容，并进入插入模式
+-x          删除光标前字符
+
+查找/撤销/
+/word          #查找word
+-Ctrl + r        #反撤销
+-ZZ            #保存并退出
+-n,N            #下一个，上一个
+
+末行模式操作：
+保存/退出/文件操作
+:wq  或者x   #保存并退出 
+:r 路径        #读入其他文本文件内容到当前 
+
+字符串替换：
+:s/root/admin     光标所在行，替换当前行第一个“root”
+:s/root/admin/g   光标所在行。替换所有的“root”
+:1,10 s/root/admin/g  替换第1-10行所有的“root”
+:% s/root/admin/g     替换全文的”root“
+
+开关参数控制
+:set nu|nonu     显示行号，隐藏行号
+:set ai|noai       启用/关闭自动缩进
+
+ #######################################
+发布自定义yum
+1.将真机上tools.tar.gz 传递到虚拟机上
+2.创建自定义Yum源
+3.在虚拟机A上解包  tools.tar.gz
+4.生成仓库清单文件
+--createrepo /tools/other     #把/tools/other里面的软件包生成仓库数据文件
+5.书写客户端配置文件[
+[rhel7]
+name=rhel7.0
+baseurl=ftp://192.168.4.254/rhel7
+enable=1
+gpgcheck=0
+[other]
+name=other
+baseurl=file:///tools/other  #本机yum源
+enable=1 
+gpgcheck=0
+]
+6.查询软件包安装清单 
+  - rpm -ql sl
+
+[root@svr7 opt]# rpm -ql sl
+/usr/bin/sl
+[以下都是放命令的地方
+/bin
+/sbin
+/usr/bin
+/usr/sbin
+
+Ls /usr/bin/sl  #显示绿色文字，代表是个命令]
+/usr/share/doc/sl-5.02
+/usr/share/doc/sl-5.02/LICENSE
+/usr/share/doc/sl-5.02/README.ja.md
+/usr/share/doc/sl-5.02/README.md
+/usr/share/man/ja/man1/sl.1.ja.gz
+/usr/share/man/man1/sl.1.gz
+
+

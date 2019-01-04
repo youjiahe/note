@@ -1,0 +1,120 @@
+通过“中国天气网”获取气温等信息
+1、实况天气获取:http://www.weather.com.cn/data/sk/城市代码.html
+2、城市信息获取:http://www.weather.com.cn/data/cityinfo/城市代码.html
+3、详细指数获取:http://www.weather.com.cn/data/zs/城市代码.html
+
+城市代码自行百度搜索
+北京：101010100
+http://www.weather.com.cn/data/sk/101010100.html  -> 返回json格式
+
+>>> import json
+>>> from urllib import request
+>>> html = request.urlopen('http://www.weather.com.cn/data/sk/101010100.html')
+>>> result = html.read()
+>>> json.loads(result)
+>>> w = json.loads(result)
+>>> w['weatherinfo']['SD']
+
+
+requests模块应用：
+>>> import requests
+>>> r = requests.get('https://upload-images.jianshu.io/upload_images/13235576-56b11823dde1e67d')
+>>> with open('/tmp/ttt.img', 'wb') as fobj:
+...    fobj.write(r.content)   # content返回bytes类型数据
+[root@room8pc16 day12]# eog /tmp/ttt.img
+
+>>> r = requests.get('http://127.0.0.1/')
+>>> r.text      # r.text返回str类型的数据
+
+>>> r = requests.get('http://www.weather.com.cn/data/sk/101010100.html')
+>>> r.json()    # r.json()将返回的json格式数据转成python数据类型
+>>> r.encoding   # 当前编码类型
+>>> r.encoding = 'utf8'    # 修改编码
+>>> r.json()
+
+带有参数的requests请求：
+相当于在浏览器的地址栏中输入：http://www.baidu.com/s?wd=python
+>>> param = {'wd': 'python'}
+>>> r = requests.get('http://www.baidu.com/s', params=param)
+>>> with open('/tmp/bd_py.html', 'wb') as fobj:
+...     fobj.write(r.content)
+
+修改请求头，模拟Firefox访问服务器
+>>> header = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'}
+>>> r = requests.get('http://127.0.0.1/', headers=header)
+[root@room8pc16 ~]# tail -f /var/log/httpd/access_log
+
+服务器回应的状态码，通过r.status_code查看
+>>> r = requests.get('http://127.0.0.1/', headers=header)
+>>> r.status_code    # 200
+>>> r = requests.get('http://127.0.0.1/abc')   # 路径不存在
+>>> r.status_code    # 404
+>>> r = requests.get('http://127.0.0.1/ban')   # ban路径无权限
+>>> r.status_code    # 403
+
+requests将所有的状态码都起了一个友好的名字
+>>> requests.codes.ok
+>>> requests.codes.not_found
+>>> requests.codes.forbidden
+
+注册钉钉帐号
+在百度中搜“钉钉开放平台 机器人”
+https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1
+https://www.jianshu.com搜“python百例” -> 116-钉钉机器人
+
+
+zabbix
+https://www.zabbix.com/documentation/3.4/zh/manual
+如果只是获取zabbix版本，不需要认证。如果需要获取主机、模板、监控项等敏感信息则
+需要认证，认证通过用户名和密码生成通行令牌。
+
+/usr/local/share/zabbix/alertscripts/dingalert.py
+
+×
+广告
+121-配置zabbix通过钉钉机器人报警
+96 凯茜的老爸
+2018.11.04 14:03 字数 131 阅读 214评论 0喜欢 2
+
+钉钉机器人的设置，参见《116-钉钉机器人》
+zabbix服务器监控到异常，可以通过各种方式发送报警消息。配置步骤如下：
+1、创建报警脚本
+
+[root@node2 ~]# vim /usr/local/share/zabbix/alertscripts/dingalert.py
+#!/usr/bin/env python
+# coding: utf8
+
+import json
+import requests
+import sys
+
+def send_msg(url, remiders, msg):
+    headers = {'Content-Type': 'application/json; charset=utf-8'}
+    data = {
+        "msgtype": "text",
+        "at": {
+            "atMobiles": remiders,
+            "isAtAll": False,
+        },
+        "text": {
+            "content": msg,
+        }
+    }
+    r = requests.post(url, data=json.dumps(data), headers=headers)
+    return r.text
+
+if __name__ == '__main__':
+    msg = sys.argv[1]
+    remiders = []
+    url = '钉钉机器人的URL'
+    print(send_msg(url, remiders, msg))
+
+
+
+
+
+
+
+
+
+

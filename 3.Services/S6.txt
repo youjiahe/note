@@ -1,0 +1,113 @@
+ #############################################
+内核及系统日志
+由系统服务rsyslog
+通用分析工具
+--tail tailf[实时跟踪文件变化] less grep
+--awk  sed  过滤工具
+专用分析工具
+用户登陆分析
+--users  简略
+--who   比较详细
+--w      最详细
+--last -2 最近登陆成功的两条
+--lastb -2 最近登录失败的两条记录
+
+日志消息优先级
+Linux 内核定义的事件紧急程度
+--0 EMERG (紧急）
+--1 ALERT（警告）
+--2 CRIT（严重）
+--3 ERR（错误）   运行出现错误
+--4 WARNING（提醒） 可能会影响系统功能的事件
+--5 NOTICE（注意）不会影响
+--6 INFO 
+--7 DEBUG
+
+ #############################################
+使用journalctl工具 
+提取由Systemctl  journalctl 服务搜集的日志
+-（最重要）journalctl -u 服务名
+-journalctl | grep 关键词
+-journalctl -u 服务名 [-p 优先级]   
+-journalctl -n 消息数
+-journalctl --since="yyyy-mm-dd HH:MM:SS" --until="yyyy-mm-dd HH:MM:SS"
+
+[root@proxy ~]# journalctl -u mysqld -n 10 -p err
+[root@proxy ~]# journalctl -u mysqld -n 10 -p warning
+[root@proxy ~]# journalctl -u mysqld -n 10 -p notice
+[root@proxy ~]# journalctl -u mysqld -n 10 -p info
+ ##############################################
+Init程序的作用
+Linux系统和服务管理器
+-是内核
+
+Systemd 
+一个更高效的系统&服务管理器
+--开机服务并行，个系统服务将的精确依赖
+--配置目录:/etc/systemd/
+
+服务管理
+Systemctl start 服务名         #启动服务
+Systemctl stop 服务名         #停止服务
+Systemctl restart 服务名       #重启服务
+Systemctl status 服务名       #查看服务状态
+Systemctl enable 服务名       #设置服务为开机自启动
+Systemctl is-enabled 服务名   #查看服务是否为开机自启动
+
+ ############################################
+运行模式的管理（运行级别）
+
+RHEL6：[背]
+       0 关机
+       1 单用户模式（破密模式）
+       2 字符界面（不支持网络）
+       3 字符界面（支持网络）
+       4 无定义
+       5 图形界面
+       6 重启
+ 
+   开机启动------>init 0～6
+   切换运行级别的命令 init
+
+RHEL7:运行模式
+
+multi user.target：字符模式
+graphical.target：图形模式
+
+当前直接切换成字符模式
+[root@svr7 ~]# systemctl isolate multi-user.target 
+当前直接切换成图形模式
+[root@svr7 ~]# systemctl isolate graphical.target
+
+ 修改默认运行模式为字符
+[root@svr7 ~]# systemctl set-default multi-user.target 
+
+修改默认运行模式为图形
+[root@svr7 ~]# systemctl set-default graphical.target 
+ ##############################################
+Cobbler   #有一个文档，讲cobbler搭建
+补充点:
+以绝对路径解包
+[root@cobbler ~]# tar -tf /opt/Cobbler/cobbler_boot.tar.gz 
+tar: 从成员名中删除开头的“/”
+/var/lib/cobbler/loaders/
+/var/lib/cobbler/loaders/README
+/var/lib/cobbler/loaders/COPYING.elilo
+/var/lib/cobbler/loaders/COPYING.yaboot
+/var/lib/cobbler/loaders/COPYING.syslinux
+/var/lib/cobbler/loaders/elilo-ia64.efi
+/var/lib/cobbler/loaders/yaboot
+/var/lib/cobbler/loaders/pxelinux.0
+/var/lib/cobbler/loaders/menu.c32
+/var/lib/cobbler/loaders/grub-x86.efi
+/var/lib/cobbler/loaders/grub-x86_64.efi
+
+[root@cobbler ~]# tar -xP[P: 以绝对路径释放tar包文件]f /opt/Cobbler/cobbler_boot.tar.gz 
+[root@cobbler ~]# ls /var/lib/cobbler/loaders/
+COPYING.elilo     COPYING.yaboot  grub-x86_64.efi  menu.c32    README
+COPYING.syslinux  elilo-ia64.efi  grub-x86.efi     pxelinux.0  yaboot
+
+ ##############################################
+PATH变量应用：提供命令搜寻路径
+ 系统环境变量
+可以把脚本写到 /usr/bin

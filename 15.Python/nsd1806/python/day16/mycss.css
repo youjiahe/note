@@ -1,0 +1,58 @@
+*{
+    font-size: 15pt;
+}
+
+a:link{
+    color: purple;
+}
+a:hover{
+    font-size: 20pt;
+}
+a:visited{
+    color: #999999;
+}
+
+
+#pid{
+    color: black;
+}
+
+p .inner{
+    color: firebrick;
+}
+
+p, .myclass3{
+    color: cadetblue;
+}
+
+.myclass1{
+    font-size: 18pt;
+}
+
+p.myclass2{
+    color: blue;
+}
+
+.warning{
+    text-align: right;
+    color: red;
+}
+
+.important{
+    text-align: center;
+    font-weight: bold;
+}
+
+h1{
+    color: green;
+}
+body{
+    color: #520cab;
+    /*text-align: center;*/
+}
+p{
+    /*background: orange;*/
+    text-align: left;
+}
+
+

@@ -1,0 +1,69 @@
+>>> def set_info(name, age):
+...   print('%s is %s years old' % (name, age))
+>>> set_info('bob', 23)
+>>> set_info(23, 'bob')  # 没有语法错误，但是语义不对
+>>> set_info(age=23, 'bob')  # 语法错误，age=23这种形式必须在后面
+>>> set_info(23, name='bob')  # 错误，name得到了两个值
+>>> set_info('bob', age=23)   # 正确
+>>> set_info(age=23, name='bob')  # 正确
+>>> set_info('bob', 23, 30)   # 参数个数不匹配也有错误
+
+>>> def mytest(*args):    # *表示args是个元组
+...   print(args)
+>>> mytest()
+>>> mytest(10)
+>>> mytest(10, 'hello', 100)
+>>> def mytest2(**kwargs):   # **表示kwargs是个字典
+...   print(kwargs)
+>>> mytest2()
+>>> mytest2(name='zs', age=25)
+
+>>> def set_info(name, age):
+...   print('%s is %s years old' % (name, age))
+>>> user = ['alice', 18]
+>>> set_info(user)  # 把user列表传给name，age没有得到值
+>>> set_info(*user)   # 调用时，*表示把user列表拆开
+
+偏函数：相当于是改造现有函数，将现有函数的一部分参数固定下来
+>>> def add(a, b, c, d, e):
+...     return a + b + c + d + e
+>>> add(10, 20, 30, 40, 5)
+>>> add(10, 20, 30, 40, 8)
+>>> add(10, 20, 30, 40, 20)
+>>> from functools import partial
+>>> newadd = partial(add, 10, 20, 30, 40)
+>>> newadd(8)
+>>> newadd(20)
+
+如果没有tkinter，需要重新编译python
+https://www.python.org/
+# yum install -y tcl-devel tk-devel sqlite-devel
+# tar xzf Python-3.6.1.tar.xz
+# cd Python
+# ./configure --prefix=/usr/local/
+# make
+# make install
+安装完成后，如果pycharm中无法导入，可以重启pycharm
+
+
+生成器：本质上是函数，但是普通函数即使有多个return，但是只能执行一个return。
+生成器可以通过yield返回多个值（中间值）
+>>> def mygen():
+...   a = 10 + 20
+...   yield a
+...   yield 'hello world'
+...   b = 'ni' + ' ' + 'hao'
+...   yield b
+>>> mg = mygen()
+>>> mg.__next__()
+>>> newg = mygen()
+>>> for item in newg:
+...   print(item)
+
+
+
+
+
+
+
+

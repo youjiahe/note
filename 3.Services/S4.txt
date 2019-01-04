@@ -1,0 +1,129 @@
+ ##############################################
+虚拟机命令行管理指令
+-virt-manager        #启用图形
+-virsh list --all          #列出所有虚拟机
+-virsh start 虚拟机名称  #启动虚拟机
+
+-virsh console 虚拟机名称  #直接控制虚拟机，不需要IP
+---若需退出  Ctrl  +  ]
+
+ #############################################
+网络装机
+ ##################################
+DHCP概述及原理  #一个网络只能有一个DHCP服务器，先到先得
+（广播进行）
+动态主机配置协议，由IETF（Internet 网络工程师任务小组)，用来简化主机地址分配管理
+主要分配以下入网参数
+--DHCP地址分配的四次绘画
+--DISCOVERY ---> OFFER  --> REQUEST --> ACK
+端口号：67/68
+
+1.装包
+软件包： dhcp
+服务： dhcpd
+2.主配置文件
+/etc/dhcp/dhcpd.conf[
+从提示读内容
+subnet 192.168.4.0 netmask 255.255.255.0 {
+  range 192.168.4.100 192.168.4.200;
+  option domain-name-servers 192.168.4.7;
+  option routers 192.168.4.254;
+  default-lease-time 600;
+  max-lease-time 7200;
+}
+]
+
+ ##############################################
+网络装机的优势
+规模化：同时装配多台主机
+自动化：装系统，配置各种服务
+远程实现：不需要光盘、U盘等物理安装介质
+ ##############################################
+PXE网络
+PXE
+--预启动执行环境，在操作系统之前运行
+--可用于远程安装
+PXE-client 寻找PXE-server的过程
+ 
+只有DHCP能回应广播
+
+ ##############################################
+PXE实现过程：
+1）客户端<----（1.IP地址；2.next-server）---- DHCP
+2）客户端<----（众多的引导文件）------------------tftp（简单文本传输协议）
+3）客户端<----（众多的rpm包）-------------------http
+##############################################
+1.DHCP搭建
+1.1配置DHCP网络装机设置
+ 增加以下
+  Next-server 192.168.4.7  #指定下一个服务器
+效果：
+subnet 192.168.4.0 netmask 255.255.255.0 {
+  range 192.168.4.100 192.168.4.200;
+  option domain-name-servers 192.168.4.7;
+  option routers 192.168.4.254;
+  default-lease-time 600;
+  max-lease-time 7200;
+  Next-server 192.168.4.7
+Filename “pxelinux.0”; 
+}
+] 
+Filename “pxelinux.0”;      
+#指定网卡引导文件名称（网络安装说明书），二进制文件[安装软件可以自动产生，默认叫pxelinux.0]
+
+1.2重启dhcpd服务
+
+2.搭建tftp   简单的文件传输协议
+2.1装包：tftp-server
+2.2起服务：tftp
+##############################################
+3.部署pxelinux.0文件
+共享文件到以下：/var/lib/tftpboot
+安装软件
+查询安装什么包，用以下命令查
+Yum provides */guestmount 
+Yum provides */pxelinux.0
+
+查看软件安装内容，用以下命令
+Rpm -ql syslinux | grep pxelinux.0]，自动生成
+##############################################
+4.部署菜单文件
+mkdir  /var/lib/tftpboot/pxelinux.cfg
+从光盘里面拷贝出菜单文件并改名为以下
+ /var/lib/tftpboot/pxelinux.cfg/defaullt
+##############################################
+5.部署驱动程序和启动内核
+  Vesamenu.c32   图形模块
+  Vmlinuz          启动内核
+  Initrg.img        驱动程序
+  Splash.png      黑色背景图片
+
+5.1.修改配置文件
+  1 default vesamenu.c32                       #加载图形模块
+  2 timeout 600                                 #默认读秒
+  10 menu background splash.png              #加载黑色背景
+  11 menu title ***********                      #标题
+  62   menu label Install RHEL7                #选项名 
+  menu default                     #默认读秒结束后，安装,一定要写在上一行上面
+  63   kernel vmlinuz                           #加载内核
+  64   append initrd=initrd.img                 #加载驱动
+##############################################
+6.构建httpd服务
+##############################################
+7.部署无人值守安装，生成应答文件
+7.1 图形system-config-kickstart
+7.2运行工具 system-congfig-kickstart
+检测软件包选择  时候可以选择
+在yum仓库里面更改仓库标识[development]
+7.3共享ks文件，传递给客户端
+ cp ks.cfg  /var/www/html/
+##############################################
+8.修改菜单文件，指定ks.cfg应答文件
+  append initrd=initrd.img  ks=http://192.168.4.7/ks.cfg
+##############################################
+总结：
+1.dhcp  ------>  IP地址、next-server、filename  
+2.Tftp  ------->  pxelinux.0
+3.Pxelinux.0 ---------->/var/lib/tftpboot/pxelinux.cfg/default
+4.Default------->vesamenu.c32/ splash.png/ vmlinuz/  initrd.img
+Ks=http
