@@ -1,9 +1,0 @@
-127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
-::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-192.168.1.11 web1
-192.168.1.12 web2
-192.168.1.10 ansible
-192.168.1.21 db1
-192.168.1.22 db2
-192.168.1.33 cache1
-
