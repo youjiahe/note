@@ -13,6 +13,9 @@
     net.core.rmem_max=4194304     #接收套接字缓冲区大小最大值
     net.core.wmem_max=1048576     #为TCP socket预留用于发送缓冲的内存数量,最大值
     fs.aio-max-nr = 1048576       #此参数限制并发未完成的异步请求数目，应该设置避免I/O子系统故障。
+   & 装包
+   yum -y install gcc gcc-c++ make binutils compat-libstdc++-33 elfutils-libelf elfutils-libelf-devel glibc glibc-common glibc-devel libaio libaio-devel libgcc libstdc++ libstdc++-devel unixODBC unixODBC-devel ksh
+
    & 静默安装 命令
    /home/oracle/database/runInstaller -silent -ignorePrereq -responseFile /home/oracle/database/response/db_install.rsp
 
