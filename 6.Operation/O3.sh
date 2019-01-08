@@ -194,12 +194,23 @@ Reading: 0 Writing: 1 Waiting: 0   //reading为0时，代表服务器读得快
 
 http {
 .. ..
-gzip on;                            //开启压缩
-gzip_min_length 1000;                //小文件不压缩
-gzip_comp_level 4;                //压缩比率
-gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-                         //对特定文件压缩，类型参考mime.types #在配置文件目录下
-.. ..
+gzip on;
+gzip_min_length 1k;
+gzip_buffers 4 16k;
+#gzip_http_version 1.0;
+gzip_comp_level 2;
+gzip_types text/plain application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+gzip_vary off;
+gzip_disable "MSIE [1-6]\.";
+
+# 第1行：开启Gzip
+# 第2行：不压缩临界值，大于1K的才压缩，一般不用改
+# 第3行：buffer，就是，嗯，算了不解释了，不用改
+# 第4行：用了反向代理的话，末端通信是HTTP/1.0，有需求的应该也不用看我这科普文了；有这句的话注释了就行了，默认是HTTP/1.1
+# 第5行：压缩级别，1-10，数字越大压缩的越好，时间也越长，看心情随便改吧
+# 第6行：进行压缩的文件类型，缺啥补啥就行了，JavaScript有两种写法，最好都写上吧，总有人抱怨js文件没有压缩，其实多写一种格式就行了
+# 第7行：跟Squid等缓存服务有关，on的话会在Header里增加"Vary: Accept-Encoding"，我不需要这玩意，自己对照情况看着办吧
+# 第8行：IE6对Gzip不怎么友好，不给它Gzip了
 }
 
 ###########################################################################
@@ -215,8 +226,39 @@ open_file_cache          max=2000  inactive=20s;
 //文件句柄的有效时间是60秒，60秒后过期
 //只有访问次数超过5次会被缓存
 } 
+###########################################################################
+●proxy_set_header的理解
+●总结：proxy_set_header 就是可设置请求头-并将头信息传递到服务器端。
+      不属于请求头的参数中也需要传递时 重定义下就行啦。
+http {
+  ... ...
+  location / {
+  proxy_set_header   Host             $host:$server_port;    
+  #给头部信息添加 代理服务器IP及port；
+  proxy_set_header   X-Real-IP        $remote_addr;          
+  #重定义了 X-Real-IP 并传递$remote_addr，以便应用获取客户端IP；
+  proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+  #
+  ... ...
+  }
+}
+###########################################################################
+X-Forwarded-For 和 X-Real-IP 的区别？
+一般来说，X-Forwarded-For是用于记录代理信息的，每经过一级代理(匿名代理除外)，
+代理服务器都会把这次请求的来源IP追加在X-Forwarded-For中
 
+●例子：
+   来自4.4.4.4的一个请求，header包含这样一行
 
+  & X-Forwarded-For: 1.1.1.1, 2.2.2.2, 3.3.3.3
+     代表 请求由1.1.1.1发出，经过三层代理，
+          第一层是2.2.2.2，第二层是3.3.3.3，而本次请求的来源IP4.4.4.4是第三层代理
 
+  & X-Real-IP，
+     没有相关标准，上面的例子，如果配置了X-Read-IP，可能会有两种情况
 
+     // 最后一跳是正向代理，可能会保留真实客户端IP
+        X-Real-IP: 1.1.1.1
+     // 最后一跳是反向代理，比如Nginx，一般会是与之直接连接的客户端IP
+        X-Real-IP: 3.3.3.3
 
