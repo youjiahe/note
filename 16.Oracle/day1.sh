@@ -18,11 +18,17 @@
 
    & 静默安装 命令
    /home/oracle/database/runInstaller -silent -ignorePrereq -responseFile /home/oracle/database/response/db_install.rsp
-
+   & 解决xhost + -- unable open display
+     [root@localhost ~]# yum -y install tigervnc-server
+     [root@localhost ~]# vncserver
+     [root@localhost ~]# export DISPLAY=localhost:1 ；必须以root身份
+     [root@localhost ~]# xhost +   #需要装包
+access control disabled, clients can connect from any host
    & 配置监听文件
    netca  /silent /responsefile /home/oracle/database/response/netca.rsp
 
    & SID最好不要使用网页的 webtalk，使用 orcl11g
+  
 ######################################################
 1.Oracle SQL 语句由如下命令组成：
   数据定义语言（DDL），包括 CREATE（创建）命令、ALTER（修改）命令、DROP（删
