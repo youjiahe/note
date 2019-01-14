@@ -69,6 +69,18 @@
             extract(minute from systimestamp) "min",
             extract(second from systimestamp) "sec"
      from dual;
+  3.查看&修改时区
+    SQL> select dbtimezone from dual;
+	DBTIME
+	------
+	+00:00
+    #重启数据库，修改时区生效
+    SQL> shutdown immediate;
+    SQL> startup；
+    SQL> select dbtimezone from dual;
+    DBTIME
+    ------
+    +08:00
 
 【转换函数】
    1.TO_CHAR
