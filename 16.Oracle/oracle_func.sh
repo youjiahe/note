@@ -136,4 +136,7 @@
      select avg(sal) avg_sal from emp;
      select max(sal) max_sal from emp;
      select min(sal) min_sal from emp;
-
+   3.avg，to_char综合
+     select to_char(avg(sal),'99999.99') avg_sal from emp;
+     select to_char(avg(sal),'L99999.99') avg_sal from emp;   #$2073.23
+     select to_number(to_char(avg(sal),'L99999.99'),'$99999.99') avg_sal from emp;  #保留两位小数,结果:2073.23
