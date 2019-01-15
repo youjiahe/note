@@ -128,6 +128,28 @@ PL/SQL 条件控制和循环控制
  ELSE 
     --以上条件都不成立结构体
  END IF; 
+● 例子：
+  查询 JAMES 的工资，如果大于 1500 元，则发放奖金 100 元，如果工作大于 900
+元，则发奖金 800 元，否则发奖金 400 元。
+   DECLARE 
+     newSal EMP.SAL%TYPE;
+   BEGIN
+     SELECT SAL INTO newSal FROM EMP WHERE ENAME='JAMES';
+     IF newSal>=1500 THEN
+       UPDATE EMP 
+       SET COMM=100 WHERE ENAME='JAMES';
+     ELSIF newSal>=900 THEN 
+       UPDATE EMP
+       SET COMM=600 WHERE ENAME='JAMES';
+     ELSE
+       UPDATE EMP
+       SET COMM=1000 WHERE ENAME='JAMES';
+     END IF;
+     COMMIT;
+   END;
+   /
+##################################################################################
+PL/SQL 条件控制和循环控制
 ● CASE语法结构
   CASE [selector]
     WHEN 表达式 1 THEN 语句序列 1；
@@ -136,3 +158,110 @@ PL/SQL 条件控制和循环控制
     ……
   [ELSE 语句序列 N]；
   END CASE;
+● 例子：
+  A--输出Excellent；B--输出Very Good；C--输出Good；
+   DECLARE
+     v_grade CHAR(1):=UPPER('&p_grade');         #& 后跟的变量 是键盘键入赋值的；运行语句后会弹出对话框；
+   BEGIN
+     CASE v_grade
+       WHEN 'A' THEN 
+         dbms_output.put_line('Excellent');
+       WHEN 'B' THEN
+         dbms_output.put_line('Very Good');
+       WHEN 'C' THEN
+         dbms_output.put_line('Good');
+     ELSE 
+       dbms_output.put_line('No such grade!');
+     END CASE;
+   END;
+   /
+##################################################################################
+PL/SQL 条件控制和循环控制
+● LOOP语法结构
+   LOOP 
+     --循环体
+   END LOOP;
+● 例子：
+  计算1+2+3...+99+100
+   DECLARE
+     counter number(3):=0;
+     sumRESULT number:=0;
+   BEGIN
+     LOOP
+       counter:=counter+1;
+       sumRESULT:=sumRESULT+counter;
+       IF counter>=100 THEN
+         EXIT;
+       END IF;
+     END LOOP;
+     dbms_output.put_line(to_char(sumRESULT));
+   END;
+   /
+##################################################################################
+PL/SQL 条件控制和循环控制
+● WHILE语法结构
+   WHILE 条件 LOOP
+     --循环体
+   END LOOP;
+● 例子：
+   DECLARE
+     counter number(3):=0;
+     sumRESULT number:=0;
+   BEGIN
+     WHILE counter<100 LOOP
+       counter:=counter+1;
+       sumRESULT:=sumRESULT+counter;
+     END LOOP;
+     dbms_output.put_line(to_char(sumRESULT));
+   END;
+   /
+##################################################################################
+PL/SQL 条件控制和循环控制
+● FOR语法结构
+   FOR 变量 IN 迭代对象 LOOP 
+      --循环体
+   END LOOP;
+● 例子：
+   DECLARE
+     counter number(3):=0;
+     sumRESULT number:=0;
+   BEGIN
+     FOR counter in 1..1000 LOOP
+       sumRESULT:=sumRESULT+counter;
+     END LOOP;
+     dbms_output.put_line(to_char(sumRESULT));
+   END;
+   /
+##################################################################################
+动态SQL
+● 为什么要使用动态SQL
+   在 PL/SQL 程序开发中，可以使用 DML 语句和事务控制语句，但是还有很多语句（比如
+   DDL 语句）不能直接在 PL/SQL 中执行。这些语句可以使用动态 SQL 来实现。
+   
+● 语法格式：动态 SQL
+EXECUTE IMMEDIATE 动态语句字符串
+[INTO 变量列表]
+[USING 参数列表]
+● 例子：
+   DECLARE
+         sql_stmt VARCHAR2(250);
+         emp_id NUMBER(4):=7566;
+         salary NUMBER(7,2);
+         dept_id NUMBER(2):=50;
+         dept_name VARCHAR2(14):='HR';
+         dlocation VARCHAR2(13):='guangzhou';
+         emp_rec EMP%ROWTYPE;
+   BEGIN
+     EXECUTE IMMEDIATE 'CREATE TABLE bouns2 (id NUMBER(4),amt VARCHAR2(10))';
+     sql_stmt:='ALTER TABLE bouns1 ADD CONSTRAINT PK_BOUNS1 PRIMARY KEY(id)';
+     EXECUTE IMMEDIATE sql_stmt;
+     sql_stmt:='INSERT INTO DEPT VALUES(:1,:2,:3)';
+     EXECUTE IMMEDIATE sql_stmt USING dept_id,dept_name,dlocation;
+     sql_stmt:='SELECT * FROM EMP WHERE EMPNO=:id';
+     EXECUTE IMMEDIATE sql_stmt INTO emp_rec USING emp_id;
+     dbms_output.put_line(emp_rec.ENAME);
+     dbms_output.put_line(emp_rec.JOB);
+     dbms_output.put_line(emp_rec.SAL);
+     COMMIT;
+   END;
+   /
