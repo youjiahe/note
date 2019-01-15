@@ -252,16 +252,30 @@ EXECUTE IMMEDIATE 动态语句字符串
          dlocation VARCHAR2(13):='guangzhou';
          emp_rec EMP%ROWTYPE;
    BEGIN
-     EXECUTE IMMEDIATE 'CREATE TABLE bouns2 (id NUMBER(4),amt VARCHAR2(10))';
-     sql_stmt:='ALTER TABLE bouns1 ADD CONSTRAINT PK_BOUNS1 PRIMARY KEY(id)';
+   --无子句的execute immediate 
+     EXECUTE IMMEDIATE 'CREATE TABLE bouns2 (id NUMBER(4),amt VARCHAR2(10))';  
+   --子句的execute immediate
+     sql_stmt:='ALTER TABLE bouns1 ADD CONSTRAINT PK_BOUNS1 PRIMARY KEY(id)'; 
      EXECUTE IMMEDIATE sql_stmt;
-     sql_stmt:='INSERT INTO DEPT VALUES(:1,:2,:3)';
+   --USING 给变量赋值
+     sql_stmt:='INSERT INTO DEPT VALUES(:1,:2,:3)';   
      EXECUTE IMMEDIATE sql_stmt USING dept_id,dept_name,dlocation;
+   --INTO 子句的execute immediate
      sql_stmt:='SELECT * FROM EMP WHERE EMPNO=:id';
      EXECUTE IMMEDIATE sql_stmt INTO emp_rec USING emp_id;
      dbms_output.put_line(emp_rec.ENAME);
      dbms_output.put_line(emp_rec.JOB);
      dbms_output.put_line(emp_rec.SAL);
+   --returning into子句的execute immediate
+     sql_stmt:='UPDATE emp SET COMM=1720 WHERE EMPNO=:id 
+                 RETURN sal INTO :2';
+     EXECUTE IMMEDIATE sql_stmt USING emp_id RETURN INTO salary;
+     dbms_output.put_line(to_char(salary));
+   --
+     sql_stmt:='DELETE FROM dept WHERE deptno=:id';
+     EXECUTE IMMEDIATE sql_stmt USING dept_id;
+   --提交修改
      COMMIT;
    END;
    /
+##################################################################################
