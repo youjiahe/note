@@ -1,0 +1,7 @@
+yum -y install zlib zlib-devel bzip2 bzip2-devel ncurses ncurses-devel \
+readline readline-devel openssl openssl-devel openssl-static xz lzma xz-devel \
+sqlite sqlite-devel gdbm gdbm-devel tk tk-devel libffi libffi-devel
+
+tar -xf Python-3.6.4.tar.xz
+./configure --prefix=/usr/local --enable-shared CFLAGS=-fPIC
+make && make install
