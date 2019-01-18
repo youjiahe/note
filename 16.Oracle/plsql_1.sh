@@ -279,3 +279,79 @@ EXECUTE IMMEDIATE 动态语句字符串
    END;
    /
 ##################################################################################
+异常处理
+● 预定义异常
+   异常名称                  异常码          描述         
+   DUP_VAL_ON_INDEX         ORA-00001       试图向唯一索引列插入重复值
+   INVALID_CURSOR           ORA-01001       试图进行非法游标操作。  
+   INVALID_NUMBER           ORA-01722       试图将字符串转换为数字  
+   NO_DATA_FOUND            ORA-01403       SELECT INTO 语句中没有返回任何记录.
+   TOO_MANY_ROWS            ORA-01422       SELECT INTO 语句中返回多于 1 条记录.
+   ZERO_DIVIDE              ORA-01476       试图用 0 作为除数.          
+   CURSOR_ALREADY_OPEN      ORA-06511       试图打开一个已经打开的游标
+● 例子：
+   DECLARE 
+     newSal emp.sal%TYPE;
+   BEGIN
+     SELECT sal INTO newSal FROM emp;
+   EXCEPTION
+       WHEN TOO_MANY_ROWS THEN
+         dbms_output.put_line('输出结果多于一行!!');
+       WHEN OTHERS THEN
+         dbms_output.put_line('未知错误');
+   END;
+   /
+##################################################################################
+异常处理
+● 自定义异常
+   DECLARE 
+     newSal emp.sal%TYPE;
+     myexp EXCEPTION;         #声明自定义异常名称
+   BEGIN
+     SELECT sal INTO newSal FROM emp WHERE ename='JAMES';
+     IF newSal<5000 THEN
+       RAISE MYEXP;           #使用RAISE引发自定义异常
+     END IF;
+   EXCEPTION
+     WHEN TOO_MANY_ROWS THEN
+       dbms_output.put_line('输出结果多于1行');
+     WHEN MYEXP THEN
+       dbms_output.put_line('工资太低了，擦擦');
+   END;
+   /
+   
+● 自定义异常——应用程序异常，自定义错误代码
+  --代码范围（-20999到-20000的负整数）
+   DECLARE 
+     newSal emp.sal%TYPE;
+     myexp EXCEPTION;         #声明自定义异常名称
+   BEGIN
+     SELECT sal INTO newSal FROM emp WHERE ename='JAMES';
+     IF newSal<5000 THEN
+       RAISE MYEXP;           #使用RAISE引发自定义异常
+     END IF;
+   EXCEPTION
+     WHEN TOO_MANY_ROWS THEN
+       dbms_output.put_line('输出结果多于1行');
+     WHEN MYEXP THEN
+       RAISE_APPLICATION_ERROR(-20001'工资太低了，擦擦');   #RAISE_APPLICATION_ERROR
+   END;
+   /
+运行结果：
+ORA-20001: SAL IS TO LESS!
+②ORA-06512: 在 line 4
+##################################################################################
+● PL\SQL总结
+--PL/SQL 是一种块结构的语言，它将一组语句放在一个块中，一次性发送给服务器，
+--PL/SQL 引擎把接收到 PL/SQL 语句块中的内容进行分析，把其中的过程控制语句由
+--PL/SQL 引擎自身去执行，把 PL/SQL 语句块中的 SQL 语句交给服务器的 SQL 语句执 
+  行器执行。
+--PL/SQL 的数据类型包括标量数据类型，引用数据类型和存储文本、图像、视频、
+  声音等非结构化得大数据类型（LOB 数据类型）等。
+--Oracle 中存在两种属性类型：%TYPE 和%ROWTYPE。
+--PL/SQL 程序可通过控制结构来控制命令执行的流程。PL/SQL 中提供三种程
+--在 PL/SQL 程序开发中，可以使用 DML 语句和事务控制语句，还可以动态执行 SQL
+在程序运行时出现的错误，称为异常。发生异常后，语句将停止执行，PL/SQL 引
+擎立即将控制权转到 PL/SQL 块的异常处理部分。PL/SQL 中任何异常出现时，每一
+个异常都对应一个异常码和异常信息序结构：
+  顺序结构、条件结构和循环结构。
