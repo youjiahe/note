@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}tasks{% endblock %}
+{% block content %}
+<div class="">
+    <ul class="nav nav-pills">
+        <li class="active"><a href="#host" data-toggle="tab">主机</a></li>
+        <li><a href="#hostgroup" data-toggle="tab">主机组</a></li>
+    </ul>
+    <div class="tab-content h4">
+        <div id='host' class="tab-pane fade active in">
+            <form action="" class="form-group" method="post">
+                <select name="host"  class="form-control h4">
+                    {% for host in hosts%}
+                        <option name="host" value="{{ host.ipaddr }}">{{ host.ipaddr }}</option>
+                    {% endfor %}
+                </select>
+                <hr>
+                <table class="table table-bordered">
+                    <tr class="info">
+                        <td>模块</td>
+                        <td>参数</td>
+                    </tr>
+                    {% for mod in mods %}
+                        <tr>
+                            <td><input name="modu" value="{{ mod.module_name }}" type="radio">&nbsp;&nbsp;{{ mod.module_name }}</td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    <li>
+                                        {% for arg in mod.modarg_set.all %}
+                                            <input name='arg' value="{{ arg.arg_text }}" type="radio">&nbsp;&nbsp;{{ arg.arg_text }}<br>
+                                        {% endfor %}
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <input type="submit" value="&nbsp;&nbsp;执行&nbsp;&nbsp;" class="btn btn-success center-block">
+            </form>
+        </div>
+
+        <div id='hostgroup' class="tab-pane fade">
+            <form action="" class="form-group" method="post">
+                <select name="group" id="group" class="form-control h4">
+                    {% for group in groups %}
+                        <option name="group" value="{{ group.groupname }}">{{ group.groupname }}</option>
+                    {% endfor %}
+                </select>
+                <hr>
+                <table class="table table-bordered">
+                    <tr class="info">
+                        <td>模块</td>
+                        <td>参数</td>
+                    </tr>
+                    {% for mod in mods %}
+                        <tr>
+                            <td><input name="modu" value="{{ mod.module_name }}" type="radio">&nbsp;&nbsp;{{ mod.module_name }}</td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    <li>
+                                        {% for arg in mod.modarg_set.all %}
+                                            <input name='arg' value="{{ arg.arg_text }}" type="radio">&nbsp;&nbsp;{{ arg.arg_text }}<br>
+                                        {% endfor %}
+                                    </li>
+                                </ul>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                </table>
+                <input type="submit" value="&nbsp;&nbsp;执行&nbsp;&nbsp;" class="btn btn-success center-block">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
