@@ -74,7 +74,47 @@ ROLLBACK（回滚）命令。
      授权成功。
      SQL> GRANT RESOURCE TO jerry;
      授权成功。
-
+      -- Create the user 
+      create user TEST
+      
+      identified by TEST 
+        default tablespace USERS 
+        temporary tablespace TEMP 
+        profile DEFAULT; 
+      -- Grant/Revoke role privileges 
+      grant connect to TEST with admin option; 
+      grant resource to TEST with admin option; 
+      -- Grant/Revoke system privileges 
+      grant alter any role to TEST; 
+      grant alter any sequence to TEST; 
+      grant alter any table to TEST; 
+      grant alter any trigger to TEST; 
+      grant alter tablespace to TEST; 
+      grant comment any table to TEST; 
+      grant create any sequence to TEST; 
+      grant create any table to TEST; 
+      grant create any trigger to TEST; 
+      grant create any view to TEST; 
+      grant create materialized view to TEST with admin option; 
+      grant create public synonym to TEST with admin option; 
+      grant create role to TEST; 
+      grant create session to TEST with admin option; 
+      grant create synonym to TEST with admin option; 
+      grant create tablespace to TEST; 
+      grant create user to TEST; 
+      grant create view to TEST with admin option; 
+      grant drop any role to TEST; 
+      grant drop any sequence to TEST; 
+      grant drop any table to TEST; 
+      grant drop any trigger to TEST; 
+      grant drop tablespace to TEST; 
+      grant drop user to TEST; 
+      grant grant any role to TEST; 
+      grant insert any table to TEST; 
+      grant select any table to TEST; 
+      grant unlimited tablespace to TEST with admin option; 
+      grant update any table to TEST;
+      
    ● 语法结构：其他操作
      //回收权限
      REVOKE 角色|权限 FROM 用户（角色）
