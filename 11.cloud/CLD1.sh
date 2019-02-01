@@ -453,7 +453,17 @@ xml 配置文件   #模版文件在 《xml_details》
   – sound 声卡相关配置,可以初除
   – redirdev 设备重定向,可以初除
   – memballoon 内存气泡,可以劢态调整内存
-
+##################################################################################
+挂载镜像文件，修改内容
+[root@you sh]# guestmount -a /var/lib/libvirt/images/node_new.qcow2 -i --rw /mnt/node_new
+[root@you sh]# cd /mnt/node_new/
+[root@you node_new]# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+[root@you node_new]# pwd
+/mnt/node_new
+[root@you node_new]# cd root/
+[root@you root]# ls
+static_ip.sh
 
 
 
