@@ -49,7 +49,7 @@ tar -xf zabbix-3.4.4.tar.gz
 --with-mysql=/usr/bin/mysql_config \ #程序，可以获得mysql的重要路径
 --with-libcurl \  #启动监控公有数据功能
 --with-net-snmp   #启动监控网络数据公您呢个
-
+./configure --enable-server  --enable-proxy  --enable-agent --with-mysql=/usr/bin/mysql_config --with-libcurl --with-net-snmp
 安装完成后查看命令
 zabbix_<Tab><Tab>
 zabbix_agentd  
