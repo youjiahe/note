@@ -32,8 +32,8 @@ read_buffer_size=1M
 # innodb_flush_method	O_DIRECT (避免双缓冲技术)
 # innodb_purge_threads=1 #使用单独的清除线程定期回收无用数据的操作
 # innodb_max_dirty_pages_pct=90 #innodb主线程刷新缓存池中的数据，使脏数据比例小于90%
-# wait_timeout=300   #非交互式连接
-# interactive_timeout = 180 #交互式连接
+# wait_timeout=300   #非交互式连接超时时间，减少sleep线程
+# interactive_timeout = 180 #交互式连接，减少sleep线程
 ############################################################
 #innodb_buffer_pool_size
 调优参考计算方法：
