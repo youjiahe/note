@@ -466,6 +466,23 @@ bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  s
 static_ip.sh
 
 
+##################################################################################
+问题处理：
+1.virsh define host1 时报错error: /usr/libexec/qemu-kvm: Not found
+解决：
+sudo apt-get install qemu-kvm
+sudo apt-get install qemu
+sudo apt-get install virt-viewer 
+sudo apt-get install libvirt-bin 
+sudo apt-get install bridge-utils
+
+ln -s /usr/bin/qemu-system-x86_64 /usr/bin/qemu
+ln -s /usr/bin/qemu-system-x86_64 /usr/bin/kvm
+ln -s /usr/bin/qemu-system-x86_64 /usr/bin/qemu-kvm
+ln -s /usr/bin/qemu-system-x86_64 /usr/bin/qemu-system-x86_64
+ln -s /usr/bin/qemu-system-x86_64 /usr/libexec/qemu-kvm
+
+
 
 
 
