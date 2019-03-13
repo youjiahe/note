@@ -3,6 +3,7 @@ readline readline-devel openssl openssl-devel openssl-static xz lzma xz-devel \
 sqlite sqlite-devel gdbm gdbm-devel tk tk-devel libffi libffi-devel
 
 tar -xf Python-3.6.4.tar.xz
+cd Python-3.6.4
 ./configure --prefix=/usr/local 
 make && make install
 
