@@ -8,8 +8,7 @@ cd Python-3.6.4
 make && make install
 
 使用国内镜像站点
-# mkdir ~/.pip
-# vim ~/.pip/pip.conf
+mkdir ~/.pip
 echo "[global]
 index-url = http://pypi.douban.com/simple/
 [install]
