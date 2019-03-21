@@ -10,8 +10,8 @@ make && make install
 使用国内镜像站点
 # mkdir ~/.pip
 # vim ~/.pip/pip.conf
-[global]
+echo "[global]
 index-url = http://pypi.douban.com/simple/
 [install]
-trusted-host=pypi.douban.com
+trusted-host=pypi.douban.com" > ~/.pip/pip.conf
 # pip install pymysql
