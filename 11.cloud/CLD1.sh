@@ -330,7 +330,10 @@ GRUB_ENABLE_LINUX_LABEL="true"   #使用系统设备名
   – 10.1 安装扩展分区软件
     [root@localhost ~]# yum -y install cloud-utils-growpart 
      写一个自动扩容脚本到 /etc/rc.d/rc.local
-    
+    LANG=en_US.UTF-8
+    growpart /dev/sda 2
+    xfs_growfs /
+
 ● 11.关闭虚拟机后执行信息清理工作
   – 11.1 真机安装命令包   
     [root@room11pc19 ~]# yum -y install libguestfs-tools-c
