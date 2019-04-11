@@ -161,6 +161,7 @@ qemu-img
   – convert 转换磁盘格式
   – info 查看磁盘信息
   – snapshot 管理磁盘快照
+  - resize 改变镜像大小
 
  & 创建新的镜像盘文件
   – qemu-img create -f 格式 磁盘路径 大小
@@ -171,6 +172,8 @@ qemu-img
  & -b 使用后端模板文件创建前端盘
   – qemu-img create -b disk.img -f qcow2 disk1.img
   – qemu-img create -b disk.img -f qcow2 disk2.img 12G
+ & 修改镜像大小  
+  - qemu-img resize host1.img 120G
 
 [root@room11pc19 qemu]# qemu-img info /var/lib/libvirt/images/rh7_node3.img
 image: /var/lib/libvirt/images/rh7_node3.img
