@@ -19,3 +19,12 @@ Linux
 lower_case_table_names = 0
 重启mysql服务
 # service mysql restart
+###########################################
+#批量删除符合条件的表
+Select CONCAT( 'drop table ', table_name, ';' ) 
+FROM information_schema.tables 
+Where table_name LIKE 'dede_%';
+
+dede_指定前缀表
+
+生成删表语句，然后执行这些语句
