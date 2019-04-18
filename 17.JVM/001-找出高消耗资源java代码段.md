@@ -26,8 +26,10 @@ jstack [option] [server-id@]remote-hostname-or-ip
 111a
 ```
 ![top-Hp](https://github.com/youjiahe/note/blob/master/17.JVM/picture/top-Hp-java.jpg)
-- 找到高消耗线程PID，再找出堆栈代码
+- 找到高消耗CPU的线程PID，再找出堆栈代码
 ```bash
 [ekp@ekp227 ~]$ jstack 4000 | grep 111a
 "ekp_cluster_thread-pool-4-thread-5" prio=10 tid=0x00007fa5a4081000 nid=0x111a waiting on condition [0x00007fa5700f1000]
 ```
+
+- 找出高消耗内存的线程亦然
