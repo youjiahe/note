@@ -21,8 +21,8 @@ jstack [option] [server-id@]remote-hostname-or-ip
 ![top-java](https://github.com/youjiahe/note/blob/master/17.JVM/picture/top-java.jpg)
 - 根据进程号查找高消耗的线程
 ```bash
-[ekp@ekp227 ~]$ top -Hp 4000  #选项 -H 是查看进程下的线程
-[ekp@ekp227 ~]$ printf "%x\n" 4378
+[ekp@ekp227 ~]$ top -Hp 4000        #选项 -H 是查看进程下的线程
+[ekp@ekp227 ~]$ printf "%x\n" 4378  #10进制-16进制转换
 111a
 ```
 ![top-Hp](https://github.com/youjiahe/note/blob/master/17.JVM/picture/top-Hp-java.jpg)
