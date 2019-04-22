@@ -25,6 +25,7 @@ ll /etc/ntp.conf*
 egrep -v "^$|#" /etc/ntp.conf.bak >/etc/ntp.conf
 ```
 3. 编辑配置文件
+
 ![ntp.conf](https://s1.51cto.com/images/blog/201803/21/1be243d95cbfe02fd9514fe2154c6a1c.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=)
 ```bash
 vim /etc/ntp.conf
@@ -61,6 +62,7 @@ Centos6: /etc/init.d/ntpd start
 centos7: systemctl start ntpd
 ```
 ntpq -p #显示节点列表
+
 ![ntpq -p 显示节点列表](https://s1.51cto.com/images/blog/201803/21/3906d7da259ec5365705dbb51467695c.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=)
 
 #### 五．客户端时间同步测试
