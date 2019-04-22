@@ -29,10 +29,10 @@ egrep -v "^$|#" /etc/ntp.conf.bak >/etc/ntp.conf
 ![ntp.conf](https://s1.51cto.com/images/blog/201803/21/1be243d95cbfe02fd9514fe2154c6a1c.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_100,g_se,x_10,y_10,shadow_90,type_ZmFuZ3poZW5naGVpdGk=)
 ```bash
 vim /etc/ntp.conf
-ftfile /var/lib/ntp/drift
-trict default kod nomodify notrap nopeer noquery
-trict -6 default kod nomodify notrap nopeer noquery
-trict 127.0.0.1 
+driftfile /var/lib/ntp/drift
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+restrict 127.0.0.1 
 restrict -6 ::1
 
 #允许内网其他机器同步时间
