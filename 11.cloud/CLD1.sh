@@ -292,7 +292,7 @@ BOOTPROTO=dhcp
   – 5.2 导入 gpg key
     rpm --import ftp://192.168.1.254/centos7/RPM-GPG-KEY-CentOS-7
   – 5.3 常用系统命令安装
-    yum install -y net-tools vim-enhanced bridge-utils psmisc
+    yum install -y net-tools vim-enhanced bridge-utils psmisc bash-completion
     
 ● 6.禁用空路由
    [root@localhost ~]# ip route show
@@ -337,7 +337,7 @@ GRUB_ENABLE_LINUX_LABEL="true"   #使用系统设备名
     growpart /dev/sda 2
     xfs_growfs /
 
-● 11.关闭虚拟机后执行信息清理工作
+● 11.关闭虚拟机后,在物理机执行信息清理工作
   – 11.1 真机安装命令包   
     [root@room11pc19 ~]# yum -y install libguestfs-tools-c
   – 11.2 信息清理    
