@@ -122,7 +122,8 @@ MySQL管理工具
        &查看：select host,user,authentication_string from user;                                        
        &修改：update mysql.user set authentication_string=password("000000")
            where user="root" and host="localhost";
-       &刷新：flush privileges;                         
+       &刷新：flush privileges; 
+  +步骤5:注释步骤2的配置，并重启服务                        
 ●root密码修改
   ]# mysqladmin -uroot -p就密码 password '新密码'                                     
 ##################################################################################                                     
