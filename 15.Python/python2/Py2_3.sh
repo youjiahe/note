@@ -15,7 +15,20 @@ Python2自动化运维 day02
 ● 名称空间
    — 默认在sys.path 列出的目录下
    — 存放模块的目录，自定义名称空间，通过全局变量 PYTHONPATH 定义
-   
+● pycharm下导入当前目录的模块会报错
+问题原因：pycharm不会自动将当前目录添加到Sources_path
+
+解决方法：
+
+            1.打开Pycharm
+
+            2.点击工具栏File，选择Settings选项
+
+            3.弹出Settings弹窗后，选择“Project 项目名”--->“Project Structure”
+
+            4.选择当前项目，点击Mark as栏选项Sources，确保当前项目添加到右侧框
+
+            5.点击Apply后，重启Pycharm
 	[root@room9pc01 mymods]# mdkir /opt/mymods
 	[root@room9pc01 mymods]# cp /root/git/python/python2/day3/randpass.py .
 	[root@room9pc01 mymods]# ls
