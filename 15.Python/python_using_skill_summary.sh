@@ -25,3 +25,15 @@
                 sleep(0.1)
         i += 1
      //功能实现：限制并发线程数为 100；
+#############################字典#################################################
+>>> adict
+{'name': 'youjiahe', 'wife': 'wenwanying'}
+>>> adict['name']
+'youjiahe'
+>>> adict.get('name')
+'youjiahe'
+>>> adict.get('age')      #以字典方法get取值，即便key不存在，也不会报错
+>>> adict['age']          #直接以不存在的key作为索引，会报错
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'age'
