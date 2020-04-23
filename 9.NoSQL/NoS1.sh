@@ -57,7 +57,7 @@ Redis服务
     ~]# tar -xf redis-4.0.8.tar.gz
   +编译
     redis-4.0.8]# cd redis-4.0.8/
-    redis-4.0.8]# make && make install
+    redis-4.0.8]# make && make PREFIX=/data/redis/ MALLOC=libc install
 
 ●初始化设置
   redis-4.0.8]# ./utils/install_server.sh      #全部默认   
